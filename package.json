@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start -p 3005",
     "lint": "next lint",
-    "postinstall": "pnpm exec prisma generate",
+    "postinstall": "npx prisma generate",
     "seed:faq": "tsx prisma/seed-faq.ts"
   },
   "dependencies": {

@@ -11,7 +11,7 @@ export default async function ProgramsWrapper() {
   }
 
   // Define the exact order of programs
-  const orderedProgramNames = ['UpSkill', 'Pioneer', 'Horizons']
+  const orderedProgramNames = ['UPSkill Program', 'Pioneer', 'Horizons']
   
   // Create a map to store programs by name for easy lookup
   const programsByName = new Map<string, Program>()
