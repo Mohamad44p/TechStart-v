@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef } from "react"
+import { useRef, useEffect } from "react"
 import { useGSAP } from "@gsap/react"
 import gsap from "gsap"
 import ScrollTrigger from "gsap/ScrollTrigger"
@@ -18,6 +18,11 @@ interface ProgramsSecProps {
 export default function ProgramsSec({ programs }: ProgramsSecProps) {
   const container = useRef<HTMLDivElement>(null)
   const { currentLang } = useLanguage()
+
+  // Log programs data for debugging
+  useEffect(() => {
+    console.log("Programs in ProgramsSec:", programs)
+  }, [programs])
 
   useGSAP(
     () => {
@@ -66,16 +71,24 @@ export default function ProgramsSec({ programs }: ProgramsSecProps) {
         </motion.div>
 
         <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3 px-4" style={{ direction: 'ltr' }}>
-          {programs.map((program) => (
-            <div key={program.id} className="program-card">
-              <ProgramCard
-                id={program.id}
-                backImage={program.imageUrl}
-                programName={currentLang === "ar" ? program.name_ar : program.name_en}
-                description={currentLang === "ar" ? program.description_ar : program.description_en}
-              />
-            </div>
-          ))}
+          {programs.map((program) => {
+            // Get the appropriate description based on language
+            const description = currentLang === "ar" ? program.description_ar : program.description_en
+            
+            // Log each program's description for debugging
+            console.log(`Program ${program.name_en} description:`, description)
+            
+            return (
+              <div key={program.id} className="program-card">
+                <ProgramCard
+                  id={program.id}
+                  backImage={program.imageUrl}
+                  programName={currentLang === "ar" ? program.name_ar : program.name_en}
+                  description={description}
+                />
+              </div>
+            )
+          })}
         </div>
       </div>
     </div>

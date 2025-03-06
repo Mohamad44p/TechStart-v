@@ -32,9 +32,10 @@ const ProgramCard = ({
         />
       </div>
 
-      <CardContent className="px-5 pb-5">
-        <p className="text-sm leading-relaxed line-clamp-4 text-[#862996]">
-          {description}
+      <CardContent className="px-5 pt-4 pb-2">
+        <div className="w-16 h-1 bg-gradient-to-r from-[#1b316e] to-[#862996] mb-3 rounded-full"></div>
+        <p className="text-base leading-relaxed min-h-[100px] line-clamp-6 text-gray-700 font-medium">
+          {description || "Explore our comprehensive program designed to enhance your skills and open new opportunities in the tech industry."}
         </p>
       </CardContent>
 

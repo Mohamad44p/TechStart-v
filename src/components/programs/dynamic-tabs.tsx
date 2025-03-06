@@ -241,7 +241,7 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory,
               >
                 <TabsList
                   className="flex flex-col h-auto overflow-y-auto custom-scrollbar 
-                                   scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
+                                   scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent w-auto min-w-full"
                 >
                   <div className="flex flex-col items-stretch w-full p-3 gap-2.5">
                     {allTabs.map((tab) => (
@@ -256,7 +256,7 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory,
                           } 
                                  data-[state=active]:text-white rounded-lg hover:bg-gradient-to-r 
                                  hover:from-[#1C6AAF]/5 hover:to-[#872996]/5 focus:outline-none 
-                                 focus:ring-2 focus:ring-[#1C6AAF]/50 relative overflow-hidden`}
+                                 focus:ring-2 focus:ring-[#1C6AAF]/50 relative overflow-hidden whitespace-normal break-words`}
                       >
                         <motion.div
                           className={`relative flex items-center gap-3 w-full ${currentLang === 'ar' ? 'flex-row-reverse' : ''

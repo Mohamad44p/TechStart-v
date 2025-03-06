@@ -14,9 +14,23 @@ export default async function HeroWrapper() {
     return <div>No hero content available</div>
   }
 
+  // Create a map to track used orders and ensure uniqueness
+  const usedOrders = new Set()
+  
   const steps = response.data.reduce(
     (acc, step) => {
-      acc[step.order] = {
+      // Ensure each step has a unique order
+      let order = step.order
+      
+      // If this order is already used, find the next available order
+      while (usedOrders.has(order)) {
+        order++
+      }
+      
+      // Mark this order as used
+      usedOrders.add(order)
+      
+      acc[order] = {
         title_en: step.title_en,
         title_ar: step.title_ar,
         tagline_en: step.tagline_en,
@@ -40,6 +54,11 @@ export default async function HeroWrapper() {
     // Use the first available step as step 0
     const firstKey = Math.min(...Object.keys(steps).map(Number))
     steps[0] = steps[firstKey]
+    
+    // Remove the duplicate if it's not at index 0
+    if (firstKey !== 0) {
+      delete steps[firstKey]
+    }
   }
 
   return <Hero steps={steps} />

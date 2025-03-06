@@ -70,8 +70,8 @@ function Stat({ name_en, name_ar, value, icon,  currentLang }: StatData & { curr
         </div>
         {currentLang === "ar" ? name_ar : name_en}
       </dt>
-      <dd className="mt-auto">
-        <div className="flex items-baseline">
+      <dd className="mt-auto flex flex-col items-center">
+        <div className="flex items-baseline justify-center">
           <p className="text-4xl font-bold tracking-tight text-[#142451]">
             {formatNumber(count)}
           </p>

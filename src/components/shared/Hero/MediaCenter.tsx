@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { motion } from "framer-motion"
@@ -17,6 +17,11 @@ interface MediaCenterProps {
 export function MediaCenter({ content }: MediaCenterProps) {
   const { currentLang } = useLanguage()
   const bgColor = "#1b316e" 
+  const [isLoaded, setIsLoaded] = useState(false)
+
+  useEffect(() => {
+    setIsLoaded(true)
+  }, [])
 
   const gradientStyle = {
     backgroundImage: `
@@ -28,33 +33,82 @@ export function MediaCenter({ content }: MediaCenterProps) {
 
   const defaultImage = "/card-front.jpg"
 
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const fallbackContent: MediaCenterContent = {
+    latestNews: {
+      title_en: "Latest News & Updates",
+      title_ar: "آخر الأخبار والتحديثات",
+      imageUrl: defaultImage,
+      slug: ""
+    } as any,
+    pressReleases: {
+      title_en: "Announcements",
+      title_ar: "إعلانات الصحفية",
+      imageUrl: defaultImage,
+      slug: ""
+    } as any,
+    featuredImage: {
+      url: defaultImage,
+      title_en: "Featured Image",
+      title_ar: "صورة مميزة",
+      gallery: {
+        title_en: "Photo Gallery",
+        title_ar: "معرض الصور"
+      }
+    } as any,
+    featuredVideo: {
+      title_en: "Video Stories",
+      title_ar: "قصص الفيديو",
+      thumbnail: defaultImage
+    } as any
+  }
+  /* eslint-enable @typescript-eslint/no-explicit-any */
+  
+  const safeContent = content || fallbackContent
+  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const getImageUrl = (obj: any, fallback = defaultImage): string => {
+    if (!obj) return fallback
+    return obj.url || obj.imageUrl || obj.thumbnail || fallback
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const getTitle = (obj: any, lang: string, fallback: string): string => {
+    if (!obj) return fallback
+    return lang === "ar" ? (obj.title_ar || fallback) : (obj.title_en || fallback)
+  }
+
   const items = [
     {
       title: currentLang === "ar" ? "آخر الأخبار والتحديثات" : "Latest News & Updates",
-      description: currentLang === "ar" 
-        ? content?.latestNews?.title_ar || "استكشف إنجازاتنا وإعلاناتنا الأخيرة."
-        : content?.latestNews?.title_en || "Explore our recent achievements.",
+      description: getTitle(safeContent.latestNews, currentLang, 
+        currentLang === "ar" ? "استكشف إنجازاتنا وإعلاناتنا الأخيرة." : "Explore our recent achievements."),
       header: (
         <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl overflow-hidden">
           <Image
-            src={content?.latestNews?.imageUrl || defaultImage}
-            alt={currentLang === "ar" 
-              ? content?.latestNews?.title_ar || "صورة افتراضية"
-              : content?.latestNews?.title_en || "Default image"}
+            src={getImageUrl(safeContent.latestNews)}
+            alt={getTitle(safeContent.latestNews, currentLang, 
+              currentLang === "ar" ? "صورة افتراضية" : "Default image")}
             width={600}
             height={300}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             priority
+            onError={(e) => {
+              const target = e.target as HTMLImageElement
+              target.src = defaultImage
+            }}
           />
         </div>
       ),
       className: "md:col-span-2",
       icon: <Copy />,
-      link: content?.latestNews ? `/${currentLang}/media-center/news/blog/${content.latestNews.slug}` : `/${currentLang}/media-center/news/blog`,
+      link: safeContent.latestNews?.slug 
+        ? `/${currentLang}/media-center/news/blog/${safeContent.latestNews.slug}` 
+        : `/${currentLang}/media-center/news/blog`,
     },
     {
-      title: currentLang === "ar" ? "البيانات الصحفية" : "Press Releases",
+      title: currentLang === "ar" ? "إعلانات الصحفية" : "Announcements",
       description: currentLang === "ar" 
         ? content?.pressReleases?.title_ar || "الإعلانات الرسمية والتغطية الصحفية."
         : content?.pressReleases?.title_en || "Official announcements and press coverage.",
@@ -123,6 +177,10 @@ export function MediaCenter({ content }: MediaCenterProps) {
       link: `/${currentLang}/media-center/gallery/videos`,
     },
   ]
+
+  if (!isLoaded) {
+    return <div className="min-h-screen bg-gray-50"></div>
+  }
 
   return (
     <motion.section

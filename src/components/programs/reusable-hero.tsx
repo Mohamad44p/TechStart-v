@@ -7,7 +7,6 @@ interface ReusableHeroProps {
   badge: string;
   title: string;
   highlightedWord: string;
-  description: string;
   objectives?: string;
   primaryButtonText: string;
   secondaryButtonText: string;
@@ -28,7 +27,6 @@ export default function ReusableHero({
   badge,
   title,
   highlightedWord,
-  description,
   objectives,
   imageSrc,
   imageAlt,
@@ -80,10 +78,6 @@ export default function ReusableHero({
                         dangerouslySetInnerHTML={{ __html: objectives }}
                       />
                     )}
-                    <div
-                      className="text-lg text-[#481640]"
-                      dangerouslySetInnerHTML={{ __html: description }}
-                    />
                   </div>
                 </motion.div>
               </div>
