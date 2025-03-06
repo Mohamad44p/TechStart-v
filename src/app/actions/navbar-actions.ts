@@ -34,6 +34,9 @@ export async function getNavbarPrograms(): Promise<NavbarProgramsResponse> {
                 buttons: true
               }
             }
+          },
+          orderBy: {
+            createdAt: 'desc'
           }
         }
       },

@@ -21,14 +21,12 @@ export const ProgramsDropdown: React.FC<DropdownProps> = ({ setPosition, transla
       try {
         const result = await getNavbarPrograms();
         if (result.success && result.categories) {
-          // Sort programs within each category from old to new
           const sortedCategories = result.categories.map(category => {
             if (category.programs && category.programs.length > 0) {
-              // Sort programs by createdAt date (ascending - oldest first)
               const sortedPrograms = [...category.programs].sort((a, b) => {
                 const dateA = new Date(a.createdAt || 0).getTime();
                 const dateB = new Date(b.createdAt || 0).getTime();
-                return dateA - dateB;
+                return dateB - dateA;
               });
               
               return {

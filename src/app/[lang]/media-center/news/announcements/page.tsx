@@ -13,7 +13,13 @@ export default async function AnnouncementsPage(props: { params: Promise<{ lang:
   const { data: announcements = [], error } = await getPostsByType(PostType.ANNOUNCEMENT)
 
   if (error) {
-    return <div>Error loading announcements</div>
+    return <div className="container mx-auto py-12 px-4">
+      <div className="text-center text-gray-600">
+        {lang === 'ar' 
+          ? 'عذراً، حدث خطأ أثناء تحميل الإعلانات'
+          : 'Sorry, there was an error loading the announcements'}
+      </div>
+    </div>
   }
 
   const title = lang === 'ar' ? 'الإعلانات' : 'Announcements'
@@ -46,10 +52,12 @@ export default async function AnnouncementsPage(props: { params: Promise<{ lang:
   const transformedAnnouncements = announcements.map(transformToContentItem);
 
   return (
-    <ContentGrid 
-      title={title}
-      subtitle={subtitle}
-      items={transformedAnnouncements}
-    />
+    <div className="py-12">
+      <ContentGrid 
+        title={title}
+        subtitle={subtitle}
+        items={transformedAnnouncements}
+      />
+    </div>
   );
 }

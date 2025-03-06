@@ -51,7 +51,7 @@ export const getFeaturedPosts = cache(async (): Promise<ApiResponse<BlogPost[]>>
   }
 })
 
-export async function getPostsByType(type: PostTypeValue | string) {
+export const getPostsByType = cache(async (type: PostTypeValue | string) => {
   try {
     const postType = typeof type === 'string' ? type.toLowerCase() : type;
     const posts = await db.post.findMany({
@@ -72,7 +72,7 @@ export async function getPostsByType(type: PostTypeValue | string) {
     console.error('Failed to fetch posts:', error);
     return { error: 'Failed to fetch posts' };
   }
-}
+});
 
 export const getAnnouncementsByCategory = cache(async (category: string): Promise<ApiResponse<BlogPost[]>> => {
   try {

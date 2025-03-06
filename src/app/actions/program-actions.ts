@@ -95,6 +95,9 @@ export async function createProgram(data: CreateProgramInput) {
     const programs = await db.programsPages.findMany({
       include: {
         category: true
+      },
+      orderBy: {
+        createdAt: 'desc'
       }
     });
 
@@ -120,6 +123,9 @@ export async function updateProgram(data: UpdateProgramInput) {
     const programs = await db.programsPages.findMany({
       include: {
         category: true
+      },
+      orderBy: {
+        createdAt: 'desc'
       }
     });
 
@@ -137,7 +143,11 @@ export async function deleteProgram(id: string) {
       where: { id },
     })
 
-    const programs = await db.programsPages.findMany()
+    const programs = await db.programsPages.findMany({
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
 
     revalidatePath("/admin/program-tabs")
     return { success: true, programs }
@@ -154,7 +164,7 @@ export async function getProgramsWithHero() {
         ProgramsHero: true
       },
       orderBy: {
-        createdAt: 'asc'
+        createdAt: 'desc'
       }
     });
     return { 
