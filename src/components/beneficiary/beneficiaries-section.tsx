@@ -1,49 +1,59 @@
-'use client'
+"use client";
 
-import { useEffect, useId, useRef, useState } from 'react'
-import Image from 'next/image'
-import { AnimatePresence, motion } from 'framer-motion'
-import { useOutsideClick } from '@/lib/use-outside-click'
-import { Input } from '@/components/ui/input'
-import { CategoryTabs } from './category-tabs'
-import type { Beneficiary, Category } from '@/types/beneficiary'
-import { useLanguage } from '@/context/LanguageContext'
+import { useEffect, useId, useRef, useState } from "react";
+import Image from "next/image";
+import { AnimatePresence, motion } from "framer-motion";
+import { useOutsideClick } from "@/lib/use-outside-click";
+import { Input } from "@/components/ui/input";
+import { CategoryTabs } from "./category-tabs";
+import type { Beneficiary, Category } from "@/types/beneficiary";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface BeneficiariesSectionProps {
-  beneficiaries: Beneficiary[]
-  categories: Category[]
+  beneficiaries: Beneficiary[];
+  categories: Category[];
 }
 
-export function BeneficiariesSection({ beneficiaries, categories }: BeneficiariesSectionProps) {
-  const [active, setActive] = useState<Beneficiary | null>(null)
-  const [search, setSearch] = useState('')
-  const [categoryFilter, setCategoryFilter] = useState('all')
-  const { currentLang } = useLanguage()
+export function BeneficiariesSection({
+  beneficiaries,
+  categories,
+}: BeneficiariesSectionProps) {
+  const [active, setActive] = useState<Beneficiary | null>(null);
+  const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const { currentLang } = useLanguage();
 
-  const DEFAULT_IMAGE = "/car-front-2.png"; 
+  const DEFAULT_IMAGE = "/car-front-2.png";
   const id = useId();
   const ref = useRef<HTMLDivElement>(null);
 
   const getValidImageUrl = (url?: string) => {
-    if (!url || url.trim() === '') return DEFAULT_IMAGE;
+    if (!url || url.trim() === "") return DEFAULT_IMAGE;
     return url;
   };
 
   const getLocalizedContent = (content: Beneficiary) => ({
-    title: currentLang === 'ar' ? content.title_ar : content.title_en,
-    description: currentLang === 'ar' ? content.description_ar : content.description_en,
-    longDescription: currentLang === 'ar' ? content.longDescription_ar : content.longDescription_en,
-  })
+    title: currentLang === "ar" ? content.title_ar : content.title_en,
+    description:
+      currentLang === "ar" ? content.description_ar : content.description_en,
+    longDescription:
+      currentLang === "ar"
+        ? content.longDescription_ar
+        : content.longDescription_en,
+  });
 
   const filteredBeneficiaries = beneficiaries.filter((beneficiary) => {
-    const localizedContent = getLocalizedContent(beneficiary)
+    const localizedContent = getLocalizedContent(beneficiary);
     const matchesSearch = (
       localizedContent.title + localizedContent.description
-    ).toLowerCase().includes(search.toLowerCase())
-    
-    const matchesCategory = categoryFilter === 'all' || beneficiary.category.slug === categoryFilter
-    return matchesSearch && matchesCategory
-  })
+    )
+      .toLowerCase()
+      .includes(search.toLowerCase());
+
+    const matchesCategory =
+      categoryFilter === "all" || beneficiary.category.slug === categoryFilter;
+    return matchesSearch && matchesCategory;
+  });
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -67,13 +77,15 @@ export function BeneficiariesSection({ beneficiaries, categories }: Beneficiarie
   return (
     <div className="w-full bg-white py-16">
       <div className="max-w-screen-xl mx-auto px-4">
-        <motion.h2 
+        <motion.h2
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="text-4xl font-bold text-center mb-16 text-black"
         >
-          Empowering Lives, Creating Opportunities
+          {currentLang === "ar"
+            ? "رواد تكنولوجيا المعلومات في فلسطين"
+            : "Palestinian IT leads Meet the Palestinian IT leads"}
         </motion.h2>
 
         <div className="mb-8 flex flex-col md:flex-row gap-4">
@@ -109,11 +121,11 @@ export function BeneficiariesSection({ beneficiaries, categories }: Beneficiarie
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                transition={{ 
+                transition={{
                   duration: 0.2,
-                  ease: [0.19, 1.0, 0.22, 1.0]
+                  ease: [0.19, 1.0, 0.22, 1.0],
                 }}
-                style={{ willChange: 'transform, opacity' }}
+                style={{ willChange: "transform, opacity" }}
                 layoutId={`card-${active.id}-${id}`}
                 ref={ref}
                 className="w-full max-w-[600px] bg-white rounded-2xl shadow-2xl overflow-hidden border"
@@ -187,7 +199,7 @@ export function BeneficiariesSection({ beneficiaries, categories }: Beneficiarie
           )}
         </AnimatePresence>
 
-        <motion.ul 
+        <motion.ul
           initial="hidden"
           animate="visible"
           variants={{
@@ -196,35 +208,35 @@ export function BeneficiariesSection({ beneficiaries, categories }: Beneficiarie
               opacity: 1,
               transition: {
                 delayChildren: 0.2,
-                staggerChildren: 0.1
-              }
-            }
+                staggerChildren: 0.1,
+              },
+            },
           }}
           className="grid grid-cols-2 md:grid-cols-4 gap-6"
         >
           {filteredBeneficiaries.map((beneficiary) => {
-            const localizedContent = getLocalizedContent(beneficiary)
+            const localizedContent = getLocalizedContent(beneficiary);
             return (
               <motion.li
                 key={beneficiary.id}
                 variants={{
                   hidden: { opacity: 0, y: 20 },
-                  visible: { 
-                    opacity: 1, 
+                  visible: {
+                    opacity: 1,
                     y: 0,
-                    transition: { 
-                      type: "spring", 
-                      stiffness: 300, 
-                      damping: 20 
-                    }
-                  }
+                    transition: {
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 20,
+                    },
+                  },
                 }}
                 layoutId={`card-${beneficiary.id}-${id}`}
                 onClick={() => setActive(beneficiary)}
                 className="bg-white border rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 cursor-pointer overflow-hidden group"
               >
                 <div className="p-6 flex flex-col items-center">
-                  <motion.div 
+                  <motion.div
                     layoutId={`image-${beneficiary.id}-${id}`}
                     className="mb-4 w-32 h-32 flex items-center justify-center"
                   >
@@ -257,7 +269,7 @@ export function BeneficiariesSection({ beneficiaries, categories }: Beneficiarie
                   </div>
                 </div>
               </motion.li>
-            )
+            );
           })}
         </motion.ul>
       </div>
@@ -292,4 +304,3 @@ export const CloseIcon = () => {
     </motion.svg>
   );
 };
-

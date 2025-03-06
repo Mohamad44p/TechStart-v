@@ -89,13 +89,15 @@ export default function ReusableHero({
               transition={{ delay: 0.2 }}
               className="lg:sticky lg:top-8"
             >
-              <div className="aspect-[2/1] relative">
+              <div className="aspect-[4/3] relative overflow-hidden rounded-xl">
                 <Image
                   src={imageSrc}
                   alt={imageAlt}
                   fill
-                  className="object-contain rounded-lg shadow-lg"
+                  className="object-contain rounded-xl transform hover:scale-105 transition-transform duration-500"
                   priority
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
+                  quality={90}
                 />
               </div>
             </motion.div>

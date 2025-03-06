@@ -32,7 +32,7 @@ export default function HomeBanner({ banner }: HomeBannerProps) {
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight text-[#142451]">
               {title}
             </h2>
-            <Link href="/about" passHref prefetch>
+            <Link href="/Safeguards" passHref prefetch>
               <Button
                 size="lg"
                 className="mt-4 bg-gradient-to-r from-[#142451] to-[#862996] text-white hover:from-[#142451]/80 hover:to-[#862996]/80"
