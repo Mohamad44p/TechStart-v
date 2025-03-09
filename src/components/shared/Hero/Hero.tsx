@@ -213,7 +213,7 @@ const Hero = ({ steps }: HeroProps) => {
                              50vw"
                       priority={currentStep === 0}
                       quality={85}
-                      className="object-contain object-center transform transition-transform duration-300 hover:scale-102"
+                      className="object-cover object-center transform transition-transform duration-300 hover:scale-102"
                       style={{
                         WebkitBackfaceVisibility: "hidden",
                         backfaceVisibility: "hidden",
