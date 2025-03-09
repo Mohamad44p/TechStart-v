@@ -77,11 +77,6 @@ const Clients: React.FC<ClientsProps> = ({ partners }) => {
                         priority={index < 2}
                       />
                     </div>
-                    {partner.name_en && (
-                      <p className="text-xs text-center mt-2 text-gray-600">
-                        {currentLang === "ar" ? partner.name_ar : partner.name_en}
-                      </p>
-                    )}
                   </div>
                 ))}
               </div>
