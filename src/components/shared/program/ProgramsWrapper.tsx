@@ -10,29 +10,20 @@ export default async function ProgramsWrapper() {
     return <div>Error loading programs</div>
   }
 
-  // Log the raw data to debug
-  console.log("Raw program data:", JSON.stringify(response.data, null, 2))
 
-  // Define the exact order of programs
   const orderedProgramNames = ['UPSkill Program', 'Pioneer', 'Horizons']
-  
-  // Create a map to store programs by name for easy lookup
+
   const programsByName = new Map<string, Program>()
-  
-  // Filter and store programs by name
+
   response.data.forEach(program => {
-    // Log each program to debug
-    console.log(`Processing program: ${program.name_en}`, {
-      description_en: program.description_en,
-      description_ar: program.description_ar
-    })
-    
+
+
     for (const name of orderedProgramNames) {
       if (program.name_en.includes(name) || program.name_ar.includes(name)) {
         // Ensure descriptions are not empty
         const description_en = program.description_en || `Learn more about our ${name} program and how it can help you achieve your goals.`
         const description_ar = program.description_ar || `تعرف على المزيد حول برنامج ${name} وكيف يمكنه مساعدتك في تحقيق أهدافك.`
-        
+
         programsByName.set(name, {
           id: program.id,
           name_en: program.name_en,
@@ -45,7 +36,7 @@ export default async function ProgramsWrapper() {
       }
     }
   })
-  
+
   // Create the final array in the exact order specified
   const orderedPrograms: Program[] = []
   for (const name of orderedProgramNames) {
@@ -56,7 +47,6 @@ export default async function ProgramsWrapper() {
   }
 
   // Log the final ordered programs to debug
-  console.log("Final ordered programs:", JSON.stringify(orderedPrograms, null, 2))
 
   return <ProgramsSec programs={orderedPrograms} />
 }

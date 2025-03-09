@@ -108,7 +108,7 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory,
 
       <div className="space-y-4">
         <div className="w-full">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          <div className={`flex flex-wrap gap-3 ${currentLang === 'ar' ? 'justify-end' : 'justify-start'}`}>
             <Button
               variant="outline"
               size="sm"
@@ -142,7 +142,7 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory,
             }
           </div>
 
-          <div className="mt-6">
+          <div className={`mt-6 ${currentLang === 'ar' ? 'text-right' : 'text-left'}`}>
             <Link href="https://fs20.formsite.com/DAIForms/smr0etmskv/login">
               <Button
                 size="default"
@@ -158,7 +158,7 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory,
           </div>
         </div>
 
-        <p className="text-xs sm:text-sm text-gray-500 italic">
+        <p className={`text-xs sm:text-sm text-gray-500 italic ${currentLang === 'ar' ? 'text-right' : 'text-left'}`}>
           {currentLang === "ar"
             ? buttonText.availability.ar
             : buttonText.availability.en}

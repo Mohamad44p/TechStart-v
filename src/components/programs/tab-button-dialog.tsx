@@ -1,16 +1,14 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog";
-import { useLanguage } from "@/context/LanguageContext";
-import { X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface TabButtonDialogProps {
   isOpen: boolean;
@@ -20,7 +18,6 @@ interface TabButtonDialogProps {
 }
 
 export function TabButtonDialog({ isOpen, onClose, title, content }: TabButtonDialogProps) {
-  const { currentLang } = useLanguage();
   const [windowWidth, setWindowWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 0);
 
   useEffect(() => {
@@ -70,15 +67,6 @@ export function TabButtonDialog({ isOpen, onClose, title, content }: TabButtonDi
             dangerouslySetInnerHTML={{ __html: content }}
           />
         </div>
-
-        <DialogFooter className="mt-4 pt-2 border-t">
-          <Button 
-            onClick={onClose} 
-            className="w-full sm:w-auto bg-gradient-to-r from-[#1C6AAF] to-[#872996] hover:opacity-90"
-          >
-            {currentLang === "ar" ? "إغلاق" : "Close"}
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
