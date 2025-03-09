@@ -2,11 +2,32 @@ import { Suspense } from 'react'
 import { getBeneficiaries, getCategories } from '@/app/actions/beneficiaryActions'
 import { BeneficiariesSection } from '@/components/beneficiary/beneficiaries-section'
 import Loading from './loading'
+import { SeoMetadata } from "@/components/shared/SeoMetadata"
+import { Metadata } from "next"
 
 export const revalidate = 30
 export const dynamic = "force-dynamic"
 
-export default async function PalestinianITleads() {
+interface PalestinianITleadsProps {
+  params: {
+    lang: string
+  }
+}
+
+export async function generateMetadata({ params }: PalestinianITleadsProps): Promise<Metadata> {
+  const { lang } = params;
+  
+  // Default metadata if no custom SEO is set
+  return {
+    title: lang === 'ar' ? 'قادة تكنولوجيا المعلومات الفلسطينيون - تيك ستارت' : 'Palestinian IT Leads - TechStart',
+    description: lang === 'ar' 
+      ? 'تعرف على قادة تكنولوجيا المعلومات الفلسطينيين الذين يقودون التحول الرقمي في فلسطين.'
+      : 'Learn about Palestinian IT leaders who are driving digital transformation in Palestine.',
+  }
+}
+
+export default async function PalestinianITleads({ params }: PalestinianITleadsProps) {
+  const { lang } = params;
   const [beneficiariesResponse, categoriesResponse] = await Promise.all([
     getBeneficiaries(),
     getCategories(),
@@ -23,11 +44,22 @@ export default async function PalestinianITleads() {
   }
 
   return (
-    <Suspense fallback={<Loading />}>
-      <BeneficiariesSection 
-        beneficiaries={beneficiariesResponse.data || []}
-        categories={categoriesResponse.data || []}
+    <>
+      <SeoMetadata 
+        path="/Palestinian-IT-leads" 
+        lang={lang} 
+        defaultTitle={lang === 'ar' ? 'قادة تكنولوجيا المعلومات الفلسطينيون - تيك ستارت' : 'Palestinian IT Leads - TechStart'}
+        defaultDescription={lang === 'ar' 
+          ? 'تعرف على قادة تكنولوجيا المعلومات الفلسطينيين الذين يقودون التحول الرقمي في فلسطين.'
+          : 'Learn about Palestinian IT leaders who are driving digital transformation in Palestine.'
+        }
       />
-    </Suspense>
+      <Suspense fallback={<Loading />}>
+        <BeneficiariesSection 
+          beneficiaries={beneficiariesResponse.data || []}
+          categories={categoriesResponse.data || []}
+        />
+      </Suspense>
+    </>
   )
 }

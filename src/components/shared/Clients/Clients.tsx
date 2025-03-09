@@ -61,10 +61,13 @@ const Clients: React.FC<ClientsProps> = ({ partners }) => {
               >
                 {currentLang === "ar" ? "بتمويل من" : "Funded By"}
               </motion.span>
-              <div className="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300">
-                <div className="grid grid-cols-2 gap-4">
-                  {fundedPartners.map((partner, index) => (
-                    <div key={index} className="relative h-[60px]">
+              <div className="flex flex-col gap-4">
+                {fundedPartners.map((partner, index) => (
+                  <div
+                    key={index}
+                    className="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300"
+                  >
+                    <div className="relative h-[80px]">
                       <Image
                         src={partner.imageUrl || "/placeholder.svg"}
                         alt={currentLang === "ar" ? partner.name_ar : partner.name_en}
@@ -74,8 +77,13 @@ const Clients: React.FC<ClientsProps> = ({ partners }) => {
                         priority={index < 2}
                       />
                     </div>
-                  ))}
-                </div>
+                    {partner.name_en && (
+                      <p className="text-xs text-center mt-2 text-gray-600">
+                        {currentLang === "ar" ? partner.name_ar : partner.name_en}
+                      </p>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
 

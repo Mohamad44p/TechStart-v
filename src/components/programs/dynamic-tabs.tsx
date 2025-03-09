@@ -35,12 +35,14 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory,
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedButton, setSelectedButton] = useState<{ title: string; content: string } | null>(null);
   const pathname = usePathname();
+  const [activeAccordion, setActiveAccordion] = useState<string | undefined>(tabs[0]?.slug);
 
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace("#", "");
       if (hash && tabs.some((tab) => tab.slug === hash)) {
         setActiveTab(hash);
+        setActiveAccordion(hash);
       }
     };
     handleHashChange();
@@ -203,7 +205,13 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory,
         </div>
 
         {isMobile ? (
-          <Accordion type="single" collapsible className="w-full space-y-4">
+          <Accordion 
+            type="single" 
+            defaultValue={activeAccordion}
+            value={activeAccordion}
+            onValueChange={setActiveAccordion}
+            className="w-full space-y-4"
+          >
             {allTabs.map((tab) => (
               <AccordionItem key={tab.slug} value={tab.slug}>
                 <AccordionTrigger className="text-lg font-semibold hover:bg-gradient-to-r hover:from-[#1C6AAF]/5 hover:to-[#872996]/5 px-4 py-2 rounded-lg transition-all duration-300">

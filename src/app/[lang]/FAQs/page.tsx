@@ -3,19 +3,30 @@ import { getFaqCategories } from "@/app/actions/pages/faqActions"
 import { FAQSection } from "@/components/faq-section/faq-section"
 import Loading from "./loading"
 import { FaqProvider } from "@/context/FaqContext"
+import { SeoMetadata } from "@/components/shared/SeoMetadata"
+import { Metadata } from "next"
 
 export const revalidate = 30
 export const dynamic = "force-dynamic"
 
 interface FAQsPageProps {
-  params: Promise<{
+  params: {
     lang: string
-  }>
+  }
 }
 
-export default async function FAQsPage(props: FAQsPageProps) {
-  const params = await props.params;
+export async function generateMetadata({ params }: FAQsPageProps): Promise<Metadata> {
+  const { lang } = params;
+  
+  return {
+    title: lang === 'ar' ? 'الأسئلة الشائعة - تيك ستارت' : 'FAQs - TechStart',
+    description: lang === 'ar' 
+      ? 'الأسئلة المتداولة حول برامج ومبادرات تيك ستارت. احصل على إجابات لأكثر الأسئلة شيوعًا.'
+      : 'Frequently asked questions about TechStart programs and initiatives. Get answers to the most common questions.',
+  }
+}
 
+export default async function FAQsPage({ params }: FAQsPageProps) {
   const {
     lang
   } = params;
@@ -42,6 +53,15 @@ export default async function FAQsPage(props: FAQsPageProps) {
 
   return (
     <div className="min-h-screen">
+      <SeoMetadata 
+        path="/FAQs" 
+        lang={lang} 
+        defaultTitle={lang === 'ar' ? 'الأسئلة الشائعة - تيك ستارت' : 'FAQs - TechStart'}
+        defaultDescription={lang === 'ar' 
+          ? 'الأسئلة المتداولة حول برامج ومبادرات تيك ستارت. احصل على إجابات لأكثر الأسئلة شيوعًا.'
+          : 'Frequently asked questions about TechStart programs and initiatives. Get answers to the most common questions.'
+        }
+      />
       <Suspense fallback={<Loading />}>
         <FaqProvider>
           <FAQSection 

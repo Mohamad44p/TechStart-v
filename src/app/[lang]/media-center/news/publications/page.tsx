@@ -2,14 +2,27 @@ import { ContentGrid } from "@/components/News-blog/content-grid"
 import { getPostsByType } from "@/app/actions/fetch-posts"
 import { PostType, PostTypeValue } from "@/lib/schema/schema"
 import type { ContentItem, Tag } from "@/types/blog"
+import { SeoMetadata } from "@/components/shared/SeoMetadata"
+import { Metadata } from "next"
 
-export const metadata = {
-  title: 'Publications & Reports',
+interface PublicationsPageProps {
+  params: {
+    lang: string
+  }
 }
 
-export default async function PublicationsPage(props: { params: Promise<{ lang: string }> }) {
-  const params = await props.params;
+export async function generateMetadata({ params }: PublicationsPageProps): Promise<Metadata> {
+  const { lang } = params;
+  
+  return {
+    title: lang === 'ar' ? 'المنشورات والتقارير - تيك ستارت' : 'Publications & Reports - TechStart',
+    description: lang === 'ar' 
+      ? 'استكشف منشورات وتقارير تيك ستارت. اطلع على أحدث الأبحاث والتحليلات والتقارير المتعلقة بمبادراتنا وبرامجنا.'
+      : 'Explore TechStart publications and reports. Access the latest research, analysis, and reports related to our initiatives and programs.',
+  }
+}
 
+export default async function PublicationsPage({ params }: PublicationsPageProps) {
   const {
     lang
   } = params;
@@ -19,6 +32,15 @@ export default async function PublicationsPage(props: { params: Promise<{ lang: 
   if (error) {
     return (
       <div className="container mx-auto py-12 px-4">
+        <SeoMetadata 
+          path="/media-center/news/publications" 
+          lang={lang} 
+          defaultTitle={lang === 'ar' ? 'المنشورات والتقارير - تيك ستارت' : 'Publications & Reports - TechStart'}
+          defaultDescription={lang === 'ar' 
+            ? 'استكشف منشورات وتقارير تيك ستارت. اطلع على أحدث الأبحاث والتحليلات والتقارير المتعلقة بمبادراتنا وبرامجنا.'
+            : 'Explore TechStart publications and reports. Access the latest research, analysis, and reports related to our initiatives and programs.'
+          }
+        />
         <div className="text-center text-gray-600">
           {lang === 'ar' 
             ? 'عذراً، حدث خطأ أثناء تحميل المنشورات'
@@ -58,12 +80,23 @@ export default async function PublicationsPage(props: { params: Promise<{ lang: 
   const transformedPublications = publications.map(transformToContentItem);
 
   return (
-    <div className="py-12">
-      <ContentGrid 
-        title={title}
-        subtitle={subtitle}
-        items={transformedPublications}
+    <div className="bg-white dark:bg-gray-900">
+      <SeoMetadata 
+        path="/media-center/news/publications" 
+        lang={lang} 
+        defaultTitle={lang === 'ar' ? 'المنشورات والتقارير - تيك ستارت' : 'Publications & Reports - TechStart'}
+        defaultDescription={lang === 'ar' 
+          ? 'استكشف منشورات وتقارير تيك ستارت. اطلع على أحدث الأبحاث والتحليلات والتقارير المتعلقة بمبادراتنا وبرامجنا.'
+          : 'Explore TechStart publications and reports. Access the latest research, analysis, and reports related to our initiatives and programs.'
+        }
       />
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+        <ContentGrid 
+          title={title}
+          subtitle={subtitle}
+          items={transformedPublications}
+        />
+      </div>
     </div>
   )
 }

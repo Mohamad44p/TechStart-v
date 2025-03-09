@@ -48,8 +48,8 @@ export function BeneficiaryForm({
       longDescription_en: "",
       longDescription_ar: "",
       imageUrl: "",
-      ctaText: "",
-      ctaLink: "",
+      buttonText: "",
+      buttonLink: "",
       categoryId: "",
     },
   })
@@ -58,7 +58,16 @@ export function BeneficiaryForm({
     setIsSubmitting(true)
     const formData = new FormData()
     
-    Object.entries(data).forEach(([key, value]) => {
+    // Process optional fields to handle empty strings
+    const processedData = {
+      ...data,
+      longDescription_en: data.longDescription_en && data.longDescription_en.trim() !== "" ? data.longDescription_en : null,
+      longDescription_ar: data.longDescription_ar && data.longDescription_ar.trim() !== "" ? data.longDescription_ar : null,
+      buttonText: data.buttonText && data.buttonText.trim() !== "" ? data.buttonText : null,
+      buttonLink: data.buttonLink && data.buttonLink.trim() !== "" ? data.buttonLink : null,
+    }
+    
+    Object.entries(processedData).forEach(([key, value]) => {
       if (value !== null && value !== undefined) {
         formData.append(key, value.toString())
       }
@@ -173,9 +182,13 @@ export function BeneficiaryForm({
                   name="longDescription_en"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Long Description (English)</FormLabel>
+                      <FormLabel>Long Description (English) (Optional)</FormLabel>
                       <FormControl>
-                        <Textarea {...field} />
+                        <Textarea 
+                          {...field} 
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(e.target.value || "")}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -217,9 +230,14 @@ export function BeneficiaryForm({
                   name="longDescription_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Long Description (Arabic)</FormLabel>
+                      <FormLabel>Long Description (Arabic) (Optional)</FormLabel>
                       <FormControl>
-                        <Textarea {...field} dir="rtl" />
+                        <Textarea 
+                          {...field} 
+                          dir="rtl"
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(e.target.value || "")}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -231,12 +249,17 @@ export function BeneficiaryForm({
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="ctaText"
+                name="buttonText"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>CTA Text</FormLabel>
+                    <FormLabel>Button Text (Optional)</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input 
+                        {...field} 
+                        placeholder="e.g., Learn More, Apply Now" 
+                        value={field.value || ""}
+                        onChange={(e) => field.onChange(e.target.value || "")}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -245,12 +268,17 @@ export function BeneficiaryForm({
 
               <FormField
                 control={form.control}
-                name="ctaLink"
+                name="buttonLink"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>CTA Link</FormLabel>
+                    <FormLabel>Button Link (Optional)</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input 
+                        {...field} 
+                        placeholder="https://example.com/page" 
+                        value={field.value || ""}
+                        onChange={(e) => field.onChange(e.target.value || "")}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

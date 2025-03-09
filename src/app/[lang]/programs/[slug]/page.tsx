@@ -3,8 +3,17 @@ import db from "@/app/db/db";
 import DynamicHero from "@/components/programs/dynamic-hero";
 import DynamicTabs from "@/components/programs/dynamic-tabs";
 import NavbarPositionSetter from './NavbarPositionSetter';
+import { SeoMetadata } from "@/components/shared/SeoMetadata";
+import { Metadata } from "next";
 
 export const dynamic = "force-dynamic"
+
+interface ProgramPageProps {
+  params: {
+    lang: string;
+    slug: string;
+  }
+}
 
 async function getProgram(slug: string) {
   try {
@@ -41,6 +50,33 @@ async function getProgram(slug: string) {
   }
 }
 
+export async function generateMetadata({ params }: ProgramPageProps): Promise<Metadata> {
+  const { lang, slug } = params;
+  const program = await getProgram(slug);
+  
+  if (!program) {
+    return {
+      title: lang === 'ar' ? 'برنامج غير موجود - تيك ستارت' : 'Program Not Found - TechStart',
+      description: lang === 'ar' ? 'لم يتم العثور على البرنامج المطلوب' : 'The requested program could not be found',
+    };
+  }
+  
+  // Use program data to create dynamic metadata
+  const title = lang === 'ar' 
+    ? `${program.name_ar} - تيك ستارت` 
+    : `${program.name_en} - TechStart`;
+  
+  // Since there's no description field in the schema, we'll create a generic one
+  const description = lang === 'ar'
+    ? `تعرف على برنامج ${program.name_ar} من تيك ستارت وكيف يمكنك المشاركة.`
+    : `Learn about TechStart's ${program.name_en} program and how you can participate.`;
+  
+  return {
+    title,
+    description,
+  };
+}
+
 function HashNavigationScript() {
   return (
     <script
@@ -75,12 +111,7 @@ function HashNavigationScript() {
   );
 }
 
-export default async function DynamicProgramPage(
-  props: {
-    params: Promise<{ lang: string; slug: string }>
-  }
-) {
-  const params = await props.params;
+export default async function DynamicProgramPage({ params }: ProgramPageProps) {
   const program = await getProgram(params.slug);
 
   if (!program) {
@@ -105,6 +136,18 @@ export default async function DynamicProgramPage(
 
   return (
     <>
+      <SeoMetadata 
+        path={`/programs/${params.slug}`} 
+        lang={params.lang} 
+        defaultTitle={params.lang === 'ar' 
+          ? `${program.name_ar} - تيك ستارت` 
+          : `${program.name_en} - TechStart`
+        }
+        defaultDescription={params.lang === 'ar'
+          ? `تعرف على برنامج ${program.name_ar} من تيك ستارت وكيف يمكنك المشاركة.`
+          : `Learn about TechStart's ${program.name_en} program and how you can participate.`
+        }
+      />
       <NavbarPositionSetter />
       <HashNavigationScript />
       <main className="min-h-screen flex flex-col">

@@ -5,11 +5,27 @@ export const beneficiarySchema = z.object({
   title_ar: z.string().min(2),
   description_en: z.string().min(10),
   description_ar: z.string().min(10),
-  longDescription_en: z.string().min(50),
-  longDescription_ar: z.string().min(50),
+  longDescription_en: z.union([
+    z.string().min(50),
+    z.string().max(0),
+    z.null()
+  ]).optional().nullable(),
+  longDescription_ar: z.union([
+    z.string().min(50),
+    z.string().max(0),
+    z.null()
+  ]).optional().nullable(),
   imageUrl: z.string().nullable(),
-  ctaText: z.string().min(2),
-  ctaLink: z.string().url(),
+  buttonText: z.union([
+    z.string().min(2),
+    z.string().max(0),
+    z.null()
+  ]).optional().nullable(),
+  buttonLink: z.union([
+    z.string().url(),
+    z.string().max(0),
+    z.null()
+  ]).optional().nullable(),
   categoryId: z.string().min(1),
 })
 

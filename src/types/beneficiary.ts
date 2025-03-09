@@ -7,8 +7,8 @@ export interface Beneficiary {
   longDescription_en: string
   longDescription_ar: string
   imageUrl: string
-  ctaText: string
-  ctaLink: string
+  buttonText: string | null
+  buttonLink: string | null
   categoryId: string
   category: Category
   createdAt: Date

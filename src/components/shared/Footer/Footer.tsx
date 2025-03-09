@@ -133,7 +133,7 @@ export default function Footer({ footerData }: FooterProps) {
           </motion.div>
 
           <motion.div variants={itemVariants} className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
-            <motion.div variants={itemVariants} className="flex justify-center md:justify-start space-x-6">
+            <motion.div variants={itemVariants} className="flex flex-wrap justify-center md:justify-start gap-4">
               {["Privacy Policy", "Terms of Use", "Trust"].map((text, i) => (
                 <Link
                   key={i}

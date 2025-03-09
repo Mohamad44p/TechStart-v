@@ -1,11 +1,31 @@
 import { getPartnerPages } from "@/app/actions/pages/partner-actions"
 import PartnersPageClient from "@/components/shared/Clients/PartnersPage"
 import type { PartnerPage } from "@/types/partner"
+import { SeoMetadata } from "@/components/shared/SeoMetadata"
+import { Metadata } from "next"
 
 export const dynamic = "force-dynamic"
 
+interface PartnersPageProps {
+  params: {
+    lang: string
+  }
+}
 
-export default async function PartnersWrapper() {
+export async function generateMetadata({ params }: PartnersPageProps): Promise<Metadata> {
+  const { lang } = params;
+  
+  // Default metadata if no custom SEO is set
+  return {
+    title: lang === 'ar' ? 'شركاؤنا - تيك ستارت' : 'Our Partners - TechStart',
+    description: lang === 'ar' 
+      ? 'تعرف على شركاء تيك ستارت الذين يساعدوننا في تحقيق مهمتنا لتطوير المهارات التقنية في فلسطين.'
+      : 'Learn about TechStart partners who help us achieve our mission of developing technical skills in Palestine.',
+  }
+}
+
+export default async function PartnersWrapper({ params }: PartnersPageProps) {
+  const { lang } = params;
   const { data: partnerPages, error } = await getPartnerPages()
 
   if (error) {
@@ -15,6 +35,19 @@ export default async function PartnersWrapper() {
 
   const partners: PartnerPage[] = partnerPages || []
 
-  return <PartnersPageClient partners={partners} />
+  return (
+    <>
+      <SeoMetadata 
+        path="/partners" 
+        lang={lang} 
+        defaultTitle={lang === 'ar' ? 'شركاؤنا - تيك ستارت' : 'Our Partners - TechStart'}
+        defaultDescription={lang === 'ar' 
+          ? 'تعرف على شركاء تيك ستارت الذين يساعدوننا في تحقيق مهمتنا لتطوير المهارات التقنية في فلسطين.'
+          : 'Learn about TechStart partners who help us achieve our mission of developing technical skills in Palestine.'
+        }
+      />
+      <PartnersPageClient partners={partners} />
+    </>
+  )
 }
 

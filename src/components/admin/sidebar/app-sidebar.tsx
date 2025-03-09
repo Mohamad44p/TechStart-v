@@ -44,6 +44,10 @@ const data: { navMain: NavItem[] } = {
           title: "Footer",
           url: "/admin/pages/footer",
         },
+        {
+          title: "SEO",
+          url: "/admin/seo",
+        },
       ]
     },
     {

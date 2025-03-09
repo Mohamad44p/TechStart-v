@@ -2,10 +2,27 @@ import { ContentGrid } from "@/components/News-blog/content-grid"
 import { getPostsByType } from "@/app/actions/fetch-posts"
 import { PostType, PostTypeValue } from "@/lib/schema/schema"
 import { ContentItem, Tag } from "@/types/blog"
+import { SeoMetadata } from "@/components/shared/SeoMetadata"
+import { Metadata } from "next"
 
-export default async function AnnouncementsPage(props: { params: Promise<{ lang: string }> }) {
-  const params = await props.params;
+interface AnnouncementsPageProps {
+  params: {
+    lang: string
+  }
+}
 
+export async function generateMetadata({ params }: AnnouncementsPageProps): Promise<Metadata> {
+  const { lang } = params;
+  
+  return {
+    title: lang === 'ar' ? 'الإعلانات - تيك ستارت' : 'Announcements - TechStart',
+    description: lang === 'ar' 
+      ? 'اطلع على آخر الإعلانات والتحديثات المهمة من تيك ستارت. ابق على اطلاع بأحدث الأخبار والفعاليات.'
+      : 'Stay updated with the latest announcements and important updates from TechStart. Keep informed about our latest news and events.',
+  }
+}
+
+export default async function AnnouncementsPage({ params }: AnnouncementsPageProps) {
   const {
     lang
   } = params;
@@ -14,6 +31,15 @@ export default async function AnnouncementsPage(props: { params: Promise<{ lang:
 
   if (error) {
     return <div className="container mx-auto py-12 px-4">
+      <SeoMetadata 
+        path="/media-center/news/announcements" 
+        lang={lang} 
+        defaultTitle={lang === 'ar' ? 'الإعلانات - تيك ستارت' : 'Announcements - TechStart'}
+        defaultDescription={lang === 'ar' 
+          ? 'اطلع على آخر الإعلانات والتحديثات المهمة من تيك ستارت. ابق على اطلاع بأحدث الأخبار والفعاليات.'
+          : 'Stay updated with the latest announcements and important updates from TechStart. Keep informed about our latest news and events.'
+        }
+      />
       <div className="text-center text-gray-600">
         {lang === 'ar' 
           ? 'عذراً، حدث خطأ أثناء تحميل الإعلانات'
@@ -52,12 +78,23 @@ export default async function AnnouncementsPage(props: { params: Promise<{ lang:
   const transformedAnnouncements = announcements.map(transformToContentItem);
 
   return (
-    <div className="py-12">
-      <ContentGrid 
-        title={title}
-        subtitle={subtitle}
-        items={transformedAnnouncements}
+    <div className="bg-white dark:bg-gray-900">
+      <SeoMetadata 
+        path="/media-center/news/announcements" 
+        lang={lang} 
+        defaultTitle={lang === 'ar' ? 'الإعلانات - تيك ستارت' : 'Announcements - TechStart'}
+        defaultDescription={lang === 'ar' 
+          ? 'اطلع على آخر الإعلانات والتحديثات المهمة من تيك ستارت. ابق على اطلاع بأحدث الأخبار والفعاليات.'
+          : 'Stay updated with the latest announcements and important updates from TechStart. Keep informed about our latest news and events.'
+        }
       />
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+        <ContentGrid 
+          title={title}
+          subtitle={subtitle}
+          items={transformedAnnouncements}
+        />
+      </div>
     </div>
   );
 }

@@ -7,6 +7,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model SeoMetadata {
+  id            String   @id @default(uuid())
+  pagePath      String   @unique
+  pageType      String
+  title_en      String
+  title_ar      String
+  description_en String
+  description_ar String
+  keywords_en   String?
+  keywords_ar   String?
+  ogImage       String?
+  canonicalUrl  String?
+  noIndex       Boolean  @default(false)
+  structuredData String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
 model Post {
   id             Int      @id @default(autoincrement())
   slug           String   @unique

@@ -8,32 +8,32 @@ import { Separator } from "@/components/ui/separator";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { PostType } from "@/lib/schema/schema";
+import { SeoMetadata } from "@/components/shared/SeoMetadata";
+import { Metadata } from "next";
 
 interface Props {
-  params: Promise<{
+  params: {
     lang: string;
     type: string;
     slug: string;
-  }>;
+  };
 }
 
-export async function generateMetadata(props: {
-  params: Promise<{ lang: string; type: string; slug: string }>;
-}) {
-  const params = await props.params;
-  const { data: post } = await getPostBySlug(params.slug);
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { lang, slug } = params;
+  const { data: post } = await getPostBySlug(slug);
 
   if (!post) return {};
 
   return {
-    title: params.lang === "ar" ? post.title_ar : post.title_en,
+    title: lang === "ar" ? post.title_ar : post.title_en,
     description:
-      params.lang === "ar" ? post.description_ar : post.description_en,
+      lang === "ar" ? post.description_ar : post.description_en,
   };
 }
 
 export default async function PostPage({ params }: Props) {
-  const { lang, type, slug } = await params;
+  const { lang, type, slug } = params;
 
   const { data: post, error } = await getPostBySlug(slug);
 
@@ -67,6 +67,12 @@ export default async function PostPage({ params }: Props) {
 
   return (
     <article className="min-h-screen pb-20">
+      <SeoMetadata 
+        path={`/media-center/news/${type}/${slug}`} 
+        lang={lang} 
+        defaultTitle={lang === "ar" ? post.title_ar : post.title_en}
+        defaultDescription={lang === "ar" ? post.description_ar ?? "" : post.description_en ?? ""}
+      />
       <BlogHeader
         title={lang === "ar" ? post.title_ar : post.title_en}
         description={lang === "ar" ? post.description_ar : post.description_en}

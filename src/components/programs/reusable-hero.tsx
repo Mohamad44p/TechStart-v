@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface ReusableHeroProps {
   badge: string;
@@ -32,6 +33,9 @@ export default function ReusableHero({
   imageAlt,
   features,
 }: ReusableHeroProps) {
+  const { currentLang } = useLanguage();
+  const isArabic = currentLang === 'ar';
+
   return (
     <div className="relative overflow-hidden bg-gradient-to-r from-purple-100 via-white to-blue-100 py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -51,13 +55,14 @@ export default function ReusableHero({
               >
                 {badge}
               </motion.span>
-              
+
               <div className="space-y-6">
                 <motion.h1
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#1E78C2]"
+                  className={`text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#1E78C2] ${isArabic ? 'tracking-wider leading-tight' : ''}`}
+                  style={isArabic ? { letterSpacing: '0.05em' } : {}}
                 >
                   {title}{" "}
                   <span className="text-blue-600 relative">

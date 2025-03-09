@@ -4,12 +4,29 @@ import { FeaturedPosts } from "@/components/News-blog/FeaturedPosts"
 import { getFeaturedPosts, getPostsByType } from "@/app/actions/fetch-posts"
 import { PostType, PostTypeValue } from "@/lib/schema/schema"
 import { ContentItem, BlogPost, Tag } from "@/types/blog"
+import { SeoMetadata } from "@/components/shared/SeoMetadata"
+import { Metadata } from "next"
 
 export const dynamic = "force-dynamic"
 
-export default async function NewsPage(props: { params: Promise<{ lang: string }> }) {
-  const params = await props.params;
+interface NewsPageProps {
+  params: {
+    lang: string
+  }
+}
 
+export async function generateMetadata({ params }: NewsPageProps): Promise<Metadata> {
+  const { lang } = params;
+  
+  return {
+    title: lang === 'ar' ? 'الأخبار والبيانات الصحفية - تيك ستارت' : 'News & Press Releases - TechStart',
+    description: lang === 'ar' 
+      ? 'ابق على اطلاع بآخر الأخبار والمنشورات والإعلانات لدينا. اكتشف أحدث التطورات والأحداث في تيك ستارت.'
+      : 'Stay updated with our latest news, publications, and announcements. Discover the latest developments and events at TechStart.',
+  }
+}
+
+export default async function NewsPage({ params }: NewsPageProps) {
   const {
     lang
   } = params;
@@ -81,13 +98,24 @@ export default async function NewsPage(props: { params: Promise<{ lang: string }
   const transformedPosts = allPosts.map(transformToContentItem);
 
   return (
-    <div className="min-h-screen">
-      {featuredPosts.length > 0 && <FeaturedPosts posts={transformedFeaturedPosts} />}
-      <ContentGrid
-        title={title}
-        subtitle={subtitle}
-        items={transformedPosts}
+    <div className="bg-white dark:bg-gray-900">
+      <SeoMetadata 
+        path="/media-center/news" 
+        lang={lang} 
+        defaultTitle={lang === 'ar' ? 'الأخبار والبيانات الصحفية - تيك ستارت' : 'News & Press Releases - TechStart'}
+        defaultDescription={lang === 'ar' 
+          ? 'ابق على اطلاع بآخر الأخبار والمنشورات والإعلانات لدينا. اكتشف أحدث التطورات والأحداث في تيك ستارت.'
+          : 'Stay updated with our latest news, publications, and announcements. Discover the latest developments and events at TechStart.'
+        }
       />
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+        {featuredPosts.length > 0 && <FeaturedPosts posts={transformedFeaturedPosts} />}
+        <ContentGrid
+          title={title}
+          subtitle={subtitle}
+          items={transformedPosts}
+        />
+      </div>
     </div>
   );
 }
