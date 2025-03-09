@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Layers, Radio, Home, Users, Phone } from 'lucide-react';
+import { Layers, Radio, Home, Users, Phone, SearchCheckIcon } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { NavMain } from "./nav-main";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarRail } from "@/components/ui/sidebar";
@@ -43,10 +43,6 @@ const data: { navMain: NavItem[] } = {
         {
           title: "Footer",
           url: "/admin/pages/footer",
-        },
-        {
-          title: "SEO",
-          url: "/admin/seo",
         },
       ]
     },
@@ -200,6 +196,17 @@ const data: { navMain: NavItem[] } = {
               url: "/admin/filesmangemnt/upload/video",
             },
           ]
+        },
+      ]
+    },
+    {
+      title: "Seo Management",
+      url: "#",
+      icon: SearchCheckIcon,
+      items: [
+        {
+          title: "Seo Metadata",
+          url: "/admin/seo",
         },
       ]
     },
