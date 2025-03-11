@@ -55,7 +55,6 @@ export default function MobileMenu({
   const [expandedProgCategory, setExpandedProgCategory] = useState<
     string | null
   >(null);
-  const [expandedProgram, setExpandedProgram] = useState<string | null>(null);
   const [expandedMediaSubsection, setExpandedMediaSubsection] = useState<string | null>(null);
 
   useEffect(() => {
@@ -85,10 +84,6 @@ export default function MobileMenu({
 
   const toggleProgramCategory = (id: string) => {
     setExpandedProgCategory(expandedProgCategory === id ? null : id);
-  };
-
-  const toggleProgram = (programId: string) => {
-    setExpandedProgram(expandedProgram === programId ? null : programId);
   };
 
   const aboutUsItems = [
@@ -172,6 +167,11 @@ export default function MobileMenu({
     },
   ];
 
+  // Common button/link styles for consistency
+  const menuItemClass = "flex items-center justify-between w-full min-h-[48px] px-4 py-3 text-base font-medium text-[#1b316e] hover:bg-gray-50 transition-colors";
+  const submenuItemClass = "flex items-center w-full min-h-[44px] px-6 py-2.5 text-sm text-[#1b316e] hover:bg-gray-100 transition-colors";
+  const programItemClass = "flex items-center w-full min-h-[44px] px-6 py-2.5 text-sm text-[#1b316e] hover:bg-gray-100 transition-colors";
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -202,10 +202,12 @@ export default function MobileMenu({
               <Link
                 href={`/${currentLang}`}
                 onClick={onClose}
-                className="flex items-center gap-2 p-3 text-lg font-medium text-[#1b316e] hover:bg-gray-100 rounded-lg transition-colors"
+                className={`${menuItemClass} rounded-lg`}
               >
-                <Home size={20} />
-                <span>Home</span>
+                <div className="flex items-center gap-2">
+                  <Home size={20} />
+                  <span>Home</span>
+                </div>
               </Link>
 
               {/* Main navigation items in a rounded container similar to desktop */}
@@ -214,12 +216,12 @@ export default function MobileMenu({
                 <div className="border-b border-gray-100 last:border-none">
                   <button
                     onClick={() => toggleSection("aboutus")}
-                    className="flex items-center justify-between w-full p-4 transition-colors text-base font-medium text-[#1b316e] hover:bg-gray-50"
+                    className={menuItemClass}
                   >
-                    {translations.aboutUs}
+                    <span className="line-clamp-2">{translations.aboutUs}</span>
                     <ChevronRight
                       size={20}
-                      className={`transform transition-transform duration-200 ${
+                      className={`transform transition-transform duration-200 flex-shrink-0 ${
                         expandedSection === "aboutus" ? "rotate-90" : ""
                       }`}
                     />
@@ -238,9 +240,9 @@ export default function MobileMenu({
                             key={item.id}
                             href={item.href}
                             onClick={onClose}
-                            className="block px-6 py-3 text-sm text-[#1b316e] hover:bg-gray-100 transition-colors"
+                            className={submenuItemClass}
                           >
-                            {item.name}
+                            <span className="line-clamp-2">{item.name}</span>
                           </Link>
                         ))}
                       </motion.div>
@@ -252,12 +254,12 @@ export default function MobileMenu({
                 <div className="border-b border-gray-100 last:border-none">
                   <button
                     onClick={() => toggleSection("programs")}
-                    className="flex items-center justify-between w-full p-4 transition-colors text-base font-medium text-[#1b316e] hover:bg-gray-50"
+                    className={menuItemClass}
                   >
-                    {translations.programs}
+                    <span className="line-clamp-2">{translations.programs}</span>
                     <ChevronRight
                       size={20}
-                      className={`transform transition-transform duration-200 ${
+                      className={`transform transition-transform duration-200 flex-shrink-0 ${
                         expandedSection === "programs" ? "rotate-90" : ""
                       }`}
                     />
@@ -280,12 +282,12 @@ export default function MobileMenu({
                             <div key={category.id} className="border-t border-gray-100 first:border-none">
                               <button
                                 onClick={() => toggleProgramCategory(category.id)}
-                                className="flex items-center justify-between w-full px-6 py-3 text-sm font-medium text-[#1b316e] hover:bg-gray-100 transition-colors"
+                                className={submenuItemClass}
                               >
-                                <span>{isArabic ? category.name_ar : category.name_en}</span>
+                                <span className="line-clamp-2">{isArabic ? category.name_ar : category.name_en}</span>
                                 <ChevronRight
                                   size={16}
-                                  className={`transform transition-transform duration-200 ${
+                                  className={`transform transition-transform duration-200 flex-shrink-0 ml-2 ${
                                     expandedProgCategory === category.id
                                       ? "rotate-90"
                                       : ""
@@ -304,62 +306,14 @@ export default function MobileMenu({
                                       className="bg-gray-100"
                                     >
                                       {category.programs.map((program) => (
-                                        <div
+                                        <Link
                                           key={program.id}
-                                          className="border-t border-gray-200/50"
+                                          href={`/${currentLang}/programs/${program.id}`}
+                                          onClick={onClose}
+                                          className={`${programItemClass} pl-8`}
                                         >
-                                          <button
-                                            onClick={() =>
-                                              toggleProgram(program.id)
-                                            }
-                                            className="flex items-center justify-between w-full px-8 py-2.5 text-sm text-[#1b316e] hover:bg-gray-200/50 transition-colors"
-                                          >
-                                            <span>{isArabic ? program.name_ar : program.name_en}</span>
-                                            {program.ProgramTab &&
-                                              program.ProgramTab.length > 0 && (
-                                                <ChevronRight
-                                                  size={14}
-                                                  className={`transform transition-transform duration-200 ${
-                                                    expandedProgram === program.id
-                                                      ? "rotate-90"
-                                                      : ""
-                                                  }`}
-                                                />
-                                              )}
-                                          </button>
-
-                                          <AnimatePresence>
-                                            {expandedProgram === program.id &&
-                                              program.ProgramTab && (
-                                                <motion.div
-                                                  initial={{
-                                                    height: 0,
-                                                    opacity: 0,
-                                                  }}
-                                                  animate={{
-                                                    height: "auto",
-                                                    opacity: 1,
-                                                  }}
-                                                  exit={{ height: 0, opacity: 0 }}
-                                                  transition={{ duration: 0.2 }}
-                                                  className="bg-gray-200/50"
-                                                >
-                                                  {program.ProgramTab.map(
-                                                    (tab) => (
-                                                      <Link
-                                                        key={tab.id}
-                                                        href={`/${currentLang}/programs/${program.id}#${tab.slug}`}
-                                                        onClick={onClose}
-                                                        className="block px-10 py-2 text-sm text-[#1b316e] hover:bg-gray-200 transition-colors"
-                                                      >
-                                                        {isArabic ? tab.title_ar : tab.title_en}
-                                                      </Link>
-                                                    )
-                                                  )}
-                                                </motion.div>
-                                              )}
-                                          </AnimatePresence>
-                                        </div>
+                                          <span className="line-clamp-2">{isArabic ? program.name_ar : program.name_en}</span>
+                                        </Link>
                                       ))}
                                     </motion.div>
                                   )}
@@ -376,12 +330,12 @@ export default function MobileMenu({
                 <div className="border-b border-gray-100 last:border-none">
                   <button
                     onClick={() => toggleSection("mediacenter")}
-                    className="flex items-center justify-between w-full p-4 transition-colors text-base font-medium text-[#1b316e] hover:bg-gray-50"
+                    className={menuItemClass}
                   >
-                    {translations.mediaCenter}
+                    <span className="line-clamp-2">{translations.mediaCenter}</span>
                     <ChevronRight
                       size={20}
-                      className={`transform transition-transform duration-200 ${
+                      className={`transform transition-transform duration-200 flex-shrink-0 ${
                         expandedSection === "mediacenter" ? "rotate-90" : ""
                       }`}
                     />
@@ -399,12 +353,12 @@ export default function MobileMenu({
                           <div key={section.id} className="border-t border-gray-100 first:border-none">
                             <button
                               onClick={() => toggleSection(section.id)}
-                              className="flex items-center justify-between w-full px-6 py-3 text-sm font-medium text-[#1b316e] hover:bg-gray-100 transition-colors"
+                              className={submenuItemClass}
                             >
-                              <span>{section.name}</span>
+                              <span className="line-clamp-2">{section.name}</span>
                               <ChevronRight
                                 size={16}
-                                className={`transform transition-transform duration-200 ${
+                                className={`transform transition-transform duration-200 flex-shrink-0 ml-2 ${
                                   expandedMediaSubsection === section.id ? "rotate-90" : ""
                                 }`}
                               />
@@ -424,9 +378,9 @@ export default function MobileMenu({
                                       key={item.id}
                                       href={item.href}
                                       onClick={onClose}
-                                      className="block px-8 py-2.5 text-sm text-[#1b316e] hover:bg-gray-200/50 transition-colors"
+                                      className={`${programItemClass} pl-8`}
                                     >
-                                      {item.name}
+                                      <span className="line-clamp-2">{item.name}</span>
                                     </Link>
                                   ))}
                                 </motion.div>
@@ -444,9 +398,9 @@ export default function MobileMenu({
                   <Link
                     href={`/${currentLang}/Safeguards`}
                     onClick={onClose}
-                    className="flex items-center justify-between w-full p-4 transition-colors text-base font-medium text-[#1b316e] hover:bg-gray-50"
+                    className={menuItemClass}
                   >
-                    {translations.safeguards}
+                    <span className="line-clamp-2">{translations.safeguards}</span>
                   </Link>
                 </div>
 
@@ -454,12 +408,12 @@ export default function MobileMenu({
                 <div className="last:border-none">
                   <button
                     onClick={() => toggleSection("contactus")}
-                    className="flex items-center justify-between w-full p-4 transition-colors text-base font-medium text-[#1b316e] hover:bg-gray-50"
+                    className={menuItemClass}
                   >
-                    {translations.contactUs}
+                    <span className="line-clamp-2">{translations.contactUs}</span>
                     <ChevronRight
                       size={20}
-                      className={`transform transition-transform duration-200 ${
+                      className={`transform transition-transform duration-200 flex-shrink-0 ${
                         expandedSection === "contactus" ? "rotate-90" : ""
                       }`}
                     />
@@ -478,9 +432,9 @@ export default function MobileMenu({
                             key={item.id}
                             href={item.href}
                             onClick={onClose}
-                            className="block px-6 py-3 text-sm text-[#1b316e] hover:bg-gray-100 transition-colors"
+                            className={submenuItemClass}
                           >
-                            {item.name}
+                            <span className="line-clamp-2">{item.name}</span>
                           </Link>
                         ))}
                       </motion.div>
