@@ -12,9 +12,9 @@ export default async function SafeG({ lang }: SafeGProps) {
   const safeguards = safeguardsResponse.success ? safeguardsResponse.data || [] : [];
 
   return (
-    <>
+    <div className="px-4">
       <SafeGHeader initialLang={lang} />
       <SafeScroll safeguards={safeguards} initialLang={lang} />
-    </>
+    </div>
   );
 }

@@ -15,7 +15,7 @@ export default function SafeGHeader({ initialLang }: SafeGHeaderProps) {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="text-center space-y-3 sm:space-y-4 mb-8 sm:mb-16 lg:mb-24 px-4"
+      className="text-center space-y-3 sm:space-y-4 mb-8 sm:mb-16 lg:mb-24"
     >
       <motion.h2 
         initial={{ scale: 0.95 }}
@@ -35,7 +35,7 @@ export default function SafeGHeader({ initialLang }: SafeGHeaderProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6, delay: 0.4 }}
-        className="mt-4 sm:mt-6 text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed text-gray-600 max-w-3xl mx-auto px-2 sm:px-4"
+        className="mt-4 sm:mt-6 text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed text-gray-600 max-w-3xl mx-auto"
       >
         {currentLang === "ar"
           ? "الالتزام بضمان بيئة آمنة ومأمونة للجميع."

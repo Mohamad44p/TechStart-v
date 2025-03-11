@@ -57,7 +57,7 @@ export default async function ContactPage(props: ContactPageProps) {
       <div className="min-h-screen bg-white dark:bg-gray-900 py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-screen-xl mx-auto">
           <h1 className="text-4xl sm:text-5xl font-bold text-center mb-4">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#1b316e] to-[#1b316e] dark:from-[#3b5998] dark:to-[#3b5998]">
+            <span className="bg-clip-text p-5 text-transparent bg-gradient-to-r from-[#1b316e] to-[#1b316e] dark:from-[#3b5998] dark:to-[#3b5998]">
               {lang === "ar" ? "تواصل معنا" : "Contact Us"}
             </span>
           </h1>

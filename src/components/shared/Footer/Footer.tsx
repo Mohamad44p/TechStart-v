@@ -161,7 +161,7 @@ export default function Footer({ footerData }: FooterProps) {
                     <Link
                       key={i}
                       href={url}
-                      className="p-2 rounded-full bg-white/80 hover:bg-[#91268f]/10 text-gray-600 hover:text-[#91268f] transition-all duration-300 shadow-lg hover:shadow-xl"
+                      className="p-2 mx-3 rounded-full bg-white/80 hover:bg-[#91268f]/10 text-gray-600 hover:text-[#91268f] transition-all duration-300 shadow-lg hover:shadow-xl"
                     >
                       <Icon size={20} />
                     </Link>
