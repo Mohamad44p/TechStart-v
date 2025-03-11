@@ -9,29 +9,30 @@ export const metadata: Metadata = {
 }
 
 interface SeoEditPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
-export default async function SeoEditPage({ params }: SeoEditPageProps) {
+export default async function SeoEditPage(props: SeoEditPageProps) {
+  const params = await props.params;
   const { id } = params
-  
+
   // Get the page details
   const pagesResult = await getSeoPages()
   if (!pagesResult.success) {
     throw new Error("Failed to fetch pages")
   }
-  
+
   const page = pagesResult.pages.find(p => p.id === id)
   if (!page) {
     notFound()
   }
-  
+
   // Get existing metadata if any
   const metadataResult = await getSeoMetadataForPage(id)
   const existingMetadata = metadataResult.success ? metadataResult.metadata : null
-  
+
   return (
     <div className="container mx-auto py-10">
       <div className="mb-8">

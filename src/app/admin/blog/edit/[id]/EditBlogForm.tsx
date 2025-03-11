@@ -140,8 +140,8 @@ export default function EditBlogForm({ blog }: { blog: Blog }) {
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
-        <CardTitle className="text-3xl font-bold">Edit Blog Post</CardTitle>
-        <CardDescription>Edit the form below to update the blog post.</CardDescription>
+        <CardTitle className="text-3xl font-bold">Edit News Post</CardTitle>
+        <CardDescription>Edit the form below to update the news post.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -153,11 +153,31 @@ export default function EditBlogForm({ blog }: { blog: Blog }) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Slug</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter post slug" {...field} className="w-full" />
-                    </FormControl>
+                    <div className="flex gap-2">
+                      <FormControl>
+                        <Input placeholder="Enter post slug" {...field} className="w-full" />
+                      </FormControl>
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        onClick={() => {
+                          const title = form.getValues("title_en");
+                          if (title) {
+                            const slug = title
+                              .toLowerCase()
+                              .replace(/[^\w\s-]/g, "") // Remove special characters
+                              .replace(/\s+/g, "-") // Replace spaces with hyphens
+                              .replace(/-+/g, "-"); // Replace multiple hyphens with a single hyphen
+                            
+                            form.setValue("slug", slug);
+                          }
+                        }}
+                      >
+                        Generate
+                      </Button>
+                    </div>
                     <FormDescription>
-                      This will be used in the URL of your post.
+                      This will be used in the URL of your post. Click "Generate" to create from title.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -176,7 +196,7 @@ export default function EditBlogForm({ blog }: { blog: Blog }) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value={PostType.BLOG}>Blog</SelectItem>
+                        <SelectItem value={PostType.NEWS}>News</SelectItem>
                         <SelectItem value={PostType.PUBLICATION}>Publication</SelectItem>
                         <SelectItem value={PostType.ANNOUNCEMENT}>Announcement</SelectItem>
                       </SelectContent>

@@ -10,14 +10,15 @@ export const revalidate = 30
 export const dynamic = "force-dynamic"
 
 interface FAQsPageProps {
-  params: {
+  params: Promise<{
     lang: string
-  }
+  }>
 }
 
-export async function generateMetadata({ params }: FAQsPageProps): Promise<Metadata> {
+export async function generateMetadata(props: FAQsPageProps): Promise<Metadata> {
+  const params = await props.params;
   const { lang } = params;
-  
+
   return {
     title: lang === 'ar' ? 'الأسئلة الشائعة - تيك ستارت' : 'FAQs - TechStart',
     description: lang === 'ar' 
@@ -26,7 +27,8 @@ export async function generateMetadata({ params }: FAQsPageProps): Promise<Metad
   }
 }
 
-export default async function FAQsPage({ params }: FAQsPageProps) {
+export default async function FAQsPage(props: FAQsPageProps) {
+  const params = await props.params;
   const {
     lang
   } = params;

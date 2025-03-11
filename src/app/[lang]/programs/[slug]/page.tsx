@@ -9,10 +9,10 @@ import { Metadata } from "next";
 export const dynamic = "force-dynamic"
 
 interface ProgramPageProps {
-  params: {
+  params: Promise<{
     lang: string;
     slug: string;
-  }
+  }>
 }
 
 async function getProgram(slug: string) {
@@ -50,27 +50,28 @@ async function getProgram(slug: string) {
   }
 }
 
-export async function generateMetadata({ params }: ProgramPageProps): Promise<Metadata> {
+export async function generateMetadata(props: ProgramPageProps): Promise<Metadata> {
+  const params = await props.params;
   const { lang, slug } = params;
   const program = await getProgram(slug);
-  
+
   if (!program) {
     return {
       title: lang === 'ar' ? 'برنامج غير موجود - تيك ستارت' : 'Program Not Found - TechStart',
       description: lang === 'ar' ? 'لم يتم العثور على البرنامج المطلوب' : 'The requested program could not be found',
     };
   }
-  
+
   // Use program data to create dynamic metadata
   const title = lang === 'ar' 
     ? `${program.name_ar} - تيك ستارت` 
     : `${program.name_en} - TechStart`;
-  
+
   // Since there's no description field in the schema, we'll create a generic one
   const description = lang === 'ar'
     ? `تعرف على برنامج ${program.name_ar} من تيك ستارت وكيف يمكنك المشاركة.`
     : `Learn about TechStart's ${program.name_en} program and how you can participate.`;
-  
+
   return {
     title,
     description,
@@ -111,7 +112,8 @@ function HashNavigationScript() {
   );
 }
 
-export default async function DynamicProgramPage({ params }: ProgramPageProps) {
+export default async function DynamicProgramPage(props: ProgramPageProps) {
+  const params = await props.params;
   const program = await getProgram(params.slug);
 
   if (!program) {

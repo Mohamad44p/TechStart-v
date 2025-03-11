@@ -10,14 +10,15 @@ import { Metadata } from "next";
 export const dynamic = "force-dynamic";
 
 interface ContactPageProps {
-  params: {
+  params: Promise<{
     lang: string;
-  };
+  }>;
 }
 
-export async function generateMetadata({ params }: ContactPageProps): Promise<Metadata> {
+export async function generateMetadata(props: ContactPageProps): Promise<Metadata> {
+  const params = await props.params;
   const { lang } = params;
-  
+
   // Default metadata if no custom SEO is set
   return {
     title: lang === 'ar' ? 'اتصل بنا - تيك ستارت' : 'Contact Us - TechStart',
@@ -27,7 +28,8 @@ export async function generateMetadata({ params }: ContactPageProps): Promise<Me
   }
 }
 
-export default async function ContactPage({ params }: ContactPageProps) {
+export default async function ContactPage(props: ContactPageProps) {
+  const params = await props.params;
   const { lang } = params;
   const { data: footerData } = await getFooter();
 

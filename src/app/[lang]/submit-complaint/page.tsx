@@ -3,14 +3,15 @@ import { SeoMetadata } from "@/components/shared/SeoMetadata";
 import { Metadata } from "next";
 
 interface SubmitComplaintProps {
-  params: {
+  params: Promise<{
     lang: string;
-  };
+  }>;
 }
 
-export async function generateMetadata({ params }: SubmitComplaintProps): Promise<Metadata> {
+export async function generateMetadata(props: SubmitComplaintProps): Promise<Metadata> {
+  const params = await props.params;
   const { lang } = params;
-  
+
   return {
     title: lang === 'ar' ? 'تقديم شكوى - تيك ستارت' : 'Submit Complaint - TechStart',
     description: lang === 'ar' 
@@ -19,7 +20,8 @@ export async function generateMetadata({ params }: SubmitComplaintProps): Promis
   }
 }
 
-export default function SubmitComplaint({ params }: SubmitComplaintProps) {
+export default async function SubmitComplaint(props: SubmitComplaintProps) {
+  const params = await props.params;
   return (
     <>
       <SeoMetadata 

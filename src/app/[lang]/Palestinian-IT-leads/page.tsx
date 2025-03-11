@@ -9,14 +9,15 @@ export const revalidate = 30
 export const dynamic = "force-dynamic"
 
 interface PalestinianITleadsProps {
-  params: {
+  params: Promise<{
     lang: string
-  }
+  }>
 }
 
-export async function generateMetadata({ params }: PalestinianITleadsProps): Promise<Metadata> {
+export async function generateMetadata(props: PalestinianITleadsProps): Promise<Metadata> {
+  const params = await props.params;
   const { lang } = params;
-  
+
   // Default metadata if no custom SEO is set
   return {
     title: lang === 'ar' ? 'قادة تكنولوجيا المعلومات الفلسطينيون - تيك ستارت' : 'Palestinian IT Leads - TechStart',
@@ -26,7 +27,8 @@ export async function generateMetadata({ params }: PalestinianITleadsProps): Pro
   }
 }
 
-export default async function PalestinianITleads({ params }: PalestinianITleadsProps) {
+export default async function PalestinianITleads(props: PalestinianITleadsProps) {
+  const params = await props.params;
   const { lang } = params;
   const [beneficiariesResponse, categoriesResponse] = await Promise.all([
     getBeneficiaries(),

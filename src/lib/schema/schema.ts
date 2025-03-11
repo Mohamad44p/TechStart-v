@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const PostType = {
-  BLOG: 'blog',
+  NEWS: 'blog',
   PUBLICATION: 'publication',
   ANNOUNCEMENT: 'announcement'
 } as const;
@@ -10,7 +10,7 @@ export type PostTypeValue = typeof PostType[keyof typeof PostType];
 
 export const createPostSchema = z.object({
   slug: z.string().min(1, "Slug is required"),
-  type: z.enum([PostType.BLOG, PostType.PUBLICATION, PostType.ANNOUNCEMENT]),
+  type: z.enum([PostType.NEWS, PostType.PUBLICATION, PostType.ANNOUNCEMENT]),
   title_en: z.string().min(1, "English title is required"),
   title_ar: z.string().min(1, "Arabic title is required"),
   description_en: z.string().optional().nullable().transform(val => val || ""),

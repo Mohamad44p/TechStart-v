@@ -7,8 +7,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useEffect, useState } from "react";
-import { X } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 interface TabButtonDialogProps {
   isOpen: boolean;
@@ -51,14 +49,6 @@ export function TabButtonDialog({ isOpen, onClose, title, content }: TabButtonDi
       >
         <DialogHeader className="flex justify-between items-start">
           <DialogTitle className="text-xl pr-8">{title}</DialogTitle>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute top-3 right-3 h-8 w-8 rounded-full"
-            onClick={onClose}
-          >
-            <X className="h-4 w-4" />
-          </Button>
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto mt-2 pb-4 text-sm text-muted-foreground">

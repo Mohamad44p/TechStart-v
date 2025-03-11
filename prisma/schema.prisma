@@ -179,10 +179,8 @@ model Beneficiary {
   id                 String   @id @default(cuid())
   title_en           String
   title_ar           String
-  description_en     String
-  description_ar     String
-  longDescription_en String
-  longDescription_ar String
+  description_en     String?
+  description_ar     String?
   imageUrl           String
   ctaText            String
   ctaLink            String

@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { useLoading } from "@/context/LoadingContext";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface PreloaderProps {
   children: React.ReactNode;
@@ -11,6 +12,8 @@ interface PreloaderProps {
 
 export default function Preloader({ children }: PreloaderProps) {
   const { completeLoading, isFirstLoad } = useLoading();
+  const { currentLang } = useLanguage();
+  const isArabic = currentLang === "ar";
   const [isLoading, setIsLoading] = useState(isFirstLoad);
   const loadingScreenRef = useRef<HTMLDivElement>(null);
   const counter1Ref = useRef<HTMLDivElement>(null);
@@ -152,13 +155,14 @@ export default function Preloader({ children }: PreloaderProps) {
         >
           <div
             ref={counterContainerRef}
-            className="counter fixed left-4 sm:left-12 bottom-4 sm:bottom-12 flex h-16 sm:h-24 text-4xl sm:text-[100px] leading-[1.02] font-normal [clip-path:polygon(0_0,100%_0,100%_100px,0_100px)]"
+            className="counter fixed left-4 sm:left-12 bottom-4 sm:bottom-12 flex flex-row h-16 sm:h-24 text-4xl sm:text-[100px] leading-[1.02] font-normal [clip-path:polygon(0_0,100%_0,100%_100px,0_100px)]"
+            style={{ direction: "ltr" }}
           >
-            <div ref={counter1Ref} className="counter-1 digit relative -top-1 sm:-top-4">
+            <div ref={counter1Ref} className="counter-1 digit relative -top-1 sm:-top-4 order-1">
               <div className="num">0</div>
               <div className="num relative -right-2 sm:-right-6">1</div>
             </div>
-            <div ref={counter2Ref} className="counter-2 digit relative -top-1 sm:-top-4">
+            <div ref={counter2Ref} className="counter-2 digit relative -top-1 sm:-top-4 order-2">
               <div className="num">0</div>
               <div className="num relative -right-1 sm:-right-2.5">1</div>
               <div className="num">2</div>
@@ -173,7 +177,7 @@ export default function Preloader({ children }: PreloaderProps) {
             </div>
             <div
               ref={counter3Ref}
-              className="counter-3 digit relative -top-1 sm:-top-4"
+              className="counter-3 digit relative -top-1 sm:-top-4 order-3"
             ></div>
           </div>
           <div className="power-button absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">

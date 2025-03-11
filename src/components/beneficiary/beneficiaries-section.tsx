@@ -36,16 +36,12 @@ export function BeneficiariesSection({
     title: currentLang === "ar" ? content.title_ar : content.title_en,
     description:
       currentLang === "ar" ? content.description_ar : content.description_en,
-    longDescription:
-      currentLang === "ar"
-        ? content.longDescription_ar
-        : content.longDescription_en,
   });
 
   const filteredBeneficiaries = beneficiaries.filter((beneficiary) => {
     const localizedContent = getLocalizedContent(beneficiary);
     const matchesSearch = (
-      localizedContent.title + localizedContent.description
+      localizedContent.title + (localizedContent.description || "")
     )
       .toLowerCase()
       .includes(search.toLowerCase());
@@ -165,22 +161,14 @@ export function BeneficiariesSection({
                   >
                     {getLocalizedContent(active).title}
                   </motion.h3>
-                  <motion.p
-                    layoutId={`description-${active.id}-${id}`}
-                    className="text-gray-700 mb-4"
-                  >
-                    {getLocalizedContent(active).description}
-                  </motion.p>
-
-                  <motion.div
-                    layout
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="text-gray-800 text-base leading-relaxed max-h-64 overflow-auto pr-2"
-                  >
-                    {getLocalizedContent(active).longDescription}
-                  </motion.div>
+                  {getLocalizedContent(active).description && (
+                    <motion.p
+                      layoutId={`description-${active.id}-${id}`}
+                      className="text-gray-700 mb-4"
+                    >
+                      {getLocalizedContent(active).description}
+                    </motion.p>
+                  )}
 
                   <motion.a
                     layout
@@ -260,12 +248,14 @@ export function BeneficiariesSection({
                     >
                       {localizedContent.title}
                     </motion.h3>
-                    <motion.p
-                      layoutId={`description-${beneficiary.id}-${id}`}
-                      className="text-gray-700 text-sm"
-                    >
-                      {localizedContent.description}
-                    </motion.p>
+                    {localizedContent.description && (
+                      <motion.p
+                        layoutId={`description-${beneficiary.id}-${id}`}
+                        className="text-gray-700 text-sm"
+                      >
+                        {localizedContent.description}
+                      </motion.p>
+                    )}
                   </div>
                 </div>
               </motion.li>

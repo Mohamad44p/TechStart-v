@@ -95,12 +95,12 @@ export function toPostType(type: string): PostTypeValue {
   const normalizedType = type.toLowerCase();
   switch (normalizedType) {
     case 'blog':
-      return PostType.BLOG;
+      return PostType.NEWS;
     case 'publication':
       return PostType.PUBLICATION;
     case 'announcement':
       return PostType.ANNOUNCEMENT;
     default:
-      return PostType.BLOG;
+      return PostType.NEWS;
   }
 }

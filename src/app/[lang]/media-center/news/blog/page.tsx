@@ -30,7 +30,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
 
   const [featuredResponse, postsResponse] = await Promise.all([
     getFeaturedPosts(),
-    getPostsByType(PostType.BLOG)
+    getPostsByType(PostType.NEWS)
   ])
 
   if (featuredResponse.error || postsResponse.error) {

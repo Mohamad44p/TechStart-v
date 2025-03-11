@@ -3,15 +3,13 @@ import * as z from "zod"
 export const beneficiarySchema = z.object({
   title_en: z.string().min(2),
   title_ar: z.string().min(2),
-  description_en: z.string().min(10),
-  description_ar: z.string().min(10),
-  longDescription_en: z.union([
-    z.string().min(50),
+  description_en: z.union([
+    z.string().min(10),
     z.string().max(0),
     z.null()
   ]).optional().nullable(),
-  longDescription_ar: z.union([
-    z.string().min(50),
+  description_ar: z.union([
+    z.string().min(10),
     z.string().max(0),
     z.null()
   ]).optional().nullable(),

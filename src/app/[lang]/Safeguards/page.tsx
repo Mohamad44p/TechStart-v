@@ -5,14 +5,15 @@ import { Metadata } from "next";
 export const dynamic = "force-dynamic";
 
 interface SafeguardsPageProps {
-  params: {
+  params: Promise<{
     lang: string;
-  };
+  }>;
 }
 
-export async function generateMetadata({ params }: SafeguardsPageProps): Promise<Metadata> {
+export async function generateMetadata(props: SafeguardsPageProps): Promise<Metadata> {
+  const params = await props.params;
   const { lang } = params;
-  
+
   return {
     title: lang === 'ar' ? 'الضمانات - تيك ستارت' : 'Safeguards - TechStart',
     description: lang === 'ar' 
@@ -21,7 +22,8 @@ export async function generateMetadata({ params }: SafeguardsPageProps): Promise
   }
 }
 
-export default async function SafeguardsPage({ params }: SafeguardsPageProps) {
+export default async function SafeguardsPage(props: SafeguardsPageProps) {
+  const params = await props.params;
   return (
     <div>
       <SeoMetadata 

@@ -10,14 +10,15 @@ import { Metadata } from "next"
 export const dynamic = "force-dynamic"
 
 interface NewsPageProps {
-  params: {
+  params: Promise<{
     lang: string
-  }
+  }>
 }
 
-export async function generateMetadata({ params }: NewsPageProps): Promise<Metadata> {
+export async function generateMetadata(props: NewsPageProps): Promise<Metadata> {
+  const params = await props.params;
   const { lang } = params;
-  
+
   return {
     title: lang === 'ar' ? 'الأخبار والبيانات الصحفية - تيك ستارت' : 'News & Press Releases - TechStart',
     description: lang === 'ar' 
@@ -26,14 +27,15 @@ export async function generateMetadata({ params }: NewsPageProps): Promise<Metad
   }
 }
 
-export default async function NewsPage({ params }: NewsPageProps) {
+export default async function NewsPage(props: NewsPageProps) {
+  const params = await props.params;
   const {
     lang
   } = params;
 
   const [featuredResponse, postsResponse] = await Promise.all([
     getFeaturedPosts(),
-    getPostsByType(PostType.BLOG)
+    getPostsByType(PostType.NEWS)
   ]);
 
   const featuredPosts = featuredResponse.data || [];

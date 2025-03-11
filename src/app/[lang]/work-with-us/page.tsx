@@ -7,14 +7,15 @@ import { Metadata } from "next"
 export const dynamic = "force-dynamic";
 
 interface WorkWithUsPageProps {
-  params: {
+  params: Promise<{
     lang: string
-  }
+  }>
 }
 
-export async function generateMetadata({ params }: WorkWithUsPageProps): Promise<Metadata> {
+export async function generateMetadata(props: WorkWithUsPageProps): Promise<Metadata> {
+  const params = await props.params;
   const { lang } = params;
-  
+
   // Default metadata if no custom SEO is set
   return {
     title: lang === 'ar' ? 'اعمل معنا - تيك ستارت' : 'Work With Us - TechStart',
@@ -24,7 +25,8 @@ export async function generateMetadata({ params }: WorkWithUsPageProps): Promise
   }
 }
 
-export default async function WorkWithUsPage({ params }: WorkWithUsPageProps) {
+export default async function WorkWithUsPage(props: WorkWithUsPageProps) {
+  const params = await props.params;
   const { lang } = params;
   const procurementListings = await getWorkWithUsListings("Procurement")
   const recruitmentListings = await getWorkWithUsListings("Recruitment")

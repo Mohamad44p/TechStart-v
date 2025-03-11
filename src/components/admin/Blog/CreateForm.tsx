@@ -76,21 +76,35 @@ export default function CreateBlog() {
     resolver: zodResolver(createPostSchema),
     defaultValues: {
       slug: "",
-      type: PostType.BLOG, // Set a default type
+      type: PostType.NEWS,
       title_en: "",
       title_ar: "",
-      description_en: "", // Change from null to empty string
-      description_ar: "", // Change from null to empty string
+      description_en: "",
+      description_ar: "",
       content_en: "",
       content_ar: "",
       imageUrl: null,
-      readTime: "", // Changed to empty string
+      readTime: "",
       published: false,
       featured: false,
       tags: [],
       pdfUrl: null,
     },
   });
+
+  // Generate slug from title_en
+  useEffect(() => {
+    const title = form.watch("title_en");
+    if (title) {
+      const slug = title
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, "") // Remove special characters
+        .replace(/\s+/g, "-") // Replace spaces with hyphens
+        .replace(/-+/g, "-"); // Replace multiple hyphens with a single hyphen
+      
+      form.setValue("slug", slug);
+    }
+  }, [form]);
 
   const isPublication = form.watch("type") === PostType.PUBLICATION;
 
@@ -109,8 +123,8 @@ export default function CreateBlog() {
       const result = await createPost(formData);
       if (result.success) {
         toast({
-          title: "Blog post created",
-          description: "Your blog post has been created successfully.",
+          title: "News post created",
+          description: "Your news post has been created successfully.",
         });
         form.reset();
         router.push("/admin/blog");
@@ -140,9 +154,9 @@ export default function CreateBlog() {
     <div className="container mx-auto py-10">
       <Card className="w-full max-w-2xl mx-auto">
         <CardHeader>
-          <CardTitle className="text-3xl font-bold">Create Blog Post</CardTitle>
+          <CardTitle className="text-3xl font-bold">Create News Post</CardTitle>
           <CardDescription>
-            Fill out the form below to create a new blog post in English and
+            Fill out the form below to create a new news post in English and
             Arabic.
           </CardDescription>
         </CardHeader>
@@ -158,13 +172,14 @@ export default function CreateBlog() {
                       <FormLabel>Slug</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Enter post slug"
+                          placeholder="Auto-generated from title"
                           {...field}
                           className="w-full"
+                          disabled
                         />
                       </FormControl>
                       <FormDescription>
-                        This will be used in the URL of your post.
+                        This will be automatically generated from the English title.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -186,7 +201,7 @@ export default function CreateBlog() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value={PostType.BLOG}>Blog</SelectItem>
+                          <SelectItem value={PostType.NEWS}>News</SelectItem>
                           <SelectItem value={PostType.PUBLICATION}>
                             Publication
                           </SelectItem>
@@ -350,7 +365,7 @@ export default function CreateBlog() {
                                   {...field}
                                   className="w-full min-h-[100px] resize-y text-right"
                                   dir="rtl"
-                                  value={field.value || ''} // Add null check
+                                  value={field.value || ''}
                                 />
                               </FormControl>
                               <FormMessage />

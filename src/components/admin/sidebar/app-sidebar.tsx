@@ -67,10 +67,18 @@ const data: { navMain: NavItem[] } = {
           title: "Work With Us",
           url: "/admin/pages/work-with-us",
         },
+        {
+          title: "Palestinian IT Leads",
+          url: "/admin/beneficiaries",
+        },
+        {
+          title: "Focus Areas",
+          url: "/admin/pages/focusareas",
+        },
       ]
     },
     {
-      title: "Programs & Focus",
+      title: "Programs",
       url: "#",
       icon: Layers,
       items: [
@@ -81,14 +89,6 @@ const data: { navMain: NavItem[] } = {
         {
           title: "Programs Hero",
           url: "/admin/programs-hero",
-        },
-        {
-          title: "Palestinian IT Leads",
-          url: "/admin/beneficiaries",
-        },
-        {
-          title: "Focus Areas",
-          url: "/admin/pages/focusareas",
         },
       ]
     },
@@ -121,15 +121,15 @@ const data: { navMain: NavItem[] } = {
       icon: Radio,
       items: [
         {
-          title: "Blog",
+          title: "News",
           url: "#",
           items: [
             {
-              title: "Create Blog",
+              title: "Create News",
               url: "/admin/blog/create",
             },
             {
-              title: "All Blogs",
+              title: "All News",
               url: "/admin/blog",
             },
           ]

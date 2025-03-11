@@ -45,8 +45,6 @@ export function BeneficiaryForm({
       title_ar: "",
       description_en: "",
       description_ar: "",
-      longDescription_en: "",
-      longDescription_ar: "",
       imageUrl: "",
       buttonText: "",
       buttonLink: "",
@@ -61,8 +59,6 @@ export function BeneficiaryForm({
     // Process optional fields to handle empty strings
     const processedData = {
       ...data,
-      longDescription_en: data.longDescription_en && data.longDescription_en.trim() !== "" ? data.longDescription_en : null,
-      longDescription_ar: data.longDescription_ar && data.longDescription_ar.trim() !== "" ? data.longDescription_ar : null,
       buttonText: data.buttonText && data.buttonText.trim() !== "" ? data.buttonText : null,
       buttonLink: data.buttonLink && data.buttonLink.trim() !== "" ? data.buttonLink : null,
     }
@@ -168,27 +164,9 @@ export function BeneficiaryForm({
                   name="description_en"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Description (English)</FormLabel>
+                      <FormLabel>Description (English) (Optional)</FormLabel>
                       <FormControl>
                         <Textarea {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="longDescription_en"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Long Description (English) (Optional)</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          {...field} 
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(e.target.value || "")}
-                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -216,28 +194,9 @@ export function BeneficiaryForm({
                   name="description_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Description (Arabic)</FormLabel>
+                      <FormLabel>Description (Arabic) (Optional)</FormLabel>
                       <FormControl>
                         <Textarea {...field} dir="rtl" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="longDescription_ar"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Long Description (Arabic) (Optional)</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          {...field} 
-                          dir="rtl"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(e.target.value || "")}
-                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -256,7 +215,6 @@ export function BeneficiaryForm({
                     <FormControl>
                       <Input 
                         {...field} 
-                        placeholder="e.g., Learn More, Apply Now" 
                         value={field.value || ""}
                         onChange={(e) => field.onChange(e.target.value || "")}
                       />
@@ -275,7 +233,6 @@ export function BeneficiaryForm({
                     <FormControl>
                       <Input 
                         {...field} 
-                        placeholder="https://example.com/page" 
                         value={field.value || ""}
                         onChange={(e) => field.onChange(e.target.value || "")}
                       />
@@ -286,10 +243,16 @@ export function BeneficiaryForm({
               />
             </div>
           </CardContent>
-
-          <CardFooter>
-            <Button type="submit" disabled={isSubmitting} className="w-full">
-              {isSubmitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+          <CardFooter className="flex justify-between">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push("/admin/beneficiaries")}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {buttonText}
             </Button>
           </CardFooter>

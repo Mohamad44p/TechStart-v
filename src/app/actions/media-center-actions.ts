@@ -15,7 +15,7 @@ export const getMediaCenterContent = cache(async (): Promise<{
     const [blogPosts, announcements] = await Promise.all([
       db.post.findMany({
         where: { 
-          type: PostType.BLOG,
+          type: PostType.NEWS,
           featured: true,
           published: true 
         },

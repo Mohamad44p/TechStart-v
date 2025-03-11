@@ -12,14 +12,15 @@ import { SeoMetadata } from "@/components/shared/SeoMetadata";
 import { Metadata } from "next";
 
 interface Props {
-  params: {
+  params: Promise<{
     lang: string;
     type: string;
     slug: string;
-  };
+  }>;
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   const { lang, slug } = params;
   const { data: post } = await getPostBySlug(slug);
 
@@ -32,7 +33,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function PostPage({ params }: Props) {
+export default async function PostPage(props: Props) {
+  const params = await props.params;
   const { lang, type, slug } = params;
 
   const { data: post, error } = await getPostBySlug(slug);
@@ -54,8 +56,8 @@ export default async function PostPage({ params }: Props) {
 
   const getTypeTitle = (type: string) => {
     switch (type.toLowerCase()) {
-      case PostType.BLOG.toLowerCase():
-        return lang === "ar" ? "المدونة" : "Blog";
+      case PostType.NEWS.toLowerCase():
+        return lang === "ar" ? "الأخبار" : "News";
       case PostType.PUBLICATION.toLowerCase():
         return lang === "ar" ? "المنشورات" : "Publications";
       case PostType.ANNOUNCEMENT.toLowerCase():

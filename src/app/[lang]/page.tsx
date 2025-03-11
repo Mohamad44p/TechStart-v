@@ -8,14 +8,15 @@ import { SeoMetadata } from "@/components/shared/SeoMetadata";
 import { Metadata } from "next";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     lang: string
-  }
+  }>
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
+  const params = await props.params;
   const { lang } = params;
-  
+
   // Default metadata if no custom SEO is set
   return {
     title: lang === 'ar' ? 'تيك ستارت - الصفحة الرئيسية' : 'TechStart - Home',
@@ -25,9 +26,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-export default async function Page({ params }: PageProps) {
+export default async function Page(props: PageProps) {
+  const params = await props.params;
   const { lang } = params;
-  
+
   return (
     <>
       <SeoMetadata 

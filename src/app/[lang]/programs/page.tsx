@@ -6,14 +6,15 @@ import { Metadata } from "next"
 export const dynamic = "force-dynamic"
 
 interface ProgramsPageProps {
-  params: {
+  params: Promise<{
     lang: string
-  }
+  }>
 }
 
-export async function generateMetadata({ params }: ProgramsPageProps): Promise<Metadata> {
+export async function generateMetadata(props: ProgramsPageProps): Promise<Metadata> {
+  const params = await props.params;
   const { lang } = params;
-  
+
   // Default metadata if no custom SEO is set
   return {
     title: lang === 'ar' ? 'البرامج - تيك ستارت' : 'Programs - TechStart',
@@ -23,7 +24,8 @@ export async function generateMetadata({ params }: ProgramsPageProps): Promise<M
   }
 }
 
-export default async function ProgramsPage({ params }: ProgramsPageProps) {
+export default async function ProgramsPage(props: ProgramsPageProps) {
+  const params = await props.params;
   const { lang } = params;
 
   const { programs } = await getPrograms()

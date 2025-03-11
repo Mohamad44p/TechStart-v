@@ -9,9 +9,9 @@ export const metadata: Metadata = {
 }
 
 interface SeoEditPageProps {
-  searchParams: {
+  searchParams: Promise<{
     path?: string
-  }
+  }>
 }
 
 // Define the existing page routes in the application
@@ -34,19 +34,20 @@ const EXISTING_PAGES = [
   { path: '/media-center/gallery/videos', type: 'gallery' as const, name_en: 'Video Gallery', name_ar: 'معرض الفيديو' },
 ] as const;
 
-export default async function SeoEditPage({ searchParams }: SeoEditPageProps) {
+export default async function SeoEditPage(props: SeoEditPageProps) {
+  const searchParams = await props.searchParams;
   const { path } = searchParams
-  
+
   if (!path) {
     redirect("/admin/seo")
   }
-  
+
   // Find the page details
   const page = EXISTING_PAGES.find(p => p.path === path)
   if (!page) {
     notFound()
   }
-  
+
   // Get existing metadata if any
   const metadataResult = await getSeoMetadataForPage(path)
   const existingMetadata = metadataResult.success && metadataResult.metadata 
@@ -65,7 +66,7 @@ export default async function SeoEditPage({ searchParams }: SeoEditPageProps) {
         structuredData: metadataResult.metadata.structuredData || "",
       }
     : undefined
-  
+
   return (
     <div className="container mx-auto py-10">
       <div className="mb-8">
