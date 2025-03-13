@@ -10,6 +10,7 @@ export type TeamMemberData = {
   jobTitleEn: string
   jobTitleAr: string
   imageUrl: string
+  linkedinUrl?: string
 }
 
 export type PaginationParams = {

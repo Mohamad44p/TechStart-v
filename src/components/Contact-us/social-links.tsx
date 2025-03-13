@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Facebook, Instagram, Linkedin, Twitter, Youtube } from "lucide-react"
+import { Facebook, Instagram, Linkedin, Youtube } from "lucide-react"
 import { useLanguage } from "@/context/LanguageContext"
 
 interface SocialLinksProps {
@@ -9,7 +9,6 @@ interface SocialLinksProps {
     facebook?: string
     instagram?: string
     linkedin?: string
-    twitter?: string
     youtube?: string
   } | null
 }
@@ -21,7 +20,6 @@ export function SocialLinks({ socialLinks }: SocialLinksProps) {
     { icon: Facebook, key: "facebook" },
     { icon: Instagram, key: "instagram" },
     { icon: Linkedin, key: "linkedin" },
-    { icon: Twitter, key: "twitter" },
     { icon: Youtube, key: "youtube" },
   ]
 

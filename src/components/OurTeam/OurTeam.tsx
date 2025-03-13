@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ArrowLeft, ArrowRight, Pause, Play } from "lucide-react"
+import { ArrowLeft, ArrowRight, Pause, Play, Linkedin } from "lucide-react"
 import { useLanguage } from "@/context/LanguageContext"
 import type { TeamMemberData } from "@/app/actions/pages/team-actions"
 import { getImageUrl } from "@/lib/utils/image-url"
@@ -15,6 +15,7 @@ interface OurTeamProps {
 const OurTeam = ({ teamMembersData }: OurTeamProps) => {
   const [currentPage, setCurrentPage] = useState(0)
   const [isAutoPlay, setIsAutoPlay] = useState(true)
+  const [direction, setDirection] = useState(0)
   const itemsPerPage = 4
   const totalPages = Math.ceil(teamMembersData.length / itemsPerPage)
   const { currentLang } = useLanguage()
@@ -24,12 +25,25 @@ const OurTeam = ({ teamMembersData }: OurTeamProps) => {
   })
 
   const handleNext = useCallback(() => {
+    setDirection(1)
     setCurrentPage((prev) => (prev + 1) % totalPages)
   }, [totalPages])
 
   const handlePrev = useCallback(() => {
+    setDirection(-1)
     setCurrentPage((prev) => (prev - 1 + totalPages) % totalPages)
   }, [totalPages])
+
+  const goToPage = useCallback((pageIndex: number) => {
+    if (currentPage === totalPages - 1 && pageIndex === 0) {
+      setDirection(1)
+    } else if (currentPage === 0 && pageIndex === totalPages - 1) {
+      setDirection(-1)
+    } else {
+      setDirection(pageIndex > currentPage ? 1 : -1)
+    }
+    setCurrentPage(pageIndex)
+  }, [currentPage, totalPages])
 
   useEffect(() => {
     let timer: NodeJS.Timeout
@@ -128,10 +142,10 @@ const OurTeam = ({ teamMembersData }: OurTeamProps) => {
         </motion.div>
 
         <div className="relative z-10 max-w-7xl mx-auto">
-          <AnimatePresence initial={false} mode="wait" custom={currentPage}>
+          <AnimatePresence initial={false} mode="wait" custom={direction}>
             <motion.div
               key={currentPage}
-              custom={currentPage}
+              custom={direction}
               variants={containerVariants}
               initial="enter"
               animate="center"
@@ -178,6 +192,17 @@ const OurTeam = ({ teamMembersData }: OurTeamProps) => {
                           <p className="text-sm font-medium text-purple-500/80 dark:text-purple-400/80">
                             {currentLang === "ar" ? member.jobTitleAr : member.jobTitleEn}
                           </p>
+                          {member.linkedinUrl && (
+                            <a 
+                              href={member.linkedinUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                            >
+                              <Linkedin className="w-5 h-5 mr-1" />
+                              <span className="text-sm">LinkedIn</span>
+                            </a>
+                          )}
                         </motion.div>
                       </div>
                     </div>
@@ -203,7 +228,7 @@ const OurTeam = ({ teamMembersData }: OurTeamProps) => {
               {Array.from({ length: totalPages }).map((_, i) => (
                 <button
                   key={i}
-                  onClick={() => setCurrentPage(i)}
+                  onClick={() => goToPage(i)}
                   aria-label={`Go to slide ${i + 1}`}
                   className={`w-3 h-3 rounded-full transition-all duration-300 ${
                     currentPage === i ? "bg-purple-500 scale-125" : "bg-purple-300/30 hover:bg-purple-400"

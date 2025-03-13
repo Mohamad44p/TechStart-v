@@ -81,7 +81,7 @@ export function BeneficiariesSection({
         >
           {currentLang === "ar"
             ? "رواد تكنولوجيا المعلومات في فلسطين"
-            : "Palestinian IT leads Meet the Palestinian IT leads"}
+            : "Meet the Palestinian IT leads"}
         </motion.h2>
 
         <div className="mb-8 flex flex-col md:flex-row gap-4">
@@ -175,11 +175,13 @@ export function BeneficiariesSection({
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 20 }}
-                    href={active.ctaLink}
+                    href={active.ctaLink || active.buttonLink || "#"}
                     target="_blank"
                     className="mt-4 block w-full text-center px-6 py-3 bg-black text-white rounded-full font-bold hover:bg-gray-800 transition-all"
                   >
-                    {active.ctaText}
+                    {active.ctaText ||
+                      active.buttonText ||
+                      (currentLang === "ar" ? "عرض المزيد" : "Learn More")}
                   </motion.a>
                 </div>
               </motion.div>

@@ -8,7 +8,7 @@ import { Navbar } from "../Nav/Navbar";
 import AnimatedNetworkBackground from "../Nav/AnimatedBackground";
 import { useLanguage } from "@/context/LanguageContext";
 
-const STEP_DURATION = 5000;
+const STEP_DURATION = 10000;
 
 interface HeroStepData {
   title_en: string;

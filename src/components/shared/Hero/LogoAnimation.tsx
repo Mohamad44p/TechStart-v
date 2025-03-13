@@ -1,24 +1,24 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useLoading } from "@/context/LoadingContext";
 
 export const LogoAnimation = () => {
-  const { isPreloaderComplete } = useLoading();
-
   const pathVariants = {
     hidden: { pathLength: 0, opacity: 0 },
     visible: (i: number) => ({
       pathLength: 1,
       opacity: 1,
       transition: {
-        pathLength: { delay: i * 0.1, type: "spring", duration: 1.2, bounce: 0 },
-        opacity: { delay: i * 0.1, duration: 0.01 }
-      }
-    })
+        pathLength: {
+          delay: i * 0.1,
+          type: "spring",
+          duration: 1.2,
+          bounce: 0,
+        },
+        opacity: { delay: i * 0.1, duration: 0.01 },
+      },
+    }),
   };
-
-  if (!isPreloaderComplete) return null;
 
   return (
     <motion.svg
@@ -30,17 +30,32 @@ export const LogoAnimation = () => {
       animate="visible"
     >
       <defs>
-        <linearGradient id="g1" x2="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(181.162,0,0,239.735,312.809,213.574)">
-          <stop offset="0" stopColor="#1e78c2"/>
-          <stop offset="1" stopColor="#121a44"/>
+        <linearGradient
+          id="g1"
+          x2="1"
+          gradientUnits="userSpaceOnUse"
+          gradientTransform="matrix(181.162,0,0,239.735,312.809,213.574)"
+        >
+          <stop offset="0" stopColor="#1e78c2" />
+          <stop offset="1" stopColor="#121a44" />
         </linearGradient>
-        <linearGradient id="g2" x2="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(217.985,0,0,248.017,517.914,217.623)">
-          <stop offset="0" stopColor="#1e78c2"/>
-          <stop offset="1" stopColor="#121a44"/>
+        <linearGradient
+          id="g2"
+          x2="1"
+          gradientUnits="userSpaceOnUse"
+          gradientTransform="matrix(217.985,0,0,248.017,517.914,217.623)"
+        >
+          <stop offset="0" stopColor="#1e78c2" />
+          <stop offset="1" stopColor="#121a44" />
         </linearGradient>
-        <linearGradient id="g3" x2="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(198.627,0,0,243.152,795.003,213.574)">
-          <stop offset="0" stopColor="#1e78c2"/>
-          <stop offset="1" stopColor="#121a44"/>
+        <linearGradient
+          id="g3"
+          x2="1"
+          gradientUnits="userSpaceOnUse"
+          gradientTransform="matrix(198.627,0,0,243.152,795.003,213.574)"
+        >
+          <stop offset="0" stopColor="#1e78c2" />
+          <stop offset="1" stopColor="#121a44" />
         </linearGradient>
       </defs>
       {Object.entries(techPaths).map(([key, path], index) => (
@@ -65,14 +80,14 @@ export const LogoAnimation = () => {
           }}
         />
       ))}
-      
+
       {Object.entries(startPaths).map(([key, path], index) => (
         <motion.path
           key={`start-${key}`}
           d={path}
           variants={pathVariants}
           initial="hidden"
-          custom={index + Object.keys(techPaths).length} 
+          custom={index + Object.keys(techPaths).length}
           strokeWidth="2"
           stroke={startStrokes[key as keyof typeof startStrokes]}
           fill="none"
@@ -81,7 +96,10 @@ export const LogoAnimation = () => {
             if (definition === "visible") {
               const element = document.querySelector(`path[d="${path}"]`);
               if (element) {
-                element.setAttribute("fill", startStrokes[key as keyof typeof startStrokes]);
+                element.setAttribute(
+                  "fill",
+                  startStrokes[key as keyof typeof startStrokes]
+                );
                 element.setAttribute("stroke", "none");
               }
             }
@@ -105,8 +123,10 @@ const startPaths = {
   A: "M626.8 533.8v-0.6c0-35.1 27.4-52.4 67.1-52.4 18.2 0 31.1 2.8 43.7 6.8v-4c0-23.1-14.2-35.4-40.3-35.4-14.2 0-25.9 2.5-36.1 6.5-2.1 0.6-4 0.9-5.8 0.9-8.6 0-15.7-6.8-15.7-15.4 0-6.8 4.6-12.6 10.1-14.8 15.4-5.8 31.2-9.5 52.4-9.5 24.3 0 42.5 6.4 53.9 18.1 12 11.7 17.5 29 17.5 50.2v80.1c0 10.2-8 17.9-18.1 17.9-10.8 0-18.2-7.4-18.2-15.8v-6.1c-11.1 13.2-28 23.7-53 23.7-30.4 0-57.5-17.6-57.5-50.2zm111.4-11.7v-11.1c-9.5-3.7-22.1-6.5-36.9-6.5-24 0-38.2 10.2-38.2 27.1v0.7c0 15.7 13.8 24.6 31.7 24.6 24.6 0 43.4-14.2 43.4-34.8z",
   R: "M818.3 435c0-10.5 8-18.8 18.5-18.8 10.5 0 18.8 8.3 18.8 18.8v16.6c8.6-20.3 24.6-35.7 40.9-35.7 11.7 0 18.5 7.7 18.5 18.4 0 9.9-6.5 16.4-14.8 17.9-26.4 4.6-44.6 24.9-44.6 63.4v48.1c0 10.1-8.3 18.4-18.8 18.4-10.2 0-18.5-8-18.5-18.4z",
   T2: "M953.2 535.7v-85.6h-6.2c-8.9 0-16-7.1-16-16.1 0-8.9 7.1-16 16-16h6.2v-27.7c0-10.1 8.3-18.5 18.8-18.5 10.2 0 18.5 8.4 18.5 18.5v27.7h29.2c9 0 16.3 7.1 16.3 16 0 9-7.3 16.1-16.3 16.1h-29.2v79.7c0 14.5 7.4 20.3 20 20.3 4.3 0 8-0.9 9.2-0.9 8.3 0 15.7 6.8 15.7 15.4 0 6.8-4.6 12.3-9.8 14.5-8 2.8-15.7 4.3-25.6 4.3-27.4 0-46.8-12-46.8-47.7z",
-  T_dot: "M175.2 342.1c-11.6 0-21 9.4-21 21v42.2c0 11.5 9.5 20.7 21 20.7 11.6 0 21.1-9.2 21.1-20.7v-42.2c0-11.6-9.5-21-21.1-21z",
-  Power: "M174.7 583.5c-59.3 0-107.6-48.3-107.6-107.6 0-31.2 13.5-60.8 37.2-81.3 7.1-6.2 18-5.4 24.2 1.8 6.2 7.1 5.4 18-1.8 24.2-16.1 13.9-25.3 34.1-25.3 55.3 0 40.4 32.9 73.3 73.3 73.3 40.3 0 73.2-32.9 73.2-73.3 0-20.9-9-40.9-24.7-54.8-7.1-6.3-7.7-17.1-1.4-24.2 6.2-7.1 17.1-7.7 24.2-1.4 23 20.4 36.2 49.7 36.2 80.4 0 59.3-48.2 107.6-107.5 107.6zm21.7-178.2v65.1c0 12.3-10.8 21.9-23.4 20.6-10.8-1.2-18.7-10.9-18.7-21.7v-64c0 11.5 9.5 20.7 21 20.7 11.6 0 21.1-9.2 21.1-20.7z"
+  T_dot:
+    "M175.2 342.1c-11.6 0-21 9.4-21 21v42.2c0 11.5 9.5 20.7 21 20.7 11.6 0 21.1-9.2 21.1-20.7v-42.2c0-11.6-9.5-21-21.1-21z",
+  Power:
+    "M174.7 583.5c-59.3 0-107.6-48.3-107.6-107.6 0-31.2 13.5-60.8 37.2-81.3 7.1-6.2 18-5.4 24.2 1.8 6.2 7.1 5.4 18-1.8 24.2-16.1 13.9-25.3 34.1-25.3 55.3 0 40.4 32.9 73.3 73.3 73.3 40.3 0 73.2-32.9 73.2-73.3 0-20.9-9-40.9-24.7-54.8-7.1-6.3-7.7-17.1-1.4-24.2 6.2-7.1 17.1-7.7 24.2-1.4 23 20.4 36.2 49.7 36.2 80.4 0 59.3-48.2 107.6-107.5 107.6zm21.7-178.2v65.1c0 12.3-10.8 21.9-23.4 20.6-10.8-1.2-18.7-10.9-18.7-21.7v-64c0 11.5 9.5 20.7 21 20.7 11.6 0 21.1-9.2 21.1-20.7z",
 };
 
 const techStrokes: { [key: string]: string } = {
@@ -123,5 +143,5 @@ const startStrokes = {
   R: "#872996",
   T2: "#872996",
   T_dot: "#222794",
-  Power: "#872996"
+  Power: "#872996",
 };

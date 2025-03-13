@@ -132,19 +132,7 @@ export default function Footer({ footerData }: FooterProps) {
             <Clients partners={partners} />
           </motion.div>
 
-          <motion.div variants={itemVariants} className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
-            <motion.div variants={itemVariants} className="flex flex-wrap justify-center md:justify-start gap-4">
-              {["Privacy Policy", "Terms of Use", "Trust"].map((text, i) => (
-                <Link
-                  key={i}
-                  href="#"
-                  className="text-sm font-medium text-gray-600 hover:text-[#91268f] transition-colors"
-                >
-                  {text}
-                </Link>
-              ))}
-            </motion.div>
-
+          <motion.div variants={itemVariants} className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <motion.p variants={itemVariants} className="text-sm text-gray-600 text-center">
               <span>© Tech Start. All rights reserved.</span>
             </motion.p>
@@ -161,6 +149,7 @@ export default function Footer({ footerData }: FooterProps) {
                     <Link
                       key={i}
                       href={url}
+                      target="_blank"
                       className="p-2 mx-3 rounded-full bg-white/80 hover:bg-[#91268f]/10 text-gray-600 hover:text-[#91268f] transition-all duration-300 shadow-lg hover:shadow-xl"
                     >
                       <Icon size={20} />

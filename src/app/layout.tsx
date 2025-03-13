@@ -8,7 +8,6 @@ export const metadata: Metadata = {
   description: 'Tech Start Platform',
 }
 
-
 const montserrat = Montserrat({
   subsets: ['latin'],
   variable: '--font-montserrat',

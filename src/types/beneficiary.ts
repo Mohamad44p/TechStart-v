@@ -9,6 +9,8 @@ export interface Beneficiary {
   imageUrl: string
   buttonText: string | null
   buttonLink: string | null
+  ctaLink?: string
+  ctaText?: string
   categoryId: string
   category: Category
   createdAt: Date

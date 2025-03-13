@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 interface ReusableHeroProps {
   badge: string;
@@ -35,12 +36,36 @@ export default function ReusableHero({
 }: ReusableHeroProps) {
   const { currentLang } = useLanguage();
   const isArabic = currentLang === 'ar';
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
     <div className="relative overflow-hidden bg-gradient-to-r from-purple-100 via-white to-blue-100 py-32">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="space-y-8">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start">
+          <div className={`grid lg:grid-cols-2 gap-8 lg:gap-16 items-start ${isMobile ? 'flex flex-col' : ''}`}>
+            {/* Image Section - Shown first on mobile */}
+            {isMobile && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2 }}
+                className="w-full"
+              >
+                <div className="aspect-[4/3] relative overflow-hidden rounded-xl">
+                  <Image
+                    src={imageSrc}
+                    alt={imageAlt}
+                    fill
+                    className="object-contain rounded-xl transform hover:scale-105 transition-transform duration-500"
+                    priority
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
+                    quality={90}
+                  />
+                </div>
+              </motion.div>
+            )}
+
+            {/* Content Section */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -88,24 +113,27 @@ export default function ReusableHero({
               </div>
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 }}
-              className="lg:sticky lg:top-8"
-            >
-              <div className="aspect-[4/3] relative overflow-hidden rounded-xl">
-                <Image
-                  src={imageSrc}
-                  alt={imageAlt}
-                  fill
-                  className="object-contain rounded-xl transform hover:scale-105 transition-transform duration-500"
-                  priority
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
-                  quality={90}
-                />
-              </div>
-            </motion.div>
+            {/* Image Section - Shown on desktop */}
+            {!isMobile && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2 }}
+                className="lg:sticky lg:top-8"
+              >
+                <div className="aspect-[4/3] relative overflow-hidden rounded-xl">
+                  <Image
+                    src={imageSrc}
+                    alt={imageAlt}
+                    fill
+                    className="object-contain rounded-xl transform hover:scale-105 transition-transform duration-500"
+                    priority
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
+                    quality={90}
+                  />
+                </div>
+              </motion.div>
+            )}
           </div>
 
           {features && features.length > 0 && (

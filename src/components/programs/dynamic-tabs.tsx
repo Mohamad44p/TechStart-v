@@ -115,7 +115,7 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory,
               variant="outline"
               size="sm"
               className="hover:bg-gradient-to-r hover:from-[#1C6AAF]/10 hover:to-[#872996]/10 
-                       transition-all duration-300 border-gray-200"
+                       transition-all duration-300 border-gray-200 min-w-[120px] h-10 px-4 py-2"
               onClick={() => handleProcessDetailsClick(tab)}
               disabled={!tab.processFile}
             >
@@ -128,7 +128,7 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory,
                   key={button.id}
                   variant="outline"
                   size="sm"
-                  className="h-auto hover:bg-gradient-to-r hover:from-[#1C6AAF]/10 
+                  className="h-10 min-w-[120px] px-4 py-2 hover:bg-gradient-to-r hover:from-[#1C6AAF]/10 
                            hover:to-[#872996]/10 border-gray-200 transition-all duration-300"
                   onClick={() => {
                     setSelectedButton({

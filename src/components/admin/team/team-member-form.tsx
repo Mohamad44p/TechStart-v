@@ -22,6 +22,7 @@ const teamMemberSchema = z.object({
   jobTitleEn: z.string().min(1, "Job title in English is required"),
   jobTitleAr: z.string().min(1, "Job title in Arabic is required"),
   imageUrl: z.string().min(1, "Image is required"),
+  linkedinUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
 })
 
 type TeamMemberFormValues = z.infer<typeof teamMemberSchema>
@@ -42,6 +43,7 @@ export function TeamMemberForm({ initialData }: TeamMemberFormProps) {
       jobTitleEn: "",
       jobTitleAr: "",
       imageUrl: "",
+      linkedinUrl: "",
     },
   })
 
@@ -159,6 +161,24 @@ export function TeamMemberForm({ initialData }: TeamMemberFormProps) {
                     <ImageUpload 
                       onUpload={(url) => field.onChange(url)}
                       value={field.value}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="linkedinUrl"
+              render={({ field }) => (
+                <FormItem className="mt-4">
+                  <FormLabel>LinkedIn URL (Optional)</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="https://www.linkedin.com/in/username" 
+                      {...field} 
+                      value={field.value || ""}
                     />
                   </FormControl>
                   <FormMessage />
