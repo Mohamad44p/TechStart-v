@@ -10,43 +10,35 @@ export default async function ProgramsWrapper() {
     return <div>Error loading programs</div>
   }
 
+  // Define the ordered program IDs
+  const orderedProgramIds = [
+    'cm7urr4jk001dt718l3o9exad', // UPSkill Program
+    'cm7urp3n80015t718sk4lzm6r', // Pioneer
+    'cm7urobwh0013t718p2dzugua'  // Horizons
+  ]
 
-  const orderedProgramNames = ['UPSkill Program', 'Pioneer', 'Horizons']
-
-  const programsByName = new Map<string, Program>()
-
+  const programsById = new Map<string, Program>()
+  
+  // Map programs by their IDs
   response.data.forEach(program => {
-
-
-    for (const name of orderedProgramNames) {
-      if (program.name_en.includes(name) || program.name_ar.includes(name)) {
-        // Ensure descriptions are not empty
-        const description_en = program.description_en || `Learn more about our ${name} program and how it can help you achieve your goals.`
-        const description_ar = program.description_ar || `تعرف على المزيد حول برنامج ${name} وكيف يمكنه مساعدتك في تحقيق أهدافك.`
-
-        programsByName.set(name, {
-          id: program.id,
-          name_en: program.name_en,
-          name_ar: program.name_ar,
-          description_en,
-          description_ar,
-          imageUrl: program.imageUrl
-        })
-        break
-      }
-    }
+    programsById.set(program.id, {
+      id: program.id,
+      name_en: program.name_en,
+      name_ar: program.name_ar,
+      description_en: program.description_en || `Learn more about our program and how it can help you achieve your goals.`,
+      description_ar: program.description_ar || `تعرف على المزيد حول البرنامج وكيف يمكنه مساعدتك في تحقيق أهدافك.`,
+      imageUrl: program.imageUrl
+    })
   })
 
-  // Create the final array in the exact order specified
+  // Create the final array in the exact order specified by IDs
   const orderedPrograms: Program[] = []
-  for (const name of orderedProgramNames) {
-    const program = programsByName.get(name)
+  for (const id of orderedProgramIds) {
+    const program = programsById.get(id)
     if (program) {
       orderedPrograms.push(program)
     }
   }
-
-  // Log the final ordered programs to debug
 
   return <ProgramsSec programs={orderedPrograms} />
 }
