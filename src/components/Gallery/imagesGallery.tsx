@@ -56,19 +56,42 @@ export const PhotoGalleryClient = ({ galleries: initialGalleries }: PhotoGallery
     setFilteredGalleries(sorted)
   }, [searchTerm, sortOrder, initialGalleries, currentLang])
 
-  const nextImage = () => {
+  const nextImage = useCallback(() => {
     if (selectedGallery) {
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % selectedGallery.images.length)
     }
-  }
+  }, [selectedGallery])
 
-  const prevImage = () => {
+  const prevImage = useCallback(() => {
     if (selectedGallery) {
       setCurrentImageIndex(
         (prevIndex) => (prevIndex - 1 + selectedGallery.images.length) % selectedGallery.images.length,
       )
     }
-  }
+  }, [selectedGallery])
+
+  // Add keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!selectedGallery) return;
+      
+      // Navigate with arrow keys or A/D keys
+      if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
+        nextImage();
+      } else if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
+        prevImage();
+      } else if (e.key === "Escape") {
+        setSelectedGallery(null);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    
+    // Clean up event listener
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selectedGallery, nextImage, prevImage]);
 
   const handleSearch = useCallback((term: string) => {
     setSearchTerm(term)
