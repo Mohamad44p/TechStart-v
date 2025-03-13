@@ -1,10 +1,22 @@
 "use client";
 
 import * as React from "react";
-import { Layers, Radio, Home, Users, Phone, SearchCheckIcon } from 'lucide-react';
-import { usePathname } from 'next/navigation';
+import {
+  Layers,
+  Radio,
+  Home,
+  Users,
+  Phone,
+  SearchCheckIcon,
+} from "lucide-react";
+import { usePathname } from "next/navigation";
 import { NavMain } from "./nav-main";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarRail } from "@/components/ui/sidebar";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarRail,
+} from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -44,7 +56,7 @@ const data: { navMain: NavItem[] } = {
           title: "Footer",
           url: "/admin/pages/footer",
         },
-      ]
+      ],
     },
     {
       title: "About Us",
@@ -75,7 +87,7 @@ const data: { navMain: NavItem[] } = {
           title: "Focus Areas",
           url: "/admin/pages/focusareas",
         },
-      ]
+      ],
     },
     {
       title: "Programs",
@@ -90,7 +102,7 @@ const data: { navMain: NavItem[] } = {
           title: "Programs Hero",
           url: "/admin/programs-hero",
         },
-      ]
+      ],
     },
     {
       title: "Contact & Support",
@@ -109,11 +121,18 @@ const data: { navMain: NavItem[] } = {
           title: "FAQ Management",
           url: "/admin/pages/faq",
         },
+      ],
+    },
+    {
+      title: "Social and Environmental",
+      url: "#",
+      icon: Users,
+      items: [
         {
           title: "Safeguards",
           url: "/admin/safeguards",
         },
-      ]
+      ],
     },
     {
       title: "Media Center",
@@ -132,7 +151,7 @@ const data: { navMain: NavItem[] } = {
               title: "All News",
               url: "/admin/blog",
             },
-          ]
+          ],
         },
         {
           title: "Gallery",
@@ -150,7 +169,7 @@ const data: { navMain: NavItem[] } = {
                   title: "Create Image Gallery",
                   url: "/admin/ImageGallery/create",
                 },
-              ]
+              ],
             },
             {
               title: "Videos",
@@ -164,11 +183,11 @@ const data: { navMain: NavItem[] } = {
                   title: "Create Video Gallery",
                   url: "/admin/VideoGallery/create",
                 },
-              ]
+              ],
             },
-          ]
+          ],
         },
-      ]
+      ],
     },
     {
       title: "Files Management",
@@ -195,9 +214,9 @@ const data: { navMain: NavItem[] } = {
               title: "Upload Video",
               url: "/admin/filesmangemnt/upload/video",
             },
-          ]
+          ],
         },
-      ]
+      ],
     },
     {
       title: "Seo Management",
@@ -208,7 +227,7 @@ const data: { navMain: NavItem[] } = {
           title: "Seo Metadata",
           url: "/admin/seo",
         },
-      ]
+      ],
     },
   ],
 };
@@ -218,10 +237,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const navMainWithActive = React.useMemo(() => {
     const markActive = (items: NavItem[]): NavItem[] => {
-      return items.map(item => ({
+      return items.map((item) => ({
         ...item,
-        isActive: item.url === pathname || (item.items && markActive(item.items).some(subItem => subItem.isActive)),
-        items: item.items ? markActive(item.items) : undefined
+        isActive:
+          item.url === pathname ||
+          (item.items &&
+            markActive(item.items).some((subItem) => subItem.isActive)),
+        items: item.items ? markActive(item.items) : undefined,
       }));
     };
     return markActive(data.navMain);
@@ -243,4 +265,3 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     </Sidebar>
   );
 }
-
