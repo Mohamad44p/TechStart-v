@@ -6,24 +6,24 @@ import { PostTypeValue } from "@/lib/schema/schema";
 import { SeoMetadata } from "@/components/shared/SeoMetadata";
 import { Metadata } from "next";
 
-interface BlogPageProps {
+interface NewsPageProps {
   params: {
     lang: string
   }
 }
 
-export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: NewsPageProps): Promise<Metadata> {
   const { lang } = params;
   
   return {
-    title: lang === 'ar' ? 'المدونة - تيك ستارت' : 'Blog - TechStart',
+    title: lang === 'ar' ? 'الأخبار والبيانات الصحفية - تيك ستارت' : 'News & Press Releases - TechStart',
     description: lang === 'ar' 
-      ? 'استكشف مدونة تيك ستارت للحصول على رؤى وتحليلات ومقالات حول التكنولوجيا والابتكار والتنمية الرقمية.'
-      : 'Explore TechStart blog for insights, analysis, and articles about technology, innovation, and digital development.',
+      ? 'استكشف الأخبار والبيانات الصحفية من تيك ستارت للحصول على رؤى وتحليلات ومقالات حول التكنولوجيا والابتكار والتنمية الرقمية.'
+      : 'Explore TechStart News & Press Releases for insights, analysis, and articles about technology, innovation, and digital development.',
   }
 }
 
-export default async function BlogPage({ params }: BlogPageProps) {
+export default async function NewsPage({ params }: NewsPageProps) {
   const {
     lang
   } = params;
@@ -39,10 +39,10 @@ export default async function BlogPage({ params }: BlogPageProps) {
         <SeoMetadata 
           path="/media-center/news/blog" 
           lang={lang} 
-          defaultTitle={lang === 'ar' ? 'المدونة - تيك ستارت' : 'Blog - TechStart'}
+          defaultTitle={lang === 'ar' ? 'الأخبار والبيانات الصحفية - تيك ستارت' : 'News & Press Releases - TechStart'}
           defaultDescription={lang === 'ar' 
-            ? 'استكشف مدونة تيك ستارت للحصول على رؤى وتحليلات ومقالات حول التكنولوجيا والابتكار والتنمية الرقمية.'
-            : 'Explore TechStart blog for insights, analysis, and articles about technology, innovation, and digital development.'
+            ? 'استكشف الأخبار والبيانات الصحفية من تيك ستارت للحصول على رؤى وتحليلات ومقالات حول التكنولوجيا والابتكار والتنمية الرقمية.'
+            : 'Explore TechStart News & Press Releases for insights, analysis, and articles about technology, innovation, and digital development.'
           }
         />
         <div className="text-center text-gray-600">
@@ -54,10 +54,10 @@ export default async function BlogPage({ params }: BlogPageProps) {
     )
   }
 
-  const title = lang === 'ar' ? 'المدونة' : 'Blog'
+  const title = lang === 'ar' ? 'الأخبار والبيانات الصحفية' : 'News & Press Releases'
   const subtitle = lang === 'ar' 
-    ? 'اكتشف أحدث المقالات والأخبار'
-    : 'Discover our latest articles and news'
+    ? 'اكتشف أحدث الأخبار والبيانات الصحفية'
+    : 'Discover our latest news and press releases'
 
   const transformedPosts = postsResponse.data?.map(post => ({
     ...post,
@@ -70,10 +70,10 @@ export default async function BlogPage({ params }: BlogPageProps) {
       <SeoMetadata 
         path="/media-center/news/blog" 
         lang={lang} 
-        defaultTitle={lang === 'ar' ? 'المدونة - تيك ستارت' : 'Blog - TechStart'}
+        defaultTitle={lang === 'ar' ? 'الأخبار والبيانات الصحفية - تيك ستارت' : 'News & Press Releases - TechStart'}
         defaultDescription={lang === 'ar' 
-          ? 'استكشف مدونة تيك ستارت للحصول على رؤى وتحليلات ومقالات حول التكنولوجيا والابتكار والتنمية الرقمية.'
-          : 'Explore TechStart blog for insights, analysis, and articles about technology, innovation, and digital development.'
+          ? 'استكشف الأخبار والبيانات الصحفية من تيك ستارت للحصول على رؤى وتحليلات ومقالات حول التكنولوجيا والابتكار والتنمية الرقمية.'
+          : 'Explore TechStart News & Press Releases for insights, analysis, and articles about technology, innovation, and digital development.'
         }
       />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">

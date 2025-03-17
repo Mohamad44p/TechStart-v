@@ -44,7 +44,7 @@ export function SeoPageList({ initialPages }: SeoPageListProps) {
       case 'program':
         return 'Program'
       case 'blog':
-        return 'Blog'
+        return 'News & Press Releases'
       case 'gallery':
         return 'Gallery'
       case 'about':
@@ -65,7 +65,7 @@ export function SeoPageList({ initialPages }: SeoPageListProps) {
       case 'program':
         return <Badge variant="secondary">Program</Badge>
       case 'blog':
-        return <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">Blog</Badge>
+        return <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">News & Press Releases</Badge>
       case 'gallery':
         return <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">Gallery</Badge>
       case 'about':

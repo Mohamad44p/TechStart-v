@@ -53,6 +53,7 @@ export default function DynamicHero({ hero, lang }: DynamicHeroProps) {
       secondaryButtonText={lang === 'ar' ? "معايير الأهلية" : "Eligibility Criteria"}
       imageSrc={hero.imageUrl || '/default-hero.png'}
       imageAlt={hero.name}
+      programName={hero.name}
       features={features.length > 0 ? features : undefined}
       secondaryButtonProps={{
         href: `${hero.programPageId}/eligibility`,

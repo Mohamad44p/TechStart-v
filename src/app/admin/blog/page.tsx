@@ -27,7 +27,7 @@ export default async function Blogs() {
 
   return (
     <div className="container mx-auto py-10">
-      <h1 className="text-3xl font-bold mb-6">Blog Posts</h1>
+      <h1 className="text-3xl font-bold mb-6">News & Press Releases</h1>
       <Suspense fallback={<div>Loading...</div>}>
         <DisplayBlogs initialBlogs={blogs} />
       </Suspense>

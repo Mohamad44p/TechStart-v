@@ -104,8 +104,8 @@ export function MediaCenter({ content }: MediaCenterProps) {
       className: "md:col-span-2",
       icon: <Copy />,
       link: safeContent.latestNews?.slug 
-        ? `/${currentLang}/media-center/news/blog/${safeContent.latestNews.slug}` 
-        : `/${currentLang}/media-center/news/blog`,
+        ? `/${currentLang}/media-center/news/press-releases/${safeContent.latestNews.slug}` 
+        : `/${currentLang}/media-center/news/press-releases`,
     },
     {
       title: currentLang === "ar" ? "إعلانات الصحفية" : "Announcements",

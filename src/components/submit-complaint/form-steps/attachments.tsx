@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/lib/FileUpload";
 import { AttachmentData } from "@/types/complaint";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface AttachmentsProps {
   onNext: (data: { attachments: AttachmentData[] }) => void;
@@ -13,6 +14,20 @@ interface AttachmentsProps {
 
 export function Attachments({ onNext, onPrevious, data }: AttachmentsProps) {
   const [files, setFiles] = useState<AttachmentData[]>(data.attachments || []);
+  const { currentLang } = useLanguage();
+  
+  const labels = {
+    en: {
+      previous: "Previous",
+      next: "Next"
+    },
+    ar: {
+      previous: "السابق",
+      next: "التالي"
+    }
+  };
+  
+  const t = labels[currentLang as keyof typeof labels];
 
   const handleUpload = (uploadedFiles: string[]) => {
     const newAttachments = uploadedFiles.map(url => ({
@@ -43,11 +58,20 @@ export function Attachments({ onNext, onPrevious, data }: AttachmentsProps) {
             maxFiles={5}
           />
 
-          <div className="flex justify-between pt-4">
-            <Button type="button" onClick={onPrevious} variant="outline">
-              Previous
+          <div className="flex justify-between mt-6">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={onPrevious}
+            >
+              {t.previous}
             </Button>
-            <Button type="submit">Next</Button>
+            <Button 
+              type="submit" 
+              className="bg-gradient-to-r from-[#1E78C2] to-[#862996] hover:opacity-90 text-white"
+            >
+              {t.next}
+            </Button>
           </div>
         </form>
       </Card>

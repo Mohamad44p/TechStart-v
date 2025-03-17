@@ -27,7 +27,7 @@ const EXISTING_PAGES = [
   { path: '/FAQs', type: 'about' as const, name_en: 'FAQs', name_ar: 'الأسئلة الشائعة' },
   { path: '/submit-complaint', type: 'contact' as const, name_en: 'Submit Complaint', name_ar: 'تقديم شكوى' },
   { path: '/media-center/news', type: 'blog' as const, name_en: 'News', name_ar: 'الأخبار' },
-  { path: '/media-center/news/blog', type: 'blog' as const, name_en: 'Blog', name_ar: 'المدونة' },
+  { path: '/media-center/news/blog', type: 'blog' as const, name_en: 'News & Press Releases', name_ar: 'الأخبار والبيانات الصحفية' },
   { path: '/media-center/news/publications', type: 'blog' as const, name_en: 'Publications', name_ar: 'المنشورات' },
   { path: '/media-center/news/announcements', type: 'blog' as const, name_en: 'Announcements', name_ar: 'الإعلانات' },
   { path: '/media-center/gallery/photos', type: 'gallery' as const, name_en: 'Photo Gallery', name_ar: 'معرض الصور' },

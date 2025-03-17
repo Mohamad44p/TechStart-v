@@ -269,257 +269,270 @@ export function AnonymousComplaintForm() {
   const t = labels[currentLang as keyof typeof labels]
 
   return (
-    <motion.form
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      onSubmit={handleSubmit}
-      className="space-y-6"
-    >
-      <Card>
-        <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <Label htmlFor="date">{t.date}</Label>
-              <Input
-                type="date"
-                id="date"
-                name="date"
-                value={formData.date}
+    <div className={`${currentLang === "ar" ? "rtl" : "ltr"}`}>
+      <Card className="mb-6">
+        <CardContent className="pt-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="date" className={`${currentLang === "ar" ? "text-right block" : ""}`}>
+                  {t.date}
+                </Label>
+                <Input
+                  id="date"
+                  name="date"
+                  type="date"
+                  value={formData.date}
+                  onChange={handleInputChange}
+                  className={`${currentLang === "ar" ? "text-right" : ""}`}
+                  disabled
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="complaintNumber" className={`${currentLang === "ar" ? "text-right block" : ""}`}>
+                  {t.complaintNumber}
+                </Label>
+                <Input
+                  id="complaintNumber"
+                  name="complaintNumber"
+                  value={formData.complaintNumber}
+                  className={`${currentLang === "ar" ? "text-right" : ""}`}
+                  disabled
+                />
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <Label className={`${currentLang === "ar" ? "text-right block" : ""}`}>
+                {t.willProvideContact}
+              </Label>
+              <RadioGroup
+                defaultValue={formData.willProvideContact ? "yes" : "no"}
+                className={`flex ${currentLang === "ar" ? "flex-row-reverse justify-end" : ""} gap-4`}
+                onValueChange={(value) => handleRadioChange("willProvideContact", value === "yes")}
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="yes" id="yes" className={`${currentLang === "ar" ? "ml-2" : "mr-2"}`} />
+                  <Label htmlFor="yes">{t.yes}</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="no" id="no" className={`${currentLang === "ar" ? "ml-2" : "mr-2"}`} />
+                  <Label htmlFor="no">{t.no}</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            {formData.willProvideContact && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="grid grid-cols-1 md:grid-cols-2 gap-6"
+              >
+                <div className="space-y-2">
+                  <Label htmlFor="email" className={`${currentLang === "ar" ? "text-right block" : ""}`}>
+                    {t.email}
+                  </Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className={`${currentLang === "ar" ? "text-right" : ""}`}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone" className={`${currentLang === "ar" ? "text-right block" : ""}`}>
+                    {t.phone}
+                  </Label>
+                  <Input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    className={`${currentLang === "ar" ? "text-right" : ""}`}
+                  />
+                </div>
+                <p className="text-sm text-gray-500 md:col-span-2">
+                  {t.contactNote}
+                </p>
+              </motion.div>
+            )}
+
+            <div className="mt-6">
+              <Label htmlFor="description">{t.description}</Label>
+              <Textarea
+                id="description"
+                name="description"
+                value={formData.description}
                 onChange={handleInputChange}
                 required
-                className={currentLang === "ar" ? "text-right" : "text-left"}
+                className={`mt-2 ${currentLang === "ar" ? "text-right" : "text-left"}`}
               />
             </div>
-            <div>
-              <Label htmlFor="complaintNumber">{t.complaintNumber}</Label>
+
+            <div className="mt-6">
+              <Label htmlFor="entityAgainst">{t.entityAgainst}</Label>
               <Input
                 type="text"
-                id="complaintNumber"
-                name="complaintNumber"
-                value={formData.complaintNumber}
-                readOnly
-                className={currentLang === "ar" ? "text-right" : "text-left"}
+                id="entityAgainst"
+                name="entityAgainst"
+                value={formData.entityAgainst}
+                onChange={handleInputChange}
+                required
+                className={`mt-2 ${currentLang === "ar" ? "text-right" : "text-left"}`}
               />
             </div>
-          </div>
 
-          <div className="mt-6">
-            <Label>{t.willProvideContact}</Label>
-            <RadioGroup
-              onValueChange={(value) => handleRadioChange("willProvideContact", value === "yes")}
-              className="flex space-x-4 mt-2"
-              defaultValue="no"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="yes" id="willProvideContact-yes" />
-                <Label htmlFor="willProvideContact-yes">{t.yes}</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="no" id="willProvideContact-no" />
-                <Label htmlFor="willProvideContact-no">{t.no}</Label>
-              </div>
-            </RadioGroup>
-          </div>
+            <div className="mt-6">
+              <Label>{t.filedInCourt}</Label>
+              <RadioGroup
+                onValueChange={(value) => handleRadioChange("filedInCourt", value === "yes")}
+                className="flex space-x-4 mt-2"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="yes" id="filedInCourt-yes" />
+                  <Label htmlFor="filedInCourt-yes">{t.yes}</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="no" id="filedInCourt-no" />
+                  <Label htmlFor="filedInCourt-no">{t.no}</Label>
+                </div>
+              </RadioGroup>
+            </div>
 
-          {formData.willProvideContact && (
-            <motion.div 
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6"
-            >
-              <div>
-                <Label htmlFor="email">{t.email}</Label>
-                <Input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className={`mt-2 ${currentLang === "ar" ? "text-right" : "text-left"}`}
-                />
-              </div>
-              <div>
-                <Label htmlFor="phone">{t.phone}</Label>
-                <Input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  className={`mt-2 ${currentLang === "ar" ? "text-right" : "text-left"}`}
-                />
-              </div>
-              <div className="md:col-span-2 text-sm text-muted-foreground">
-                {t.contactNote}
-              </div>
-            </motion.div>
-          )}
+            <div className="mt-6">
+              <Label>{t.previousComplaint}</Label>
+              <RadioGroup
+                onValueChange={(value) => handleRadioChange("previousComplaint", value === "yes")}
+                className="flex space-x-4 mt-2"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="yes" id="previousComplaint-yes" />
+                  <Label htmlFor="previousComplaint-yes">{t.yes}</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="no" id="previousComplaint-no" />
+                  <Label htmlFor="previousComplaint-no">{t.no}</Label>
+                </div>
+              </RadioGroup>
+            </div>
 
-          <div className="mt-6">
-            <Label htmlFor="description">{t.description}</Label>
-            <Textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              required
-              className={`mt-2 ${currentLang === "ar" ? "text-right" : "text-left"}`}
-            />
-          </div>
-
-          <div className="mt-6">
-            <Label htmlFor="entityAgainst">{t.entityAgainst}</Label>
-            <Input
-              type="text"
-              id="entityAgainst"
-              name="entityAgainst"
-              value={formData.entityAgainst}
-              onChange={handleInputChange}
-              required
-              className={`mt-2 ${currentLang === "ar" ? "text-right" : "text-left"}`}
-            />
-          </div>
-
-          <div className="mt-6">
-            <Label>{t.filedInCourt}</Label>
-            <RadioGroup
-              onValueChange={(value) => handleRadioChange("filedInCourt", value === "yes")}
-              className="flex space-x-4 mt-2"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="yes" id="filedInCourt-yes" />
-                <Label htmlFor="filedInCourt-yes">{t.yes}</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="no" id="filedInCourt-no" />
-                <Label htmlFor="filedInCourt-no">{t.no}</Label>
-              </div>
-            </RadioGroup>
-          </div>
-
-          <div className="mt-6">
-            <Label>{t.previousComplaint}</Label>
-            <RadioGroup
-              onValueChange={(value) => handleRadioChange("previousComplaint", value === "yes")}
-              className="flex space-x-4 mt-2"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="yes" id="previousComplaint-yes" />
-                <Label htmlFor="previousComplaint-yes">{t.yes}</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="no" id="previousComplaint-no" />
-                <Label htmlFor="previousComplaint-no">{t.no}</Label>
-              </div>
-            </RadioGroup>
-          </div>
-
-          {formData.previousComplaint && (
-            <>
-              <div className="mt-6">
-                <Label htmlFor="previousEntityAgainst">{t.previousEntityAgainst}</Label>
-                <Input
-                  type="text"
-                  id="previousEntityAgainst"
-                  name="previousEntityAgainst"
-                  value={formData.previousEntityAgainst}
-                  onChange={handleInputChange}
-                  required
-                  className={`mt-2 ${currentLang === "ar" ? "text-right" : "text-left"}`}
-                />
-              </div>
-
-              <div className="mt-6">
-                <Label htmlFor="previousFilingDate">{t.previousFilingDate}</Label>
-                <Input
-                  type="date"
-                  id="previousFilingDate"
-                  name="previousFilingDate"
-                  value={formData.previousFilingDate}
-                  onChange={handleInputChange}
-                  required
-                  className={`mt-2 ${currentLang === "ar" ? "text-right" : "text-left"}`}
-                />
-              </div>
-
-              <div className="mt-6">
-                <Label>{t.receivedResponse}</Label>
-                <RadioGroup
-                  onValueChange={(value) => handleRadioChange("receivedResponse", value === "yes")}
-                  className="flex space-x-4 mt-2"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="yes" id="receivedResponse-yes" />
-                    <Label htmlFor="receivedResponse-yes">{t.yes}</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="no" id="receivedResponse-no" />
-                    <Label htmlFor="receivedResponse-no">{t.no}</Label>
-                  </div>
-                </RadioGroup>
-              </div>
-
-              {formData.receivedResponse && (
+            {formData.previousComplaint && (
+              <>
                 <div className="mt-6">
-                  <Label htmlFor="responseDate">{t.responseDate}</Label>
+                  <Label htmlFor="previousEntityAgainst">{t.previousEntityAgainst}</Label>
                   <Input
-                    type="date"
-                    id="responseDate"
-                    name="responseDate"
-                    value={formData.responseDate}
+                    type="text"
+                    id="previousEntityAgainst"
+                    name="previousEntityAgainst"
+                    value={formData.previousEntityAgainst}
                     onChange={handleInputChange}
                     required
                     className={`mt-2 ${currentLang === "ar" ? "text-right" : "text-left"}`}
                   />
                 </div>
-              )}
-            </>
-          )}
 
-          <div className="mt-6">
-            <Label htmlFor="factsAndGrounds">{t.factsAndGrounds}</Label>
-            <Textarea
-              id="factsAndGrounds"
-              name="factsAndGrounds"
-              value={formData.factsAndGrounds}
-              onChange={handleInputChange}
-              required
-              className={`mt-2 ${currentLang === "ar" ? "text-right" : "text-left"}`}
-            />
-          </div>
+                <div className="mt-6">
+                  <Label htmlFor="previousFilingDate">{t.previousFilingDate}</Label>
+                  <Input
+                    type="date"
+                    id="previousFilingDate"
+                    name="previousFilingDate"
+                    value={formData.previousFilingDate}
+                    onChange={handleInputChange}
+                    required
+                    className={`mt-2 ${currentLang === "ar" ? "text-right" : "text-left"}`}
+                  />
+                </div>
 
-          <div className="mt-6">
-            <Label>{t.attachments}</Label>
-            <Input
-              type="file"
-              multiple
-              className="mt-2"
-              onChange={(e) => setFormData((prev) => ({ ...prev, attachments: Array.from(e.target.files || []) }))}
-            />
-          </div>
+                <div className="mt-6">
+                  <Label>{t.receivedResponse}</Label>
+                  <RadioGroup
+                    onValueChange={(value) => handleRadioChange("receivedResponse", value === "yes")}
+                    className="flex space-x-4 mt-2"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="yes" id="receivedResponse-yes" />
+                      <Label htmlFor="receivedResponse-yes">{t.yes}</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="no" id="receivedResponse-no" />
+                      <Label htmlFor="receivedResponse-no">{t.no}</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
 
-          <div className="mt-6 flex items-center space-x-2">
-            <Checkbox
-              id="confirmed"
-              checked={formData.confirmed}
-              onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, confirmed: checked as boolean }))}
-            />
-            <Label
-              htmlFor="confirmed"
-              className={`text-sm ${currentLang === "ar" ? "text-right mr-2" : "text-left ml-2"}`}
-            >
-              {t.confirmation}
-            </Label>
-          </div>
+                {formData.receivedResponse && (
+                  <div className="mt-6">
+                    <Label htmlFor="responseDate">{t.responseDate}</Label>
+                    <Input
+                      type="date"
+                      id="responseDate"
+                      name="responseDate"
+                      value={formData.responseDate}
+                      onChange={handleInputChange}
+                      required
+                      className={`mt-2 ${currentLang === "ar" ? "text-right" : "text-left"}`}
+                    />
+                  </div>
+                )}
+              </>
+            )}
 
-          <Button type="submit" className="mt-6 w-full" disabled={isSubmitting}>
-            {isSubmitting ? t.submitting : t.submit}
-          </Button>
+            <div className="mt-6">
+              <Label htmlFor="factsAndGrounds">{t.factsAndGrounds}</Label>
+              <Textarea
+                id="factsAndGrounds"
+                name="factsAndGrounds"
+                value={formData.factsAndGrounds}
+                onChange={handleInputChange}
+                required
+                className={`mt-2 ${currentLang === "ar" ? "text-right" : "text-left"}`}
+              />
+            </div>
+
+            <div className="mt-6">
+              <Label>{t.attachments}</Label>
+              <Input
+                type="file"
+                multiple
+                className="mt-2"
+                onChange={(e) => setFormData((prev) => ({ ...prev, attachments: Array.from(e.target.files || []) }))}
+              />
+            </div>
+
+            <div className="mt-6 flex items-center space-x-2">
+              <Checkbox
+                id="confirmed"
+                checked={formData.confirmed}
+                onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, confirmed: checked as boolean }))}
+              />
+              <Label
+                htmlFor="confirmed"
+                className={`text-sm ${currentLang === "ar" ? "text-right mr-2" : "text-left ml-2"}`}
+              >
+                {t.confirmation}
+              </Label>
+            </div>
+
+            <div className="flex justify-end">
+              <Button 
+                type="submit" 
+                disabled={isSubmitting}
+                className="bg-gradient-to-r from-[#1E78C2] to-[#862996] hover:opacity-90 text-white"
+              >
+                {isSubmitting
+                  ? t.submitting
+                  : t.submit}
+              </Button>
+            </div>
+          </form>
         </CardContent>
       </Card>
-    </motion.form>
+    </div>
   )
 }
 

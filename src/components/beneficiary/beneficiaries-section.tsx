@@ -77,11 +77,11 @@ export function BeneficiariesSection({
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="text-4xl font-bold text-center mb-16 text-black"
+          className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-[#1E78C2] to-[#862996] text-transparent bg-clip-text"
         >
           {currentLang === "ar"
             ? "رواد تكنولوجيا المعلومات في فلسطين"
-            : "Meet the Palestinian IT leads"}
+            : "Meet the Pioneers of the Palestinian IT Sector"}
         </motion.h2>
 
         <div className="mb-8 flex flex-col md:flex-row gap-4">

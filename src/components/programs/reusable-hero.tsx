@@ -9,11 +9,13 @@ interface ReusableHeroProps {
   badge: string;
   title: string;
   highlightedWord: string;
+  description?: string;
   objectives?: string;
   primaryButtonText: string;
   secondaryButtonText: string;
   imageSrc: string;
   imageAlt: string;
+  programName?: string;
   features?: Array<{
     icon: React.ReactNode;
     title: string;
@@ -29,10 +31,14 @@ export default function ReusableHero({
   badge,
   title,
   highlightedWord,
+  description,
   objectives,
+  primaryButtonText,
+  secondaryButtonText,
   imageSrc,
   imageAlt,
   features,
+  secondaryButtonProps,
 }: ReusableHeroProps) {
   const { currentLang } = useLanguage();
   const isArabic = currentLang === 'ar';
@@ -102,6 +108,11 @@ export default function ReusableHero({
                   className="bg-white/50 backdrop-blur-sm rounded-xl p-6"
                 >
                   <div className="space-y-4">
+                    {description && (
+                      <p className="text-lg text-gray-600 leading-relaxed">
+                        {description}
+                      </p>
+                    )}
                     {objectives && (
                       <div
                         className="text-lg text-gray-600 prose prose-blue max-w-none prose-p:leading-relaxed prose-headings:text-gray-900"
@@ -110,6 +121,39 @@ export default function ReusableHero({
                     )}
                   </div>
                 </motion.div>
+              </div>
+
+              {/* Buttons */}
+              <div className="flex flex-wrap gap-4 mt-6">
+                <motion.button
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="px-6 py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors"
+                >
+                  {primaryButtonText}
+                </motion.button>
+                
+                {secondaryButtonProps ? (
+                  <motion.a
+                    href={secondaryButtonProps.href}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
+                    className="px-6 py-3 rounded-lg bg-white text-blue-600 font-medium border border-blue-200 hover:bg-blue-50 transition-colors"
+                  >
+                    {secondaryButtonProps.text}
+                  </motion.a>
+                ) : (
+                  <motion.button
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
+                    className="px-6 py-3 rounded-lg bg-white text-blue-600 font-medium border border-blue-200 hover:bg-blue-50 transition-colors"
+                  >
+                    {secondaryButtonText}
+                  </motion.button>
+                )}
               </div>
             </motion.div>
 

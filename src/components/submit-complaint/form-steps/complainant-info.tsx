@@ -125,20 +125,30 @@ export function ComplainantInfo({ onNext, data }: ComplainantInfoProps) {
   const t = labels[currentLang as keyof typeof labels]
 
   return (
-    <motion.form onSubmit={handleSubmit} className="space-y-6">
-      <div>
-        <Label>{t.complainantType}</Label>
+    <motion.form
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      onSubmit={handleSubmit}
+      className={`space-y-6 ${currentLang === 'ar' ? "rtl" : "ltr"}`}
+    >
+      <div className="space-y-4">
+        <Label className={`${currentLang === "ar" ? "text-right block" : ""}`}>
+          {t.complainantType}
+        </Label>
         <RadioGroup
           defaultValue={complainantType}
-          onValueChange={(value) => setComplainantType(value as "individual" | "firm")}
-          className={`flex space-x-4 mt-2 ${currentLang === "ar" ? "flex-row-reverse" : ""}`}
+          onValueChange={(value) => {
+            setComplainantType(value as "individual" | "firm")
+            setFormData({ ...formData, complainantType: value as "individual" | "firm" })
+          }}
+          className={`flex ${currentLang === "ar" ? "flex-row-reverse justify-end" : ""} gap-4`}
         >
-          <div className={`flex items-center ${currentLang === "ar" ? "space-x-reverse" : "space-x-2"}`}>
-            <RadioGroupItem value="individual" id="individual" />
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="individual" id="individual" className={`${currentLang === "ar" ? "ml-2" : "mr-2"}`} />
             <Label htmlFor="individual">{t.individual}</Label>
           </div>
-          <div className={`flex items-center ${currentLang === "ar" ? "space-x-reverse" : "space-x-2"}`}>
-            <RadioGroupItem value="firm" id="firm" />
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="firm" id="firm" className={`${currentLang === "ar" ? "ml-2" : "mr-2"}`} />
             <Label htmlFor="firm">{t.firm}</Label>
           </div>
         </RadioGroup>
@@ -223,8 +233,13 @@ export function ComplainantInfo({ onNext, data }: ComplainantInfoProps) {
         />
       </div>
 
-      <div className={`flex ${currentLang === "ar" ? "justify-start" : "justify-end"}`}>
-        <Button type="submit">{t.next}</Button>
+      <div className="flex justify-end mt-6">
+        <Button 
+          type="submit" 
+          className="bg-gradient-to-r from-[#1E78C2] to-[#862996] hover:opacity-90 text-white"
+        >
+          {t.next}
+        </Button>
       </div>
     </motion.form>
   )

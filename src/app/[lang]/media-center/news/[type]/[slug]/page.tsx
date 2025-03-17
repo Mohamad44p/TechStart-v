@@ -1,6 +1,6 @@
 import { getPostBySlug, getRelatedPosts } from "@/app/actions/fetch-posts";
 import {  toPostType } from "@/types/blog";
-import { BlogHeader } from "@/components/News-blog/BlogHeader";
+import { NewsHeader } from "@/components/News-blog/BlogHeader";
 import { RelatedPosts } from "@/components/News-blog/RelatedPosts";
 import { ShareButtons } from "@/components/News-blog/ShareButtons";
 import { notFound } from "next/navigation";
@@ -75,7 +75,7 @@ export default async function PostPage(props: Props) {
         defaultTitle={lang === "ar" ? post.title_ar : post.title_en}
         defaultDescription={lang === "ar" ? post.description_ar ?? "" : post.description_en ?? ""}
       />
-      <BlogHeader
+      <NewsHeader
         title={lang === "ar" ? post.title_ar : post.title_en}
         description={lang === "ar" ? post.description_ar : post.description_en}
         image={post.imageUrl}

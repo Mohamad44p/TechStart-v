@@ -24,7 +24,7 @@ const FeaturedCard = ({ post, currentLang, formatDate }: {
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         <div className="absolute bottom-4 left-4 right-4">
           <span className="inline-block px-3 py-1 text-xs font-semibold text-white bg-[#862996] rounded-full">
-            {post.type}
+            {post.type === 'blog' ? (currentLang === 'ar' ? 'الأخبار والبيانات الصحفية' : 'News & Press Releases') : post.type}
           </span>
         </div>
       </div>
@@ -94,7 +94,7 @@ export function FeaturedPosts({ posts }: { posts: BlogPost[] }) {
     <section className="py-12 bg-gradient-to-b from-white to-gray-50">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-12 bg-gradient-to-r from-[#1b316e] to-[#862996] bg-clip-text text-transparent">
-          {currentLang === 'ar' ? 'المنشورات المميزة' : 'Featured Posts'}
+          {currentLang === 'ar' ? 'الأخبار والبيانات الصحفية المميزة' : 'Featured News & Press Releases'}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {posts.map((post) => (

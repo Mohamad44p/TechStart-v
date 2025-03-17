@@ -118,11 +118,20 @@ export function ComplaintDescription({ onNext, onPrevious, data }: ComplaintDesc
         </RadioGroup>
       </div>
 
-      <div className="flex justify-between">
-        <Button type="button" onClick={onPrevious} variant="outline">
+      <div className={`flex justify-between`}>
+        <Button 
+          type="button" 
+          variant="outline" 
+          onClick={onPrevious}
+        >
           {t.previous}
         </Button>
-        <Button type="submit">{t.next}</Button>
+        <Button 
+          type="submit" 
+          className="bg-gradient-to-r from-[#1E78C2] to-[#862996] hover:opacity-90 text-white"
+        >
+          {t.next}
+        </Button>
       </div>
     </motion.form>
   )

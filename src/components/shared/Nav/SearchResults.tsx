@@ -42,7 +42,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       case 'program':
         return 'Program'
       case 'blog':
-        return 'Blog'
+        return 'News & Press Releases'
       case 'gallery':
         return 'Gallery'
       case 'video':

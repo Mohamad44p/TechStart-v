@@ -25,6 +25,9 @@ export function ContentGrid({ title, subtitle, items }: ContentGridProps) {
     if (type === "all") {
       return currentLang === "ar" ? "الكل" : "All";
     }
+    if (type === "blog") {
+      return currentLang === "ar" ? "الأخبار والبيانات الصحفية" : "News & Press Releases";
+    }
     return type;
   };
 

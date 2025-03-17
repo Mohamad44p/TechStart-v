@@ -71,11 +71,19 @@ export function Confirmation({ onSubmit, onPrevious, data, isSubmitting }: Confi
         </Label>
       </div>
 
-      <div className="flex justify-between">
-        <Button type="button" onClick={onPrevious} variant="outline" disabled={isSubmitting}>
+      <div className="flex justify-between mt-8">
+        <Button 
+          type="button" 
+          variant="outline" 
+          onClick={onPrevious}
+        >
           {t.previous}
         </Button>
-        <Button type="submit" disabled={!confirmed || isSubmitting}>
+        <Button 
+          type="submit" 
+          disabled={!confirmed || isSubmitting}
+          className="bg-gradient-to-r from-[#1E78C2] to-[#862996] hover:opacity-90 text-white"
+        >
           {isSubmitting ? t.submitting : t.submit}
         </Button>
       </div>

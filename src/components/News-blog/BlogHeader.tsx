@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Calendar, Clock } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
-interface BlogHeaderProps {
+interface NewsHeaderProps {
   title: string;
   description: string | null;
   image: string | null;
@@ -14,14 +14,14 @@ interface BlogHeaderProps {
   type: string;
 }
 
-export function BlogHeader({
+export function NewsHeader({
   title,
   description,
   image,
   date,
   readTime,
   type,
-}: BlogHeaderProps) {
+}: NewsHeaderProps) {
   const { currentLang } = useLanguage();
 
   const formatDate = (date: Date) => {

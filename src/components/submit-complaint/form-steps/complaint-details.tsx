@@ -1,9 +1,10 @@
-import { useState, FormEvent } from "react"
+import { useState } from "react"
 import { motion } from "framer-motion"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { toast } from "@/hooks/use-toast"
+import { useLanguage } from "@/context/LanguageContext"
 
 interface ComplaintDetailsData {
   facts: string
@@ -16,26 +17,46 @@ interface ComplaintDetailsProps {
 }
 
 export function ComplaintDetails({ onNext, onPrevious, data }: ComplaintDetailsProps) {
-  const [formData, setFormData] = useState<ComplaintDetailsData>({
+  const [formData, setFormData] = useState({
     facts: data?.facts || "",
   })
+
+  const { currentLang } = useLanguage()
+
+  const labels = {
+    en: {
+      factsAndGrounds: "Facts and grounds of the complaint",
+      factsPlaceholder: "Please describe in detail the facts and grounds of your complaint...",
+      previous: "Previous",
+      next: "Next"
+    },
+    ar: {
+      factsAndGrounds: "حقائق وأسباب الشكوى",
+      factsPlaceholder: "يرجى وصف حقائق وأسباب شكواك بالتفصيل...",
+      previous: "السابق",
+      next: "التالي"
+    }
+  }
+
+  const t = labels[currentLang as keyof typeof labels]
 
   const validateForm = () => {
     if (!formData.facts.trim()) {
       toast({
-        title: "Error",
-        description: "Facts and grounds of the complaint are required",
+        title: currentLang === "ar" ? "خطأ" : "Error",
+        description: currentLang === "ar" ? "حقائق وأسباب الشكوى مطلوبة" : "Facts and grounds are required",
         variant: "destructive",
-      });
-      return false;
+      })
+      return false
     }
-    return true;
-  };
+    return true
+  }
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-    onNext(formData);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (validateForm()) {
+      onNext(formData)
+    }
   }
 
   return (
@@ -51,9 +72,20 @@ export function ComplaintDetails({ onNext, onPrevious, data }: ComplaintDetailsP
         />
       </div>
 
-      <div className="flex justify-between">
-        <Button type="button" onClick={onPrevious} variant="outline">Previous</Button>
-        <Button type="submit">Next</Button>
+      <div className="flex justify-between mt-6">
+        <Button 
+          type="button" 
+          variant="outline" 
+          onClick={onPrevious}
+        >
+          {t.previous}
+        </Button>
+        <Button 
+          type="submit" 
+          className="bg-gradient-to-r from-[#1E78C2] to-[#862996] hover:opacity-90 text-white"
+        >
+          {t.next}
+        </Button>
       </div>
     </motion.form>
   )

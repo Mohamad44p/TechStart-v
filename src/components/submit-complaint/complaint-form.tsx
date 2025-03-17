@@ -111,8 +111,18 @@ export function ComplaintForm() {
         <div className="p-8">
           <Tabs defaultValue="regular" className="w-full" dir={currentLang === "ar" ? "rtl" : "ltr"}>
             <TabsList className="grid w-full grid-cols-2 mb-8">
-              <TabsTrigger value="regular">{t.regularComplaint}</TabsTrigger>
-              <TabsTrigger value="anonymous">{t.anonymousComplaint}</TabsTrigger>
+              <TabsTrigger 
+                value="regular" 
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#1E78C2] data-[state=active]:to-[#862996] data-[state=active]:text-white"
+              >
+                {t.regularComplaint}
+              </TabsTrigger>
+              <TabsTrigger 
+                value="anonymous"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#1E78C2] data-[state=active]:to-[#862996] data-[state=active]:text-white"
+              >
+                {t.anonymousComplaint}
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="regular">
@@ -126,7 +136,7 @@ export function ComplaintForm() {
                         animate={{
                           width: `${(idx <= currentStep ? 100 : 0) / steps[currentLang as keyof typeof steps].length}%`,
                         }}
-                        className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary"
+                        className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-[#1E78C2] to-[#862996]"
                       />
                     ))}
                   </div>
@@ -135,17 +145,19 @@ export function ComplaintForm() {
                       <div
                         key={step}
                         className={`flex flex-col items-center ${
-                          idx <= currentStep ? "text-primary" : "text-gray-400"
+                          idx <= currentStep ? "text-[#1E78C2]" : "text-gray-400"
                         }`}
                       >
                         <div
-                          className={`rounded-full transition duration-500 ease-in-out h-12 w-12 py-3 border-2 ${
-                            idx <= currentStep ? "border-primary bg-primary text-white" : "border-gray-300"
-                          } flex items-center justify-center`}
+                          className={`rounded-full transition duration-500 ease-in-out h-12 w-12 py-3 border-2 flex items-center justify-center ${
+                            idx <= currentStep 
+                              ? "border-none bg-gradient-to-r from-[#1E78C2] to-[#862996] text-white" 
+                              : "border-gray-300"
+                          }`}
                         >
                           {idx + 1}
                         </div>
-                        <div className="text-xs mt-2">{step}</div>
+                        <div className="text-xs mt-2 text-center">{step}</div>
                       </div>
                     ))}
                   </div>

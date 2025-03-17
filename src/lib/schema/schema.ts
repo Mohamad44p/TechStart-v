@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const PostType = {
-  NEWS: 'blog',
+  NEWS: 'blog', // 'News & Press Releases' displayed in UI
   PUBLICATION: 'publication',
   ANNOUNCEMENT: 'announcement'
 } as const;

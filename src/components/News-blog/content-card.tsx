@@ -47,7 +47,7 @@ export function ContentCard({
       <div className="p-6">
         <div className="flex items-center gap-2 mb-3">
           <span className="inline-block px-3 py-1 text-xs font-semibold text-white bg-[#862996] rounded-full">
-            {type}
+            {type === 'blog' ? 'News & Press Releases' : type}
           </span>
         </div>
         
