@@ -136,7 +136,7 @@ const OurTeam = ({ teamMembersData }: OurTeamProps) => {
           transition={{ duration: 0.8 }}
         >
           <h2 className="text-5xl md:text-6xl font-bold p-3 tracking-tight bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-            {currentLang === "ar" ? "تعرف على فريقنا المذهل" : "Meet Our Team"}
+            {currentLang === "ar" ? "تعرف على فريقنا " : "Meet Our Team"}
           </h2>
           <div className="w-32 h-1.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 mx-auto rounded-full" />
         </motion.div>

@@ -179,12 +179,12 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory,
         {/* Tabs Title and Description Section */}
         <div className="mb-12 text-center">
           <motion.h2 
-            className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-[#1C6AAF] to-[#872996] bg-clip-text text-transparent"
+            className="text-3xl md:text-4xl font-bold mb-4 p-3 bg-gradient-to-r from-[#1C6AAF] to-[#872996] bg-clip-text text-transparent"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            {programName ? programName : (currentLang === "ar" ? "تفاصيل البرنامج" : "Program Details")}
+            {programName ? `${currentLang === "ar" ? "منحه " : ""}${programName} ${currentLang === "ar" ? "" : "Windows"}` : (currentLang === "ar" ? "تفاصيل البرنامج" : "Program Details")}
           </motion.h2>
           <motion.div 
             className="w-24 h-1 bg-gradient-to-r from-[#1C6AAF] to-[#872996] mx-auto mb-6"
@@ -192,16 +192,6 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory,
             animate={{ width: 96 }}
             transition={{ duration: 0.7 }}
           />
-          <motion.p 
-            className="text-gray-600 max-w-2xl mx-auto"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            {currentLang === "ar" 
-              ? "استكشف جميع المعلومات المتعلقة بالبرنامج، بما في ذلك المتطلبات والمزايا وعملية التقديم."
-              : "Explore all information related to the program, including requirements, benefits, and the application process."}
-          </motion.p>
         </div>
 
         {isMobile ? (

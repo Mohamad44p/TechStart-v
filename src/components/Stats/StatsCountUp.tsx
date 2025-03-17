@@ -22,11 +22,6 @@ export default function StatsCountUp({ stats }: StatsCountUpProps) {
               {currentLang === "ar" ? "تيك ستارت بالأرقام" : "TechStart in numbers"}
             </h2>
             <div className="w-32 h-1.5 bg-gradient-to-r from-[#1b316e] to-[#862996] mx-auto rounded-full mt-4 mb-8" />
-            <p className="mt-4 text-lg leading-8 text-[#142451]">
-              {currentLang === "ar"
-                ? "اكتشف حجم مبادراتنا التقنية العالمية"
-                : "Discover the scale of our global tech initiatives"}
-            </p>
           </div>
           <dl className="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {stats.map((stat) => (
