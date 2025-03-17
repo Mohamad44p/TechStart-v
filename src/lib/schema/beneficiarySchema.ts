@@ -3,27 +3,11 @@ import * as z from "zod"
 export const beneficiarySchema = z.object({
   title_en: z.string().min(2),
   title_ar: z.string().min(2),
-  description_en: z.union([
-    z.string().min(10),
-    z.string().max(0),
-    z.null()
-  ]).optional().nullable(),
-  description_ar: z.union([
-    z.string().min(10),
-    z.string().max(0),
-    z.null()
-  ]).optional().nullable(),
-  imageUrl: z.string().nullable(),
-  buttonText: z.union([
-    z.string().min(2),
-    z.string().max(0),
-    z.null()
-  ]).optional().nullable(),
-  buttonLink: z.union([
-    z.string().url(),
-    z.string().max(0),
-    z.null()
-  ]).optional().nullable(),
+  description_en: z.string().optional().nullable(),
+  description_ar: z.string().optional().nullable(),
+  imageUrl: z.string(),
+  ctaText: z.string().optional().nullable(),
+  ctaLink: z.string().optional().nullable(),
   categoryId: z.string().min(1),
 })
 

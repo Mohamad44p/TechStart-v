@@ -9,47 +9,80 @@ import { cache } from 'react'
 import type { ApiResponse, Beneficiary, Category } from '@/types/beneficiary'
 
 export async function createBeneficiary(formData: FormData) {
-  const buttonText = formData.get("buttonText")?.toString() || "";
-  const buttonLink = formData.get("buttonLink")?.toString() || "";
-  
-  const data = {
-    title_en: formData.get("title_en")?.toString() || "",
-    title_ar: formData.get("title_ar")?.toString() || "",
-    description_en: formData.get("description_en")?.toString() || null,
-    description_ar: formData.get("description_ar")?.toString() || null,
-    imageUrl: formData.get("imageUrl")?.toString() || "",
-    buttonText: buttonText.trim() === "" ? null : buttonText,
-    buttonLink: buttonLink.trim() === "" ? null : buttonLink,
-    categoryId: formData.get("categoryId")?.toString() || "",
-  }
-
   try {
+    // Ensure required fields are present
+    const title_en = formData.get("title_en")?.toString()
+    const title_ar = formData.get("title_ar")?.toString()
+    const imageUrl = formData.get("imageUrl")?.toString()
+    const categoryId = formData.get("categoryId")?.toString()
+
+    if (!title_en || !title_ar || !imageUrl || !categoryId) {
+      return { 
+        success: false, 
+        error: "Required fields are missing" 
+      }
+    }
+
+    // Get optional fields
+    const description_en = formData.get("description_en")?.toString() || null
+    const description_ar = formData.get("description_ar")?.toString() || null
+    const ctaText = formData.get("ctaText")?.toString() || null
+    const ctaLink = formData.get("ctaLink")?.toString() || null
+
+    const data = {
+      title_en,
+      title_ar,
+      imageUrl,
+      categoryId,
+      description_en,
+      description_ar,
+      ctaText,
+      ctaLink,
+    }
+
     const beneficiary = await db.beneficiary.create({
       data,
     })
     revalidatePath("/admin/beneficiaries")
     return { success: true, data: beneficiary }
   } catch (error) {
+    console.error("Error creating beneficiary:", error)
     return { success: false, error: "Failed to create beneficiary" }
   }
 }
 
 export async function updateBeneficiary(id: string, formData: FormData) {
-  const buttonText = formData.get("buttonText")?.toString() || "";
-  const buttonLink = formData.get("buttonLink")?.toString() || "";
-  
-  const data = {
-    title_en: formData.get("title_en")?.toString() || "",
-    title_ar: formData.get("title_ar")?.toString() || "",
-    description_en: formData.get("description_en")?.toString() || null,
-    description_ar: formData.get("description_ar")?.toString() || null,
-    imageUrl: formData.get("imageUrl")?.toString() || "",
-    buttonText: buttonText.trim() === "" ? null : buttonText,
-    buttonLink: buttonLink.trim() === "" ? null : buttonLink,
-    categoryId: formData.get("categoryId")?.toString() || "",
-  }
-
   try {
+    // Ensure required fields are present
+    const title_en = formData.get("title_en")?.toString()
+    const title_ar = formData.get("title_ar")?.toString()
+    const imageUrl = formData.get("imageUrl")?.toString()
+    const categoryId = formData.get("categoryId")?.toString()
+
+    if (!title_en || !title_ar || !imageUrl || !categoryId) {
+      return { 
+        success: false, 
+        error: "Required fields are missing" 
+      }
+    }
+
+    // Get optional fields
+    const description_en = formData.get("description_en")?.toString() || null
+    const description_ar = formData.get("description_ar")?.toString() || null
+    const ctaText = formData.get("ctaText")?.toString() || null
+    const ctaLink = formData.get("ctaLink")?.toString() || null
+
+    const data = {
+      title_en,
+      title_ar,
+      imageUrl,
+      categoryId,
+      description_en,
+      description_ar,
+      ctaText,
+      ctaLink,
+    }
+
     const beneficiary = await db.beneficiary.update({
       where: { id },
       data,
@@ -57,6 +90,7 @@ export async function updateBeneficiary(id: string, formData: FormData) {
     revalidatePath("/admin/beneficiaries")
     return { success: true, data: beneficiary }
   } catch (error) {
+    console.error("Error updating beneficiary:", error)
     return { success: false, error: "Failed to update beneficiary" }
   }
 }

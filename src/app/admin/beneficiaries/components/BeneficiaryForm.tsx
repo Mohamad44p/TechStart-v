@@ -46,8 +46,8 @@ export function BeneficiaryForm({
       description_en: "",
       description_ar: "",
       imageUrl: "",
-      buttonText: "",
-      buttonLink: "",
+      ctaText: "",
+      ctaLink: "",
       categoryId: "",
     },
   })
@@ -56,18 +56,25 @@ export function BeneficiaryForm({
     setIsSubmitting(true)
     const formData = new FormData()
     
-    // Process optional fields to handle empty strings
-    const processedData = {
-      ...data,
-      buttonText: data.buttonText && data.buttonText.trim() !== "" ? data.buttonText : null,
-      buttonLink: data.buttonLink && data.buttonLink.trim() !== "" ? data.buttonLink : null,
-    }
+    // Always append required fields
+    formData.append("title_en", data.title_en)
+    formData.append("title_ar", data.title_ar)
+    formData.append("imageUrl", data.imageUrl)
+    formData.append("categoryId", data.categoryId)
     
-    Object.entries(processedData).forEach(([key, value]) => {
-      if (value !== null && value !== undefined) {
-        formData.append(key, value.toString())
-      }
-    })
+    // Handle optional fields
+    if (data.description_en?.trim()) {
+      formData.append("description_en", data.description_en.trim())
+    }
+    if (data.description_ar?.trim()) {
+      formData.append("description_ar", data.description_ar.trim())
+    }
+    if (data.ctaText?.trim()) {
+      formData.append("ctaText", data.ctaText.trim())
+    }
+    if (data.ctaLink?.trim()) {
+      formData.append("ctaLink", data.ctaLink.trim())
+    }
 
     try {
       const result = mode === 'edit' && id
@@ -166,7 +173,11 @@ export function BeneficiaryForm({
                     <FormItem>
                       <FormLabel>Description (English) (Optional)</FormLabel>
                       <FormControl>
-                        <Textarea {...field} />
+                        <Textarea 
+                          {...field} 
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(e.target.value || "")}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -196,7 +207,12 @@ export function BeneficiaryForm({
                     <FormItem>
                       <FormLabel>Description (Arabic) (Optional)</FormLabel>
                       <FormControl>
-                        <Textarea {...field} dir="rtl" />
+                        <Textarea 
+                          {...field} 
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(e.target.value || "")}
+                          dir="rtl"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -208,10 +224,10 @@ export function BeneficiaryForm({
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="buttonText"
+                name="ctaText"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Button Text (Optional)</FormLabel>
+                    <FormLabel>CTA Text (Optional)</FormLabel>
                     <FormControl>
                       <Input 
                         {...field} 
@@ -226,10 +242,10 @@ export function BeneficiaryForm({
 
               <FormField
                 control={form.control}
-                name="buttonLink"
+                name="ctaLink"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Button Link (Optional)</FormLabel>
+                    <FormLabel>CTA Link (Optional)</FormLabel>
                     <FormControl>
                       <Input 
                         {...field} 

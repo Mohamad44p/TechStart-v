@@ -187,9 +187,18 @@ export function MultiVideoUpload({ onUpload, defaultVideos = [] }: MultiVideoUpl
     const [isLoading, setIsLoading] = useState(true)
 
     if (video.type === "youtube") {
-      const videoId = video.url.includes("embed")
-        ? video.url.split("/").pop()?.split("?")[0]
-        : video.url.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v(?:\/|=)|(?:.*\/)?)([\w-]{11}))/)?.[1]
+      let videoId;
+      
+      if (video.url.includes("embed")) {
+        videoId = video.url.split("/").pop()?.split("?")[0];
+      } else if (video.url.includes("youtube.com/shorts/")) {
+        // Handle YouTube Shorts URLs
+        const shortsMatch = video.url.match(/youtube\.com\/shorts\/([^?&#]+)/);
+        videoId = shortsMatch?.[1];
+      } else {
+        // Handle standard YouTube URLs
+        videoId = video.url.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v(?:\/|=)|(?:.*\/)?)([\w-]{11}))/)?.[1];
+      }
 
       if (!videoId) {
         return <div className="text-red-500">Invalid YouTube URL</div>
@@ -397,6 +406,13 @@ export function MultiVideoUpload({ onUpload, defaultVideos = [] }: MultiVideoUpl
 }
 
 function getYoutubeVideoId(url: string) {
+  // Handle YouTube Shorts URLs
+  if (url.includes('youtube.com/shorts/')) {
+    const shortsMatch = url.match(/youtube\.com\/shorts\/([^?&#]+)/)
+    return shortsMatch && shortsMatch[1].length === 11 ? shortsMatch[1] : null
+  }
+  
+  // Handle standard YouTube URLs
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/
   const match = url.match(regExp)
   return match && match[2].length === 11 ? match[2] : null

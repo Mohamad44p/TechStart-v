@@ -182,8 +182,8 @@ model Beneficiary {
   description_en     String?
   description_ar     String?
   imageUrl           String
-  ctaText            String
-  ctaLink            String
+  ctaText            String?
+  ctaLink            String?
   categoryId         String
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
