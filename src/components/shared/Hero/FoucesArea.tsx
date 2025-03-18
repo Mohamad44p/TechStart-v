@@ -48,22 +48,53 @@ const ServiceCard = ({
           },
         },
       }}
+      className="h-full"
     >
-      <Card className="group relative h-full overflow-hidden rounded-2xl bg-white shadow-lg transition-all duration-300 hover:shadow-2xl dark:bg-gray-800">
+      <Card className="group relative flex flex-col h-full overflow-hidden rounded-2xl bg-white shadow-lg transition-all duration-300 hover:shadow-2xl dark:bg-gray-800">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-blue-500/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
         <div className="relative aspect-[4/3] overflow-hidden">
           <Image
             src={getImageUrl(card.imageUrl) || "/placeholder.svg"}
             fill
-            className="transition-transform object-contain duration-300 group-hover:scale-110"
+            className="object-contain transition-transform duration-300 group-hover:scale-110"
             alt={currentLang === "ar" ? card.titleAr : card.titleEn}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
         </div>
-        <div className="p-6">
+        <div className="flex flex-col flex-grow p-6">
           <h2 className="mb-2 text-2xl font-bold text-[#1F6DB3] transition-colors duration-300 group-hover:text-purple-600 dark:text-gray-100 dark:group-hover:text-purple-400">
             {currentLang === "ar" ? card.titleAr : card.titleEn}
           </h2>
+          
+          <div className="flex-grow"></div>
+          
+          {card.buttonUrl && (
+            <div className="mt-4">
+              <a
+                href={card.buttonUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center rounded-md bg-[#1F6DB3] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-purple-600 dark:bg-purple-700 dark:hover:bg-purple-600 z-10 relative"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {currentLang === "ar" ? "المزيد" : "Learn More"}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className={`ml-2 h-4 w-4 ${currentLang === "ar" ? "rotate-180" : ""}`}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"
+                  />
+                </svg>
+              </a>
+            </div>
+          )}
         </div>
         <div className="absolute bottom-0 left-0 h-1 w-full origin-left transform bg-gradient-to-r from-purple-500 to-blue-500 scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></div>
       </Card>

@@ -9,6 +9,9 @@ import {
   SortingState,
   getSortedRowModel,
   PaginationState,
+  ColumnFiltersState,
+  getFilteredRowModel,
+  Column,
 } from "@tanstack/react-table";
 
 import {
@@ -30,6 +33,7 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { PaginatedResult, PaginationParams } from "@/app/actions/pages/team-actions";
+import { ArrowUpDown } from "lucide-react";
 
 interface TableConfig {
   statusOptions: ReadonlyArray<{
@@ -59,6 +63,7 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: config.defaultPageSize,
@@ -67,9 +72,13 @@ export function DataTable<TData, TValue>({
   // Use a ref to track if this is the initial render
   const isInitialRender = useRef(true);
   const searchTimeoutRef = useRef<NodeJS.Timeout>();
+  const sortingTimeoutRef = useRef<NodeJS.Timeout>();
 
   // Determine if we're using paginated data
   const isPaginated = data && typeof data === 'object' && 'data' in data;
+  
+  // Determine if we're using server-side pagination (based on onPaginationChange prop)
+  const isServerPagination = !!onPaginationChange;
   
   // Extract the actual data array and pagination info
   const tableData = isPaginated ? (data as PaginatedResult<TData>).data : (data as TData[]);
@@ -78,12 +87,130 @@ export function DataTable<TData, TValue>({
     ? (data as PaginatedResult<TData>).totalPages 
     : Math.ceil(tableData.length / pagination.pageSize);
 
+  // Get all valid filter column IDs
+  const getValidColumnIds = useCallback(() => {
+    return columns.reduce((acc, column) => {
+      if ('accessorKey' in column) {
+        acc.push(column.accessorKey as string);
+      }
+      return acc;
+    }, [] as string[]);
+  }, [columns]);
+
+  // Find a valid column ID to filter by
+  const findValidFilterColumnId = useCallback(() => {
+    const validColumnIds = getValidColumnIds();
+    
+    // First try to use the first filterableColumn if it exists
+    if (config.filterableColumns?.length) {
+      const filterColumnId = config.filterableColumns[0].id;
+      if (validColumnIds.includes(filterColumnId)) {
+        return filterColumnId;
+      }
+    } 
+    
+    // Otherwise try to use the first sortable column
+    if (config.sortableColumns?.length) {
+      const sortColumnId = config.sortableColumns[0];
+      if (validColumnIds.includes(sortColumnId)) {
+        return sortColumnId;
+      }
+    }
+    
+    // Finally, use the first valid column ID
+    return validColumnIds.length > 0 ? validColumnIds[0] : null;
+  }, [config.filterableColumns, config.sortableColumns, getValidColumnIds]);
+
+  // Apply client-side filtering if we're not using server-side pagination
+  useEffect(() => {
+    if (isServerPagination || !searchQuery) {
+      setColumnFilters([]);
+      return;
+    }
+    
+    const filterColumnId = findValidFilterColumnId();
+    
+    // Only set column filter if we have a valid column ID
+    if (filterColumnId) {
+      setColumnFilters([{
+        id: filterColumnId,
+        value: searchQuery
+      }]);
+    } else {
+      setColumnFilters([]);
+    }
+  }, [searchQuery, isServerPagination, findValidFilterColumnId]);
+
+  // Process columns to add sorting UI to sortable columns
+  const processedColumns = columns.map(column => {
+    // Skip columns without accessorKey or that are already configured
+    if (!('accessorKey' in column) || 
+        (typeof column.header !== 'string' && typeof column.header !== 'undefined')) {
+      return column;
+    }
+
+    const accessorKey = column.accessorKey as string;
+    
+    // Check if this column is sortable according to config
+    const isSortable = config.sortableColumns?.includes(accessorKey);
+    
+    if (isSortable) {
+      return {
+        ...column,
+        header: ({ column }: { column: Column<TData, unknown> }) => {
+          const headerText = typeof column.columnDef.header === 'string' 
+            ? column.columnDef.header 
+            : accessorKey;
+            
+          return (
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+              className="whitespace-nowrap"
+            >
+              {headerText}
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          );
+        },
+      };
+    }
+    
+    return column;
+  });
+
+  // Function to get the default sort column
+  const getDefaultSortColumn = useCallback(() => {
+    const validColumnIds = getValidColumnIds();
+    
+    // First check if there's an active sort
+    if (sorting.length > 0 && validColumnIds.includes(sorting[0].id)) {
+      return sorting[0].id;
+    }
+    
+    // Then check if there are sortable columns configured
+    if (config.sortableColumns?.length) {
+      const sortColumnId = config.sortableColumns[0];
+      if (validColumnIds.includes(sortColumnId)) {
+        return sortColumnId;
+      }
+    }
+    
+    // Finally, use the first valid column ID
+    return validColumnIds.length > 0 ? validColumnIds[0] : 'id';
+  }, [sorting, config.sortableColumns, getValidColumnIds]);
+
   // Handle search
   const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchQuery(value);
     
-    // Reset to first page when searching
+    // For client-side filtering, we don't need to do anything else
+    if (!isServerPagination) {
+      return;
+    }
+    
+    // Reset to first page when searching on server
     setPagination(prev => ({ ...prev, pageIndex: 0 }));
 
     // Clear previous timeout
@@ -91,8 +218,8 @@ export function DataTable<TData, TValue>({
       clearTimeout(searchTimeoutRef.current);
     }
 
-    // Create pagination params with search
-    const sortColumn = sorting.length > 0 ? sorting[0].id : 'createdAt';
+    // Get default sort column and direction
+    const sortColumn = getDefaultSortColumn();
     const sortDirection = sorting.length > 0 ? (sorting[0].desc ? 'desc' : 'asc') : 'asc';
     
     const searchParams: PaginationParams = {
@@ -111,7 +238,37 @@ export function DataTable<TData, TValue>({
         });
       }
     }, 300);
-  }, [sorting, pagination.pageSize, onPaginationChange]);
+  }, [sorting, pagination.pageSize, onPaginationChange, isServerPagination, getDefaultSortColumn]);
+
+  // Handle sorting change
+  useEffect(() => {
+    if (isInitialRender.current || !isServerPagination) return;
+    
+    if (!onPaginationChange) return;
+
+    // Clear previous timeout
+    if (sortingTimeoutRef.current) {
+      clearTimeout(sortingTimeoutRef.current);
+    }
+
+    const sortColumn = getDefaultSortColumn();
+    const sortDirection = sorting.length > 0 ? (sorting[0].desc ? 'desc' : 'asc') : 'asc';
+    
+    const sortParams: PaginationParams = {
+      page: pagination.pageIndex + 1,
+      pageSize: pagination.pageSize,
+      sortBy: sortColumn,
+      sortOrder: sortDirection as 'asc' | 'desc',
+      search: searchQuery,
+    };
+    
+    // Debounce the sort request
+    sortingTimeoutRef.current = setTimeout(() => {
+      onPaginationChange(sortParams).catch(error => {
+        console.error('Error during sorting:', error);
+      });
+    }, 300);
+  }, [sorting, onPaginationChange, pagination.pageIndex, pagination.pageSize, searchQuery, isServerPagination, getDefaultSortColumn]);
 
   // Handle pagination change
   useEffect(() => {
@@ -121,9 +278,12 @@ export function DataTable<TData, TValue>({
       return;
     }
     
-    if (!onPaginationChange) return;
+    if (!isServerPagination || !onPaginationChange) return;
 
-    const sortColumn = sorting.length > 0 ? sorting[0].id : 'createdAt';
+    // Don't trigger for sorting changes - we handle those separately
+    if (sortingTimeoutRef.current) return;
+
+    const sortColumn = getDefaultSortColumn();
     const sortDirection = sorting.length > 0 ? (sorting[0].desc ? 'desc' : 'asc') : 'asc';
     
     const paginationParams: PaginationParams = {
@@ -137,23 +297,58 @@ export function DataTable<TData, TValue>({
     onPaginationChange(paginationParams).catch(error => {
       console.error('Error during pagination:', error);
     });
-  }, [pagination, sorting, onPaginationChange, searchQuery]);
+  }, [pagination, onPaginationChange, searchQuery, sorting, isServerPagination, getDefaultSortColumn]);
+
+  // Validate that sortableColumns actually exist in the columns array
+  useEffect(() => {
+    if (config.sortableColumns && config.sortableColumns.length > 0 && process.env.NODE_ENV === 'development') {
+      const validColumnIds = getValidColumnIds();
+      
+      // Check if all sortable columns exist
+      const invalidColumns = config.sortableColumns.filter(colId => !validColumnIds.includes(colId));
+      
+      if (invalidColumns.length > 0) {
+        console.warn(
+          `[DataTable] The following sortable columns do not exist in the columns array: ${invalidColumns.join(', ')}. ` +
+          `Valid column IDs are: ${validColumnIds.join(', ')}`
+        );
+      }
+    }
+  }, [columns, config.sortableColumns, getValidColumnIds]);
 
   const table = useReactTable({
-    data: tableData,
-    columns,
+    data: tableData || [],
+    columns: processedColumns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     onPaginationChange: setPagination,
-    manualPagination: isPaginated,
-    pageCount: pageCount,
+    manualPagination: isServerPagination,
+    pageCount: isServerPagination ? pageCount : undefined,
+    getFilteredRowModel: getFilteredRowModel(),
+    onColumnFiltersChange: setColumnFilters,
     state: {
       sorting,
       pagination,
+      columnFilters,
     },
+    // Add debug and error handling
+    debugTable: process.env.NODE_ENV === 'development',
+    debugHeaders: process.env.NODE_ENV === 'development',
+    debugColumns: process.env.NODE_ENV === 'development',
   });
+
+  // Ensure counts are valid numbers
+  const validTotalCount = totalCount || 0;
+  const validPageCount = pageCount || 1;
+  
+  // Calculate current page info for display
+  const startIndex = validTotalCount > 0 ? pagination.pageIndex * pagination.pageSize + 1 : 0;
+  const endIndex = validTotalCount > 0 ? Math.min((pagination.pageIndex + 1) * pagination.pageSize, validTotalCount) : 0;
+  const showingText = validTotalCount > 0 
+    ? `Showing ${startIndex} to ${endIndex} of ${validTotalCount} entries`
+    : 'No entries to show';
 
   return (
     <div>
@@ -242,9 +437,7 @@ export function DataTable<TData, TValue>({
       {/* Pagination controls */}
       <div className="flex items-center justify-between space-x-2 py-4">
         <div className="text-sm text-muted-foreground">
-          Showing {pagination.pageIndex * pagination.pageSize + 1} to{" "}
-          {Math.min((pagination.pageIndex + 1) * pagination.pageSize, totalCount)} of{" "}
-          {totalCount} entries
+          {showingText}
         </div>
         <div className="flex items-center space-x-2">
           <Button
@@ -267,7 +460,7 @@ export function DataTable<TData, TValue>({
             <span className="text-sm font-medium">Page</span>
             <span className="text-sm font-medium">
               {table.getState().pagination.pageIndex + 1} of{" "}
-              {table.getPageCount()}
+              {validPageCount}
             </span>
           </div>
           <Button

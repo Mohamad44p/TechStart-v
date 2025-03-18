@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server"
 
 import db from "@/app/db/db"
 import { revalidatePath } from "next/cache"
-import { safeDbOperation } from "@/lib/db-utils"
 
 export type TeamMemberData = {
   nameEn: string
@@ -56,11 +56,11 @@ export async function getTeamMembers(params?: PaginationParams): Promise<Paginat
       : {};
 
     // Get total count for pagination
-    const total = await db.teamMember.count({ where });
+    const total = await db.teamMember.count({ where: where as any });
 
     // Get paginated data
     const teamMembers = await db.teamMember.findMany({
-      where,
+      where: where as any,
       orderBy: { [safeParams.sortBy]: safeParams.sortOrder },
       skip,
       take: safeParams.pageSize,

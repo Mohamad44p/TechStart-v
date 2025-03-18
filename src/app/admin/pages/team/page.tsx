@@ -9,7 +9,7 @@ import { getTeamMembers, PaginationParams, PaginatedResult } from "@/app/actions
 import { useState, useEffect, useRef } from "react"
 import { TeamMember } from "./columns"
 
-export default function TeamMembers() {
+export default function TeamMembers(props) {
   const [teamMembers, setTeamMembers] = useState<PaginatedResult<TeamMember> | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -24,43 +24,44 @@ export default function TeamMembers() {
   const initialRenderRef = useRef(true)
   const isFetchingRef = useRef(false)
 
-  useEffect(() => {
-    const fetchTeamMembers = async () => {
-      // Prevent concurrent fetches
-      if (isFetchingRef.current) return
+  // Function to fetch team members with the given parameters
+  const fetchTeamMembers = async (params: PaginationParams) => {
+    // Prevent concurrent fetches
+    if (isFetchingRef.current) return
+    
+    try {
+      isFetchingRef.current = true
+      setLoading(true)
       
-      try {
-        isFetchingRef.current = true
-        setLoading(true)
-        
-        // Ensure we're passing a valid object to getTeamMembers
-        const params: PaginationParams = {
-          page: paginationParams.page || 1,
-          pageSize: paginationParams.pageSize || teamTableConfig.defaultPageSize,
-          sortBy: paginationParams.sortBy || 'createdAt',
-          sortOrder: paginationParams.sortOrder || 'asc',
-          search: paginationParams.search || '',
-        }
-        
-        const data = await getTeamMembers(params)
-        setTeamMembers(data as PaginatedResult<TeamMember>)
-        setError(null)
-      } catch (err) {
-        console.error('Error fetching team members:', err)
-        setError(err instanceof Error ? err.message : 'Failed to fetch team members')
-      } finally {
-        setLoading(false)
-        isFetchingRef.current = false
+      // Ensure we're passing a valid object to getTeamMembers
+      const validParams: PaginationParams = {
+        page: params.page || 1,
+        pageSize: params.pageSize || teamTableConfig.defaultPageSize,
+        sortBy: params.sortBy || 'createdAt',
+        sortOrder: params.sortOrder || 'asc',
+        search: params.search || '',
       }
+      
+      const data = await getTeamMembers(validParams)
+      setTeamMembers(data as PaginatedResult<TeamMember>)
+      setError(null)
+    } catch (err) {
+      console.error('Error fetching team members:', err)
+      setError(err instanceof Error ? err.message : 'Failed to fetch team members')
+    } finally {
+      setLoading(false)
+      isFetchingRef.current = false
     }
+  }
 
+  useEffect(() => {
     // Always fetch on initial render
     if (initialRenderRef.current) {
       initialRenderRef.current = false
-      fetchTeamMembers()
+      fetchTeamMembers(paginationParams)
     } else {
       // After initial render, only fetch when pagination params change
-      fetchTeamMembers()
+      fetchTeamMembers(paginationParams)
     }
   }, [paginationParams])
 
@@ -78,13 +79,16 @@ export default function TeamMembers() {
     }
     
     // Ensure we're setting a valid object
-    setPaginationParams({
+    const newParams = {
       page: params.page || 1,
       pageSize: params.pageSize || teamTableConfig.defaultPageSize,
       sortBy: params.sortBy || 'createdAt',
       sortOrder: params.sortOrder || 'asc',
       search: params.search || '',
-    })
+    }
+    
+    // Update the state with new parameters - this will trigger the useEffect
+    setPaginationParams(newParams)
   }
 
   if (loading && !teamMembers) {

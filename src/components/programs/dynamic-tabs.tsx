@@ -229,13 +229,11 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory,
           <Tabs
             value={activeTab}
             onValueChange={setActiveTab}
-            className={`flex flex-col lg:flex-row items-start h-full gap-6 ${currentLang === 'ar' ? 'lg:flex-row-reverse' : ''
-              }`}
+            className={`flex flex-col lg:flex-row items-start h-full gap-6 ${currentLang === 'ar' ? 'lg:flex-row-reverse' : ''}`}
           >
             <div className="lg:w-96 w-full">
               <div
-                className="sticky top-4 z-10 rounded-xl shadow-lg overflow-hidden 
-                            backdrop-blur-md bg-white/90 border border-gray-100"
+                className="sticky top-4 z-10 rounded-xl shadow-lg overflow-hidden backdrop-blur-md bg-white/90 border border-gray-100"
               >
                 <TabsList
                   className="flex flex-col h-auto overflow-y-auto custom-scrollbar 
@@ -246,19 +244,10 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory,
                       <TabsTrigger
                         key={tab.slug}
                         value={tab.slug}
-                        className={`group flex items-center w-full px-4 py-4 text-start transition-all duration-300
-                                 text-sm font-medium text-gray-600 data-[state=active]:bg-gradient-to-r 
-                                 ${currentLang === 'ar'
-                            ? 'data-[state=active]:from-[#872996] data-[state=active]:to-[#1C6AAF] text-right'
-                            : 'data-[state=active]:from-[#1C6AAF] data-[state=active]:to-[#872996] text-left'
-                          } 
-                                 data-[state=active]:text-white rounded-lg hover:bg-gradient-to-r 
-                                 hover:from-[#1C6AAF]/5 hover:to-[#872996]/5 focus:outline-none 
-                                 focus:ring-2 focus:ring-[#1C6AAF]/50 relative overflow-hidden whitespace-normal break-words`}
+                        className={`group flex items-center w-full px-4 py-4 text-start transition-all duration-300 text-sm font-medium text-gray-600 data-[state=active]:bg-gradient-to-r ${currentLang === 'ar' ? 'data-[state=active]:from-[#872996] data-[state=active]:to-[#1C6AAF] text-right' : 'data-[state=active]:from-[#1C6AAF] data-[state=active]:to-[#872996] text-left'} data-[state=active]:text-white rounded-lg hover:bg-gradient-to-r hover:from-[#1C6AAF]/5 hover:to-[#872996]/5 focus:outline-none focus:ring-2 focus:ring-[#1C6AAF]/50 relative overflow-hidden whitespace-normal break-words`}
                       >
                         <motion.div
-                          className={`relative flex items-center gap-3 w-full ${currentLang === 'ar' ? 'flex-row-reverse' : ''
-                            }`}
+                          className={`relative flex items-center gap-3 w-full ${currentLang === 'ar' ? 'flex-row-reverse' : ''}`}
                           whileHover={{ x: currentLang === 'ar' ? -3 : 3 }}
                           transition={{ duration: 0.2 }}
                         >
@@ -275,8 +264,7 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory,
             </div>
 
             <div
-              className="flex-grow w-full lg:max-w-[calc(100%-25rem)] bg-white rounded-xl 
-                           shadow-lg p-8 border border-gray-100"
+              className="flex-grow w-full lg:max-w-[calc(100%-25rem)] bg-white rounded-xl shadow-lg p-8 border border-gray-100"
             >
               {tabs.map((tab) => (
                 <TabsContent

@@ -25,7 +25,7 @@ const navbarTranslations: NavbarTranslations = {
         horizon: "Horizon",
       },
       aboutUs: {
-        whoWeAre: "Who we are",
+        whoWeAre: "Who are we",
         partners: "Our Partners",
         itLeads: "Palestinian IT leads",
         workWithUs: "Work with us",

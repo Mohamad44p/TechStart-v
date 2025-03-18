@@ -8,7 +8,7 @@ import Link from 'next/link'
 import { DataActions } from '@/components/shared/data-actions'
 import { DatabaseErrorDisplay } from '@/components/admin/shared/DatabaseErrorDisplay'
 
-export default async function AboutPage(props) {
+export default async function AboutPage() {
   let aboutUs = null;
   let error = null;
   

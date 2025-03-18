@@ -1,4 +1,3 @@
-
 export const complaintsTableConfig = {
   statusOptions: [
     { value: "PENDING", label: "Pending" },
@@ -15,4 +14,12 @@ export const complaintsTableConfig = {
     RESOLVED: "success",
     REJECTED: "destructive",
   } as const,
-}
+  
+  filterableColumns: [
+    { id: "type", title: "Type" },
+    { id: "status", title: "Status" },
+    { id: "description", title: "Description" }
+  ],
+  
+  sortableColumns: ["submittedAt", "type", "status", "complaintNumber"],
+} as const;

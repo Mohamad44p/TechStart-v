@@ -8,4 +8,10 @@ export const beneficiariesTableConfig = {
     ACTIVE: "success",
     INACTIVE: "destructive",
   } as const,
-}
+  filterableColumns: [
+    { id: "title_en", title: "Title (English)" },
+    { id: "title_ar", title: "Title (Arabic)" },
+    { id: "category.name_en", title: "Category" }
+  ],
+  sortableColumns: ["title_en", "title_ar", "createdAt", "updatedAt"],
+} as const;

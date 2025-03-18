@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 }
 
 export default async function SeoManagementPage() {
-  const { success, pages = [], error } = await getSeoPages()
+  const { pages = [], error } = await getSeoPages()
 
   return (
     <div className="container mx-auto py-10">

@@ -20,6 +20,7 @@ const cardSchema = z.object({
   titleEn: z.string().min(1, "Title in English is required"),
   titleAr: z.string().min(1, "Title in Arabic is required"),
   imageUrl: z.string().min(1, "Image is required"),
+  buttonUrl: z.string().nullable().optional(),
 })
 
 const focusareaSchema = z.object({
@@ -47,7 +48,7 @@ export function FocusareaForm({ initialData }: FocusareaFormProps) {
       titleAr: "",
       descriptionEn: "",
       descriptionAr: "",
-      cards: [{ titleEn: "", titleAr: "", imageUrl: "" }],
+      cards: [{ titleEn: "", titleAr: "", imageUrl: "", buttonUrl: null }],
     },
   })
 
@@ -226,6 +227,24 @@ export function FocusareaForm({ initialData }: FocusareaFormProps) {
                       </FormItem>
                     )}
                   />
+                  <FormField
+                    control={form.control}
+                    name={`cards.${index}.buttonUrl`}
+                    render={({ field }) => (
+                      <FormItem className="mt-4">
+                        <FormLabel>Button URL (Optional)</FormLabel>
+                        <FormControl>
+                          <Input 
+                            {...field} 
+                            value={field.value || ""}
+                            onChange={(e) => field.onChange(e.target.value || null)}
+                            placeholder="https://example.com"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                   {fields.length > 1 && (
                     <Button type="button" variant="outline" size="sm" className="mt-2" onClick={() => remove(index)}>
                       Remove Card
@@ -238,7 +257,7 @@ export function FocusareaForm({ initialData }: FocusareaFormProps) {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => append({ titleEn: "", titleAr: "", imageUrl: "" })}
+                onClick={() => append({ titleEn: "", titleAr: "", imageUrl: "", buttonUrl: null })}
               >
                 Add Card
               </Button>

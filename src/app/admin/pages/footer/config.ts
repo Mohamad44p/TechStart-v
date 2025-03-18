@@ -2,8 +2,11 @@ export const footerTableConfig = {
   defaultPageSize: 10,
   enableSearch: true,
   searchPlaceholder: "Search footer content...",
-  filterableColumns: ["name_en", "name_ar"],
-  sortableColumns: ["createdAt", "name_en", "name_ar", "order"],
+  filterableColumns: [
+    { id: "techStartTitle_en", title: "Title (English)" },
+    { id: "techStartTitle_ar", title: "Title (Arabic)" }
+  ],
+  sortableColumns: ["createdAt", "techStartTitle_en", "techStartTitle_ar"],
   
   statusOptions: [
     { value: "ACTIVE", label: "Active" },

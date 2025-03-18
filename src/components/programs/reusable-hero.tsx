@@ -11,8 +11,6 @@ interface ReusableHeroProps {
   highlightedWord: string;
   description?: string;
   objectives?: string;
-  primaryButtonText: string;
-  secondaryButtonText: string;
   imageSrc: string;
   imageAlt: string;
   programName?: string;
@@ -21,10 +19,6 @@ interface ReusableHeroProps {
     title: string;
     description: string;
   }>;
-  secondaryButtonProps?: {
-    href: string;
-    text: string;
-  };
 }
 
 export default function ReusableHero({
@@ -33,12 +27,9 @@ export default function ReusableHero({
   highlightedWord,
   description,
   objectives,
-  primaryButtonText,
-  secondaryButtonText,
   imageSrc,
   imageAlt,
   features,
-  secondaryButtonProps,
 }: ReusableHeroProps) {
   const { currentLang } = useLanguage();
   const isArabic = currentLang === 'ar';
@@ -123,41 +114,8 @@ export default function ReusableHero({
                 </motion.div>
               </div>
 
-              {/* Buttons */}
-              <div className="flex flex-wrap gap-4 mt-6">
-                <motion.button
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                  className="px-6 py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors"
-                >
-                  {primaryButtonText}
-                </motion.button>
-                
-                {secondaryButtonProps ? (
-                  <motion.a
-                    href={secondaryButtonProps.href}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6 }}
-                    className="px-6 py-3 rounded-lg bg-white text-blue-600 font-medium border border-blue-200 hover:bg-blue-50 transition-colors"
-                  >
-                    {secondaryButtonProps.text}
-                  </motion.a>
-                ) : (
-                  <motion.button
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6 }}
-                    className="px-6 py-3 rounded-lg bg-white text-blue-600 font-medium border border-blue-200 hover:bg-blue-50 transition-colors"
-                  >
-                    {secondaryButtonText}
-                  </motion.button>
-                )}
-              </div>
             </motion.div>
 
-            {/* Image Section - Shown on desktop */}
             {!isMobile && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}

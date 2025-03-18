@@ -13,6 +13,7 @@ export type FocusareaData = {
     titleEn: string
     titleAr: string
     imageUrl: string
+    buttonUrl?: string | null
   }[]
 }
 
