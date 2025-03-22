@@ -23,6 +23,7 @@ export const createPostSchema = z.object({
   published: z.boolean(),
   featured: z.boolean(),
   tags: z.array(z.string()),
+  publishedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format").default(() => new Date().toISOString().split('T')[0]),
 }).refine((data) => {
   if (data.type === PostType.PUBLICATION) {
     return data.title_en && data.title_ar && data.pdfUrl;

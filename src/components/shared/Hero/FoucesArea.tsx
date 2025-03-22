@@ -106,7 +106,7 @@ export default function FoucesArea({ focusareasData }: FoucesAreaProps) {
   const { currentLang } = useLanguage();
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-b from-gray-50 to-white py-24 dark:from-gray-900 dark:to-gray-800">
+    <div className="relative overflow-hidden bg-gradient-to-b from-gray-50 to-white m-2 py-24 dark:from-gray-900 dark:to-gray-800">
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
       <div className="absolute inset-0 bg-dot-pattern opacity-5"></div>
       <motion.div

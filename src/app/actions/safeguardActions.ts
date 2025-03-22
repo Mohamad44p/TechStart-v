@@ -18,6 +18,7 @@ async function processFormData(formData: FormData) {
     bgColor: formData.get("bgColor")?.toString() || "from-gray-100 to-gray-200",
     attachmentUrl: formData.get("attachmentUrl")?.toString() || "",
     imageUrl: formData.get("imageUrl")?.toString() || "",
+    order: parseInt(formData.get("order")?.toString() || "1", 10),
   }
 }
 
@@ -74,11 +75,10 @@ export const getSingleSafeguard = cache(async () => {
   }
 })
 
-
 export const getSafeguards = cache(async () => {
   try {
     const safeguards = await db.safeguard.findMany({
-      orderBy: { createdAt: "desc" },
+      orderBy: { order: "asc" },
     })
 
     return { success: true, data: safeguards }

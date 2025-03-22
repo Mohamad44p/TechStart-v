@@ -49,6 +49,7 @@ interface Blog {
   featured: boolean;
   createdAt: Date;
   updatedAt: Date;
+  publishedAt: Date;
   tags: {
     id: number;
     name_en: string;
@@ -77,6 +78,19 @@ export default function EditBlogForm({ blog }: { blog: Blog }) {
     fetchTags()
   }, [])
 
+  // Helper function to ensure date is in YYYY-MM-DD format
+  const formatDateToYYYYMMDD = (date: Date | string | null | undefined): string => {
+    if (!date) return new Date().toISOString().split('T')[0];
+    
+    try {
+      const d = new Date(date);
+      return d.toISOString().split('T')[0];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (e) {
+      return new Date().toISOString().split('T')[0];
+    }
+  };
+
   const form = useForm<CreatePostInput>({
     resolver: zodResolver(createPostSchema),
     defaultValues: {
@@ -92,22 +106,50 @@ export default function EditBlogForm({ blog }: { blog: Blog }) {
       readTime: blog.readTime || "",
       published: blog.published,
       featured: blog.featured,
-      tags: blog.tags.map(tag => tag.id.toString())
+      tags: blog.tags.map(tag => tag.id.toString()),
+      publishedAt: formatDateToYYYYMMDD(blog.publishedAt),
     },
   })
 
   async function onSubmit(data: CreatePostInput) {
     setIsSubmitting(true)
-    const formData = new FormData()
-    Object.entries(data).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        value.forEach((item) => formData.append(key, item))
-      } else if (value !== null && value !== undefined) {
-        formData.append(key, value.toString())
-      }
-    })
-
+    
     try {
+      // Create a new FormData object
+      const formData = new FormData()
+      
+      // Add all form fields
+      formData.append("slug", data.slug)
+      formData.append("type", data.type)
+      formData.append("title_en", data.title_en)
+      formData.append("title_ar", data.title_ar)
+      formData.append("description_en", data.description_en || "")
+      formData.append("description_ar", data.description_ar || "")
+      formData.append("content_en", data.content_en || "")
+      formData.append("content_ar", data.content_ar || "")
+      
+      // Handle optional fields
+      if (data.pdfUrl) formData.append("pdfUrl", data.pdfUrl)
+      if (data.imageUrl) formData.append("imageUrl", data.imageUrl)
+      formData.append("readTime", data.readTime || "")
+      
+      // Handle boolean fields
+      formData.append("published", String(data.published))
+      formData.append("featured", String(data.featured))
+      
+      // Handle tags
+      if (data.tags && data.tags.length > 0) {
+        data.tags.forEach(tag => formData.append("tags", tag))
+      } else {
+        // Add empty tag array to prevent null tags
+        formData.append("tags", "")
+      }
+      
+      // Handle date - ensure it's a valid date string
+      const dateValue = data.publishedAt || formatDateToYYYYMMDD(new Date())
+      formData.append("publishedAt", dateValue)
+      
+      // Submit the form
       const result = await editPost(blog.id, formData)
       if (result.success) {
         toast({
@@ -177,7 +219,7 @@ export default function EditBlogForm({ blog }: { blog: Blog }) {
                       </Button>
                     </div>
                     <FormDescription>
-                      This will be used in the URL of your post. Click "Generate" to create from title.
+                      This will be used in the URL of your post. Click &quot;Generate&quot; to create from title.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -206,6 +248,27 @@ export default function EditBlogForm({ blog }: { blog: Blog }) {
                 )}
               />
             </div>
+
+            <FormField
+              control={form.control}
+              name="publishedAt"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Publication Date</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="date"
+                      {...field}
+                      className="w-full"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Set the publication date for this post. This can be different from the actual posting date.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <Tabs defaultValue="english" className="w-full">
               <TabsList className="grid w-full grid-cols-2">

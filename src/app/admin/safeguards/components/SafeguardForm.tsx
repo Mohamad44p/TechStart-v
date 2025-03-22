@@ -32,6 +32,7 @@ const safeguardSchema = z.object({
   bgColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Invalid background color format"),
   attachmentUrl: z.string().optional(),
   imageUrl: z.string().optional(),
+  order: z.coerce.number().int().positive().default(1),
 })
 
 type SafeguardFormInput = z.infer<typeof safeguardSchema>
@@ -63,6 +64,7 @@ export function SafeguardForm({ initialData, mode, id, buttonText = "Save Safegu
       bgColor: "#f0f0f0",
       attachmentUrl: "",
       imageUrl: "",
+      order: 1,
     },
   })
 
@@ -103,19 +105,35 @@ export function SafeguardForm({ initialData, mode, id, buttonText = "Save Safegu
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)}>
           <CardContent className="space-y-6">
-            <FormField
-              control={form.control}
-              name="domain"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Domain</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g. ESMF, SEP, LMP" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="domain"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Domain</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g. ESMF, SEP, LMP" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="order"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Display Order</FormLabel>
+                    <FormControl>
+                      <Input type="number" min="1" placeholder="1" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <FormField
               control={form.control}

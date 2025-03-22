@@ -12,7 +12,7 @@ export interface Safeguard {
   bgColor: string;
   attachmentUrl: string | null;
   imageUrl: string | null;
-  order?: number;
+  order: number;
   status?: string;
   createdAt?: Date;
   updatedAt?: Date;

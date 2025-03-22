@@ -22,6 +22,7 @@ export type Safeguard = {
   bgColor: string
   attachmentUrl: string | null
   imageUrl: string | null
+  order: number
   createdAt: string | Date
   updatedAt: string | Date
 }
@@ -66,6 +67,18 @@ const ActionButtons = ({ safeguard }: { safeguard: Safeguard }) => {
 }
 
 export const columns: ColumnDef<Safeguard>[] = [
+  {
+    accessorKey: "order",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Order
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+  },
   {
     accessorKey: "domain",
     header: ({ column }) => (

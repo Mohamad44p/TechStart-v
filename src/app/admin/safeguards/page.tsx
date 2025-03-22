@@ -10,8 +10,8 @@ export default async function SafeguardsPage() {
   try {
     const safeguards = await db.safeguard.findMany({
     orderBy: [
-      { domain: 'asc' },
-      { createdAt: 'desc' },
+      { order: 'asc' },
+      { domain: 'asc' }
     ],
     select: {
       id: true,
@@ -27,6 +27,7 @@ export default async function SafeguardsPage() {
       bgColor: true,
       attachmentUrl: true,
       imageUrl: true,
+      order: true,
       createdAt: true,
       updatedAt: true,
     },

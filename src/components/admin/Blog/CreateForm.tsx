@@ -89,6 +89,7 @@ export default function CreateBlog() {
       featured: false,
       tags: [],
       pdfUrl: null,
+      publishedAt: new Date().toISOString().split('T')[0],
     },
   });
 
@@ -215,6 +216,27 @@ export default function CreateBlog() {
                   )}
                 />
               </div>
+
+              <FormField
+                control={form.control}
+                name="publishedAt"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Publication Date</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="date"
+                        {...field}
+                        className="w-full"
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Set the publication date for this post. This can be different from the actual posting date.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <Tabs defaultValue="english" className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
