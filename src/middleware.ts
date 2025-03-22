@@ -11,6 +11,17 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const savedLocale = request.cookies.get("NEXT_LOCALE")?.value;
 
+  // Handle specific article redirects
+  if (pathname.match(/^\/[a-z]{2}\/Article\/36\/complaints$/i)) {
+    const locale = pathname.split('/')[1];
+    return NextResponse.redirect(new URL(`/${locale}/submit-complaint`, request.url));
+  }
+
+  if (pathname.match(/^\/[a-z]{2}\/Article\/23\/contact-us$/i)) {
+    const locale = pathname.split('/')[1];
+    return NextResponse.redirect(new URL(`/${locale}/Contact-us`, request.url));
+  }
+
   if (pathname.startsWith("/admin")) {
     const token = request.cookies.get("ADMIN_TOKEN")?.value
 
