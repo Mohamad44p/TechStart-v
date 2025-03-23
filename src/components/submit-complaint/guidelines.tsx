@@ -166,7 +166,7 @@ export function Guidelines() {
                         href="https://docs.google.com/document/d/19ByLdoSR-3Jy_Zb0WCeDxVh5NKu8A8hX/edit?tab=t.0"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-indigo-600 hover:underline font-medium"
+                        className="text-indigo-600 underline font-medium"
                       >
                         Download Complaints Form
                       </a>

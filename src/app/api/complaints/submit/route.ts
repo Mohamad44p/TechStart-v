@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { ComplaintType, AttachmentData } from '@/types/complaint';
 import db from '@/app/db/db';
+import { sendComplaintNotification } from '@/utils/email';
 
 export async function POST(req: Request) {
   try {
@@ -80,6 +81,27 @@ export async function POST(req: Request) {
     const complaint = await db.complaint.create({
       data: complaintData
     });
+
+    // Send email notification to admins
+    try {
+      await sendComplaintNotification({
+        complaintNumber: complaint.complaintNumber,
+        type: complaint.type,
+        details: {
+          ...complaintData,
+          description: data.complaintDescription.description,
+          entityAgainst: data.complaintDescription.entity,
+          filedInCourt: data.complaintDescription.filedInCourt,
+          hasPreviousComplaint: data.previousComplaints.hasPreviousComplaint,
+          previousComplaintEntity: data.previousComplaints.previousComplaintEntity,
+          previousComplaintDate: data.previousComplaints.previousComplaintDate,
+          facts: data.complaintDetails.facts,
+        }
+      });
+    } catch (error) {
+      console.error('Failed to send email notification:', error);
+      // Continue even if email fails, we've already saved the complaint to DB
+    }
 
     return NextResponse.json({
       success: true,

@@ -2,6 +2,7 @@
 
 import db from "@/app/db/db";
 import { revalidatePath } from "next/cache";
+import { sendContactFormNotification } from "@/utils/email";
 
 export interface ContactFormData {
   name: string;
@@ -25,6 +26,17 @@ export async function submitContactForm(
       status: "new",
     },
   });
+
+  // Send email notification to admins
+  try {
+    await sendContactFormNotification({
+      ...data,
+      id: submission.id,
+    });
+  } catch (error) {
+    console.error("Failed to send email notification:", error);
+    // Continue even if email fails, we've already saved to DB
+  }
 
   revalidatePath("/admin/pages/contact-submissions");
   return submission;

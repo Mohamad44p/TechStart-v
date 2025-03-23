@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { jwtVerify } from "jose"
+import { jwtVerify } from "jose";
 
 const locales = ["en", "ar"];
 const defaultLocale = "en";
 
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "your-secret-key");
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.JWT_SECRET || "your-secret-key"
+);
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -13,46 +15,82 @@ export async function middleware(request: NextRequest) {
 
   // Handle specific article redirects
   if (pathname.match(/^\/[a-z]{2}\/Article\/36\/complaints$/i)) {
-    const locale = pathname.split('/')[1];
-    return NextResponse.redirect(new URL(`/${locale}/submit-complaint`, request.url));
+    const locale = pathname.split("/")[1];
+    return NextResponse.redirect(
+      new URL(`/${locale}/submit-complaint`, request.url)
+    );
   }
 
   if (pathname.match(/^\/[a-z]{2}\/Article\/23\/contact-us$/i)) {
-    const locale = pathname.split('/')[1];
+    const locale = pathname.split("/")[1];
     return NextResponse.redirect(new URL(`/${locale}/Contact-us`, request.url));
   }
 
   if (pathname.startsWith("/admin")) {
-    const token = request.cookies.get("ADMIN_TOKEN")?.value
+    const token = request.cookies.get("ADMIN_TOKEN")?.value;
 
-    console.log("Middleware - Token:", token ? "Present" : "Not present")
+    console.log("Middleware - Token:", token ? "Present" : "Not present");
 
     // Allow access to login page
     if (pathname === "/admin/login") {
       if (token) {
         try {
-          await jwtVerify(token, JWT_SECRET)
-          return NextResponse.redirect(new URL("/admin", request.url))
+          await jwtVerify(token, JWT_SECRET);
+          return NextResponse.redirect(new URL("/admin", request.url));
         } catch (error) {
-          console.error("Token verification failed:", error)
+          console.error("Token verification failed:", error);
         }
       }
-      return NextResponse.next()
+      return NextResponse.next();
     }
 
     if (!token) {
-      console.log("Middleware - No token, redirecting to login")
-      return NextResponse.redirect(new URL("/admin/login", request.url))
+      console.log("Middleware - No token, redirecting to login");
+      return NextResponse.redirect(new URL("/admin/login", request.url));
     }
 
     try {
-      await jwtVerify(token, JWT_SECRET)
-      return NextResponse.next() 
+      await jwtVerify(token, JWT_SECRET);
+      return NextResponse.next();
     } catch (error) {
-      console.error("Token verification failed:", error)
-      return NextResponse.redirect(new URL("/admin/login", request.url))
+      console.error("Token verification failed:", error);
+      return NextResponse.redirect(new URL("/admin/login", request.url));
     }
   }
+
+  // Special protected route for mohamadmon
+  if (pathname.startsWith("/mohamadmon")) {
+    const mohamadToken = request.cookies.get("MOHAMAD_TOKEN")?.value;
+
+    // Allow access to mohamadmon login page
+    if (pathname === "/mohamadmon/login") {
+      if (mohamadToken) {
+        try {
+          await jwtVerify(mohamadToken, JWT_SECRET);
+          return NextResponse.redirect(new URL("/mohamadmon", request.url));
+        } catch (error) {
+          console.error("Mohamad token verification failed:", error);
+        }
+      }
+      return NextResponse.next();
+    }
+
+    if (!mohamadToken) {
+      console.log(
+        "Middleware - No mohamad token, redirecting to mohamad login"
+      );
+      return NextResponse.redirect(new URL("/mohamadmon/login", request.url));
+    }
+
+    try {
+      await jwtVerify(mohamadToken, JWT_SECRET);
+      return NextResponse.next();
+    } catch (error) {
+      console.error("Mohamad token verification failed:", error);
+      return NextResponse.redirect(new URL("/mohamadmon/login", request.url));
+    }
+  }
+
   if (request.nextUrl.pathname.startsWith("/videos/")) {
     const path = request.nextUrl.pathname.replace(/^\/[a-z]{2}\//, "/");
     const response = NextResponse.rewrite(new URL(path, request.url));
@@ -174,6 +212,7 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     "/admin/:path*",
+    "/mohamadmon/:path*",
     "/videos/:path*",
     "/((?!api|_next|admin|assets|favicon.ico).*)",
     "/uploads/videos/:path*",

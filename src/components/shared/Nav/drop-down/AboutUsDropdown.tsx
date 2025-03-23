@@ -14,7 +14,7 @@ export const AboutUsDropdown: React.FC<DropdownProps> = ({ setPosition, translat
   const menuItems = [
     {
       id: "who-we-are",
-      name: translations.menuItems.aboutUs.whoWeAre,
+      name: translations.menuItems.aboutUs.whoWeAre.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
       href: "/About-us",
     },
     {

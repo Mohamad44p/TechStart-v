@@ -383,3 +383,131 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Accessibility Styles */
+html.high-contrast {
+  filter: contrast(1.4);
+}
+
+html.high-contrast * {
+  background-color: white !important;
+  color: black !important;
+  border-color: black !important;
+}
+
+html.high-contrast a,
+html.high-contrast button {
+  text-decoration: underline !important;
+}
+
+html.reduce-motion * {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+.accessibility-dock {
+  transition: transform 0.3s ease;
+}
+
+html.reduce-motion .accessibility-dock {
+  transition: none !important;
+}
+
+/* Custom line height for better readability */
+html.custom-line-height p,
+html.custom-line-height h1,
+html.custom-line-height h2,
+html.custom-line-height h3,
+html.custom-line-height h4,
+html.custom-line-height h5,
+html.custom-line-height h6,
+html.custom-line-height li,
+html.custom-line-height span,
+html.custom-line-height div:not(.accessibility-dock *) {
+  line-height: calc(var(--line-height-multiplier, 1.5) * 1em) !important;
+}
+
+/* Custom letter spacing for better readability */
+html.custom-letter-spacing p,
+html.custom-letter-spacing h1,
+html.custom-letter-spacing h2,
+html.custom-letter-spacing h3,
+html.custom-letter-spacing h4,
+html.custom-letter-spacing h5,
+html.custom-letter-spacing h6,
+html.custom-letter-spacing li,
+html.custom-letter-spacing span,
+html.custom-letter-spacing div:not(.accessibility-dock *) {
+  letter-spacing: var(--letter-spacing, 0) !important;
+}
+
+/* Dyslexia-friendly font */
+html.dyslexic-font * {
+  font-family: 'Open Sans', 'Segoe UI', 'Arial', sans-serif !important;
+  font-weight: 500 !important;
+}
+
+html.dyslexic-font p,
+html.dyslexic-font li,
+html.dyslexic-font span {
+  font-size: 1.05em !important;
+  line-height: 1.7 !important;
+}
+
+/* Focus mode for better concentration */
+html.focus-mode:not(.focus-mode-hover-content) p,
+html.focus-mode:not(.focus-mode-hover-content) li,
+html.focus-mode:not(.focus-mode-hover-content) h1,
+html.focus-mode:not(.focus-mode-hover-content) h2,
+html.focus-mode:not(.focus-mode-hover-content) h3,
+html.focus-mode:not(.focus-mode-hover-content) h4,
+html.focus-mode:not(.focus-mode-hover-content) h5,
+html.focus-mode:not(.focus-mode-hover-content) h6 {
+  opacity: 0.4;
+  transition: opacity 0.3s ease;
+}
+
+html.focus-mode:not(.focus-mode-hover-content) p:hover,
+html.focus-mode:not(.focus-mode-hover-content) li:hover,
+html.focus-mode:not(.focus-mode-hover-content) h1:hover,
+html.focus-mode:not(.focus-mode-hover-content) h2:hover,
+html.focus-mode:not(.focus-mode-hover-content) h3:hover,
+html.focus-mode:not(.focus-mode-hover-content) h4:hover,
+html.focus-mode:not(.focus-mode-hover-content) h5:hover,
+html.focus-mode:not(.focus-mode-hover-content) h6:hover {
+  opacity: 1;
+  background-color: rgba(255, 255, 0, 0.1);
+}
+
+html.reduce-motion html.focus-mode:not(.focus-mode-hover-content) * {
+  transition: none !important;
+}
+
+/* Color blindness filters */
+html.protanopia {
+  filter: url('#protanopia-filter');
+}
+
+html.deuteranopia {
+  filter: url('#deuteranopia-filter');
+}
+
+html.tritanopia {
+  filter: url('#tritanopia-filter');
+}
+
+/* Fallback filters using CSS when SVG filters aren't supported */
+@supports not (filter: url('#protanopia-filter')) {
+  html.protanopia {
+    filter: grayscale(0.6) sepia(0.2);
+  }
+  
+  html.deuteranopia {
+    filter: grayscale(0.3) sepia(0.5);
+  }
+  
+  html.tritanopia {
+    filter: grayscale(0.4) hue-rotate(320deg);
+  }
+}
