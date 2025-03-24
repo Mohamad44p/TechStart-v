@@ -26,9 +26,10 @@ interface DynamicTabsProps {
   faqCategories: FaqCategory[];
   faqsByCategory: Record<string, FaqItem[]>;
   programName?: string;
+  programId?: string;
 }
 
-export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory, programName }: DynamicTabsProps): JSX.Element {
+export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory, programName, programId }: DynamicTabsProps): JSX.Element {
   const { currentLang } = useLanguage();
   const [activeTab, setActiveTab] = useState(tabs[0]?.slug || "");
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -145,7 +146,9 @@ export default function DynamicTabs({ tabs, lang, faqCategories, faqsByCategory,
           </div>
 
           <div className={`mt-6 ${currentLang === 'ar' ? 'text-right' : 'text-left'}`}>
-            <Link href="https://fs20.formsite.com/DAIForms/smr0etmskv/login">
+            <Link href={programId === "cm7urp3n80015t718sk4lzm6r" 
+              ? "https://fs20.formsite.com/DAIForms/np9dh3xik0/login" 
+              : "https://fs20.formsite.com/DAIForms/smr0etmskv/login"} target="_blank" rel="noopener noreferrer">
               <Button
                 size="default"
                 className="bg-gradient-to-r from-[#1C6AAF] to-[#872996] hover:opacity-90 
