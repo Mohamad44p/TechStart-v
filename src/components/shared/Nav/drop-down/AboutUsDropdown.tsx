@@ -25,7 +25,7 @@ export const AboutUsDropdown: React.FC<DropdownProps> = ({ setPosition, translat
     {
       id: "Palestinian-IT-leads",
       name: translations.menuItems.aboutUs.itLeads,
-      href: "/Palestinian-IT-leads",
+      href: "/Our-Beneficiaries",
     },
     {
       id: "work-with-us",

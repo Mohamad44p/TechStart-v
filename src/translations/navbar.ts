@@ -25,10 +25,10 @@ const navbarTranslations: NavbarTranslations = {
         horizon: "Horizon",
       },
       aboutUs: {
-        whoWeAre: "Who are we",
+        whoWeAre: "Who Are We",
         partners: "Our Partners",
-        itLeads: "Palestinian IT leads",
-        workWithUs: "Work with us",
+        itLeads: "Our Beneficiaries",
+        workWithUs: "Work With Us",
       },
       mediaCenter: {
         gallery: "Gallery",
@@ -67,7 +67,7 @@ const navbarTranslations: NavbarTranslations = {
       aboutUs: {
         whoWeAre: "من نحن",
         partners: "شركاؤنا",
-        itLeads: "قادة تكنولوجيا المعلومات الفلسطينيون",
+        itLeads: "المستفيدون",
         workWithUs: "اعمل معنا",
       },
       mediaCenter: {

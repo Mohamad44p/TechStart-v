@@ -110,6 +110,10 @@ const data: { navMain: NavItem[] } = {
       icon: Phone,
       items: [
         {
+          title: "Contact Info",
+          url: "/admin/contact-info",
+        },
+        {
           title: "Contact Submissions",
           url: "/admin/pages/contact-submissions",
         },

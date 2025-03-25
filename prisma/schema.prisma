@@ -536,6 +536,16 @@ model UploadedItem {
   createdAt DateTime @default(now())
 }
 
+model ContactInfo {
+  id        String   @id @default(cuid())
+  addressEn String
+  addressAr String
+  phone     String
+  email     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 enum VideoType {
   youtube
   local
