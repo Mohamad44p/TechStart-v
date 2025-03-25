@@ -3,6 +3,7 @@
 
 import db from "@/app/db/db"
 import { revalidatePath } from "next/cache"
+import { PaginationParams, PaginatedResult } from "@/types/pagination"
 
 export type TeamMemberData = {
   nameEn: string
@@ -11,22 +12,6 @@ export type TeamMemberData = {
   jobTitleAr: string
   imageUrl: string
   linkedinUrl?: string
-}
-
-export type PaginationParams = {
-  page?: number
-  pageSize?: number
-  sortBy?: string
-  sortOrder?: 'asc' | 'desc'
-  search?: string
-}
-
-export type PaginatedResult<T> = {
-  data: T[]
-  total: number
-  page: number
-  pageSize: number
-  totalPages: number
 }
 
 export async function getTeamMembers(params?: PaginationParams): Promise<PaginatedResult<any>> {

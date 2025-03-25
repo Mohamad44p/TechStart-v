@@ -13,6 +13,9 @@ export function NavigationEvents() {
     // This effect runs on route change
     setLoading(true);
     
+    // Scroll to the top of the page on navigation
+    window.scrollTo(0, 0);
+    
     // Add a small timeout to ensure the loader is visible
     const timeoutId = setTimeout(() => {
       setLoading(false);

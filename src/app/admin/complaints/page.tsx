@@ -1,59 +1,120 @@
-import { Suspense } from "react";
-import { columns } from "./columns";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import db from "@/app/db/db";
-import { ComplaintTableSkeleton } from "./loading";
-import { DataTable } from "@/components/admin/Gallary/tabel/data-table";
-import { complaintsTableConfig } from "./config";
-import type { Complaint } from "@/types/complaint";
-import { cache } from "react";
+'use client'
 
-function ComplaintsDataTable({ data }: { data: Complaint[] }) {
-  return (
-    <DataTable columns={columns} data={data} config={complaintsTableConfig} />
-  );
+import { useState, useEffect, useRef } from 'react'
+import { columns } from "./columns"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ComplaintTableSkeleton } from "./loading"
+import { DataTable } from "@/components/admin/Gallary/tabel/data-table"
+import { complaintsTableConfig } from "./config"
+import type { Complaint } from "@/types/complaint"
+import { PaginatedResult, PaginationParams } from "@/types/pagination"
+import { getComplaintStats, getPaginatedComplaints } from "@/app/actions/complaints-actions"
+
+interface ComplaintsDataTableProps {
+  data: PaginatedResult<Complaint>
+  onPaginationChange: (params: PaginationParams) => void
 }
 
-export const revalidate = 30;
+function ComplaintsDataTable({ data, onPaginationChange }: ComplaintsDataTableProps) {
+  return (
+    <DataTable 
+      columns={columns} 
+      data={data} 
+      config={complaintsTableConfig}
+      onPaginationChange={onPaginationChange}
+    />
+  )
+}
 
-export const dynamic = "force-dynamic";
+export default function ComplaintsPage() {
+  const [activeTab, setActiveTab] = useState('all')
+  const [stats, setStats] = useState({ total: 0, pending: 0, inReview: 0, resolved: 0 })
+  const [complaints, setComplaints] = useState<PaginatedResult<Complaint> | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [paginationParams, setPaginationParams] = useState<PaginationParams & { status?: string }>({
+    page: 1,
+    pageSize: complaintsTableConfig.defaultPageSize,
+    sortBy: 'submittedAt',
+    sortOrder: 'desc',
+    search: '',
+    status: 'all'
+  })
+  
+  const initialRenderRef = useRef(true)
+  const isFetchingRef = useRef(false)
 
-const getComplaintStats = cache(async () => {
-  const [total, pending, inReview, resolved] = await Promise.all([
-    db.complaint.count(),
-    db.complaint.count({ where: { status: "PENDING" } }),
-    db.complaint.count({ where: { status: "IN_REVIEW" } }),
-    db.complaint.count({ where: { status: "RESOLVED" } }),
-  ]);
+  // Fetch stats
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const statsData = await getComplaintStats()
+        setStats(statsData)
+      } catch (err) {
+        console.error('Error fetching complaint stats:', err)
+      }
+    }
+    
+    fetchStats()
+  }, [])
 
-  return { total, pending, inReview, resolved };
-});
+  // Function to fetch complaints with the given parameters
+  const fetchComplaints = async (params: PaginationParams & { status?: string }) => {
+    // Prevent concurrent fetches
+    if (isFetchingRef.current) return
+    
+    try {
+      isFetchingRef.current = true
+      setLoading(true)
+      
+      const data = await getPaginatedComplaints({
+        ...params,
+        status: params.status || activeTab
+      })
+      
+      setComplaints(data)
+      setError(null)
+    } catch (err) {
+      console.error('Error fetching complaints:', err)
+      setError(err instanceof Error ? err.message : 'Failed to fetch complaints')
+    } finally {
+      setLoading(false)
+      isFetchingRef.current = false
+    }
+  }
 
-const getComplaints = cache(async (status?: string): Promise<Complaint[]> => {
-  const complaints = (await db.complaint.findMany({
-    where:
-      status && status !== "all"
-        ? {
-            status: status.toUpperCase().replace("-", "_"),
-          }
-        : undefined,
-    include: {
-      attachments: true,
-      notes: true,
-    },
-    orderBy: { submittedAt: "desc" },
-  })) as unknown as Complaint[];
+  // Handle tab change
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab)
+    setPaginationParams({
+      ...paginationParams,
+      page: 1, // Reset to first page on tab change
+      status: tab
+    })
+  }
 
-  return complaints;
-});
+  useEffect(() => {
+    // Always fetch on initial render or tab change
+    if (initialRenderRef.current) {
+      initialRenderRef.current = false
+    }
+    
+    // Fetch data whenever pagination params change 
+    fetchComplaints(paginationParams)
+  }, [paginationParams])
 
-export default async function ComplaintsPage(props: {
-  searchParams?: Promise<{ status?: string }>;
-}) {
-  const searchParams = await props.searchParams;
-  const stats = await getComplaintStats();
-  const complaints = await getComplaints(searchParams?.status);
+  // Handle pagination change
+  const handlePaginationChange = (params: PaginationParams): Promise<void> => {
+    // Prevent unnecessary updates if only pagination changes that don't affect status
+    const newParams = {
+      ...params,
+      status: activeTab
+    }
+    
+    setPaginationParams(newParams)
+    return Promise.resolve()
+  }
 
   return (
     <div className="container mx-auto py-10">
@@ -69,44 +130,39 @@ export default async function ComplaintsPage(props: {
           <CardTitle>Complaints Management</CardTitle>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="all">
+          <Tabs value={activeTab} onValueChange={handleTabChange}>
             <TabsList>
               <TabsTrigger value="all">All</TabsTrigger>
               <TabsTrigger value="pending">Pending</TabsTrigger>
               <TabsTrigger value="in-review">In Review</TabsTrigger>
               <TabsTrigger value="resolved">Resolved</TabsTrigger>
             </TabsList>
-            <TabsContent value="all">
-              <Suspense fallback={<ComplaintTableSkeleton />}>
-                <ComplaintsDataTable data={complaints} />
-              </Suspense>
-            </TabsContent>
-            <TabsContent value="pending">
-              <Suspense fallback={<ComplaintTableSkeleton />}>
-                <ComplaintsDataTable data={await getComplaints("PENDING")} />
-              </Suspense>
-            </TabsContent>
-            <TabsContent value="in-review">
-              <Suspense fallback={<ComplaintTableSkeleton />}>
-                <ComplaintsDataTable data={await getComplaints("IN_REVIEW")} />
-              </Suspense>
-            </TabsContent>
-            <TabsContent value="resolved">
-              <Suspense fallback={<ComplaintTableSkeleton />}>
-                <ComplaintsDataTable data={await getComplaints("RESOLVED")} />
-              </Suspense>
-            </TabsContent>
+            {loading && !complaints ? (
+              <ComplaintTableSkeleton />
+            ) : error ? (
+              <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded mt-4">
+                <strong className="font-bold">Error: </strong>
+                <span>{error}</span>
+              </div>
+            ) : complaints ? (
+              <TabsContent value={activeTab}>
+                <ComplaintsDataTable 
+                  data={complaints} 
+                  onPaginationChange={handlePaginationChange} 
+                />
+              </TabsContent>
+            ) : null}
           </Tabs>
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }
 
 interface StatsCardProps {
-  title: string;
-  value: number;
-  type?: "default" | "warning" | "info" | "success";
+  title: string
+  value: number
+  type?: "default" | "warning" | "info" | "success"
 }
 
 function StatsCard({ title, value, type = "default" }: StatsCardProps) {
@@ -129,5 +185,5 @@ function StatsCard({ title, value, type = "default" }: StatsCardProps) {
         <div className="text-2xl font-bold">{value}</div>
       </CardContent>
     </Card>
-  );
+  )
 }

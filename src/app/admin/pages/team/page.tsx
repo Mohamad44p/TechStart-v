@@ -5,11 +5,12 @@ import { teamTableConfig } from "./config"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { DataTable } from "@/components/admin/Gallary/tabel/data-table"
-import { getTeamMembers, PaginationParams, PaginatedResult } from "@/app/actions/pages/team-actions"
+import { getTeamMembers } from "@/app/actions/pages/team-actions"
 import { useState, useEffect, useRef } from "react"
 import { TeamMember } from "./columns"
+import { PaginationParams, PaginatedResult } from "@/types/pagination"
 
-export default function TeamMembers(props) {
+export default function TeamMembers() {
   const [teamMembers, setTeamMembers] = useState<PaginatedResult<TeamMember> | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -66,7 +67,7 @@ export default function TeamMembers(props) {
   }, [paginationParams])
 
   // Handle pagination change
-  const handlePaginationChange = async (params: PaginationParams) => {
+  const handlePaginationChange = async (params: PaginationParams): Promise<void> => {
     // Prevent unnecessary updates if the params haven't changed
     if (
       params.page === paginationParams.page &&

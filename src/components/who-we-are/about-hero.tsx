@@ -16,7 +16,7 @@ const AboutHero = ({ aboutUsData }: AboutHeroProps) => {
   const { currentLang } = useLanguage()
 
   return (
-    <section className="relative py-24 overflow-hidden bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+    <section className="relative py-16 md:py-24 overflow-hidden bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
       <div className="absolute inset-0 bg-dot-pattern opacity-5"></div>
       <motion.div
@@ -25,12 +25,31 @@ const AboutHero = ({ aboutUsData }: AboutHeroProps) => {
         transition={{ duration: 0.8 }}
         className="container mx-auto px-4"
       >
-        <div className="flex flex-col lg:flex-row items-center gap-16">
+        <div className="flex flex-col lg:flex-row items-center gap-8 md:gap-16">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="order-1 lg:order-2 w-full lg:w-1/2 mb-8 lg:mb-0"
+          >
+            {aboutUsData.imageUrl && (
+              <div className="relative w-full aspect-square sm:aspect-[4/3] md:aspect-[3/3] rounded-2xl overflow-hidden">
+                <Image
+                  src={getImageUrl(aboutUsData.imageUrl) || "/TechLogo.svg"}
+                  alt={currentLang === "ar" ? aboutUsData.titleAr : aboutUsData.titleEn}
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </div>
+            )}
+          </motion.div>
+
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="lg:w-1/2 space-y-8"
+            className="order-2 lg:order-1 w-full lg:w-1/2 space-y-6 md:space-y-8 text-center lg:text-left"
           >
             <motion.span
               initial={{ opacity: 0 }}
@@ -44,9 +63,9 @@ const AboutHero = ({ aboutUsData }: AboutHeroProps) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-4xl lg:text-6xl font-bold tracking-tight text-[#142452] dark:text-gray-100"
+              className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight text-[#142452] dark:text-gray-100"
             >
-              <span className="block bg-gradient-to-r from-[#1F6DB3] to-[#142452] bg-clip-text text-transparent mt-2 relative p-5 leading-tight">
+              <span className="block bg-gradient-to-r from-[#1F6DB3] to-[#142452] bg-clip-text text-transparent mt-2 relative p-2 md:p-5 leading-tight">
                 {currentLang === "ar" ? aboutUsData.titleAr : aboutUsData.titleEn}
               </span>
             </motion.h1>
@@ -54,33 +73,14 @@ const AboutHero = ({ aboutUsData }: AboutHeroProps) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="text-xl text-[#1F6DB3] dark:text-gray-300 leading-relaxed"
+              className="text-lg md:text-xl text-[#1F6DB3] dark:text-gray-300 leading-relaxed"
             >
               {currentLang === "ar" ? aboutUsData.descriptionAr : aboutUsData.descriptionEn}
             </motion.p>
           </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="lg:w-1/2"
-          >
-            {aboutUsData.imageUrl && (
-              <div className="relative w-full aspect-[3/3] rounded-2xl overflow-hidden">
-                <Image
-                  src={getImageUrl(aboutUsData.imageUrl) || "/TechLogo.svg"}
-                  alt={currentLang === "ar" ? aboutUsData.titleAr : aboutUsData.titleEn}
-                  fill
-                  className="object-contain"
-                  priority
-                />
-              </div>
-            )}
-          </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mt-16 md:mt-20">
           {aboutUsData.cards.map((card, index) => (
             <AboutCard
               key={index}
@@ -122,22 +122,22 @@ const AboutCard = ({ card, index, currentLang, isVisible }: AboutCardProps) => {
     >
       <Card className="group relative h-full overflow-hidden rounded-2xl bg-white/80 backdrop-blur shadow-lg transition-all duration-300 hover:shadow-2xl dark:bg-gray-800/80">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-blue-500/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
-        <div className="relative p-8 space-y-6">
+        <div className="relative p-6 md:p-8 space-y-4 md:space-y-6">
           <motion.div
             className="flex items-center gap-4"
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
           >
-            <div className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 text-white shadow-lg group-hover:shadow-xl transition-all duration-300">
-              <Icon className="h-7 w-7" />
+            <div className="flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 text-white shadow-lg group-hover:shadow-xl transition-all duration-300">
+              <Icon className="h-6 w-6 md:h-7 md:w-7" />
             </div>
-            <h3 className="text-2xl font-bold text-[#142452] group-hover:text-[#1F6DB3] transition-colors duration-300 dark:text-gray-100 dark:group-hover:text-[#1F6DB3]">
+            <h3 className="text-xl md:text-2xl font-bold text-[#142452] group-hover:text-[#1F6DB3] transition-colors duration-300 dark:text-gray-100 dark:group-hover:text-[#1F6DB3]">
               {currentLang === "ar" ? card.titleAr : card.titleEn}
             </h3>
           </motion.div>
           <motion.p
-            className="text-lg text-[#1F6DB3] group-hover:text-[#142452] transition-colors duration-300 dark:text-gray-300 dark:group-hover:text-gray-200"
+            className="text-base md:text-lg text-[#1F6DB3] group-hover:text-[#142452] transition-colors duration-300 dark:text-gray-300 dark:group-hover:text-gray-200"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}

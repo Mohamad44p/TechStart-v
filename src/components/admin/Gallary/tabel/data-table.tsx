@@ -32,7 +32,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { PaginatedResult, PaginationParams } from "@/app/actions/pages/team-actions";
+import { PaginatedResult, PaginationParams } from "@/types/pagination";
 import { ArrowUpDown } from "lucide-react";
 
 interface TableConfig {
@@ -52,7 +52,7 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[] | PaginatedResult<TData>;
   config: TableConfig;
-  onPaginationChange?: (params: PaginationParams) => Promise<void>;
+  onPaginationChange?: (params: PaginationParams) => Promise<void> | void;
 }
 
 export function DataTable<TData, TValue>({
@@ -71,8 +71,9 @@ export function DataTable<TData, TValue>({
   
   // Use a ref to track if this is the initial render
   const isInitialRender = useRef(true);
-  const searchTimeoutRef = useRef<NodeJS.Timeout>();
-  const sortingTimeoutRef = useRef<NodeJS.Timeout>();
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const sortingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const paginationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Determine if we're using paginated data
   const isPaginated = data && typeof data === 'object' && 'data' in data;
@@ -86,6 +87,20 @@ export function DataTable<TData, TValue>({
   const pageCount = isPaginated 
     ? (data as PaginatedResult<TData>).totalPages 
     : Math.ceil(tableData.length / pagination.pageSize);
+
+  // If using server-side pagination, set the pageIndex based on the returned page
+  useEffect(() => {
+    if (isPaginated && isServerPagination) {
+      const currentPage = (data as PaginatedResult<TData>).page;
+      // Only update if different to avoid loops
+      if (currentPage && currentPage !== pagination.pageIndex + 1) {
+        setPagination(prev => ({
+          ...prev,
+          pageIndex: currentPage - 1
+        }));
+      }
+    }
+  }, [data, isPaginated, isServerPagination]);
 
   // Get all valid filter column IDs
   const getValidColumnIds = useCallback(() => {
@@ -200,19 +215,44 @@ export function DataTable<TData, TValue>({
     return validColumnIds.length > 0 ? validColumnIds[0] : 'id';
   }, [sorting, config.sortableColumns, getValidColumnIds]);
 
+  // Helper function to send pagination updates to the server
+  const sendServerPaginationUpdate = useCallback((params: PaginationParams) => {
+    if (!onPaginationChange) return;
+    
+    if (paginationTimeoutRef.current) {
+      clearTimeout(paginationTimeoutRef.current);
+    }
+    
+    paginationTimeoutRef.current = setTimeout(() => {
+      try {
+        const result = onPaginationChange(params);
+        // If it's a promise, add error handling
+        if (result instanceof Promise) {
+          result.catch(error => {
+            console.error('Error during pagination update:', error);
+          });
+        }
+      } catch (error) {
+        console.error('Error calling pagination handler:', error);
+      }
+    }, 100);
+  }, [onPaginationChange]);
+
   // Handle search
   const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    
+    // Update the UI immediately
     setSearchQuery(value);
     
     // For client-side filtering, we don't need to do anything else
-    if (!isServerPagination) {
+    if (!isServerPagination || !onPaginationChange) {
       return;
     }
     
-    // Reset to first page when searching on server
+    // Reset to first page immediately for better UX
     setPagination(prev => ({ ...prev, pageIndex: 0 }));
-
+    
     // Clear previous timeout
     if (searchTimeoutRef.current) {
       clearTimeout(searchTimeoutRef.current);
@@ -223,29 +263,23 @@ export function DataTable<TData, TValue>({
     const sortDirection = sorting.length > 0 ? (sorting[0].desc ? 'desc' : 'asc') : 'asc';
     
     const searchParams: PaginationParams = {
-      page: 1,
+      page: 1, // Reset to first page when searching
       pageSize: pagination.pageSize,
       sortBy: sortColumn,
       sortOrder: sortDirection as 'asc' | 'desc',
       search: value,
     };
 
-    // Debounce the search request
+    // Debounce the search request to avoid too many API calls
     searchTimeoutRef.current = setTimeout(() => {
-      if (onPaginationChange) {
-        onPaginationChange(searchParams).catch(error => {
-          console.error('Error during search:', error);
-        });
-      }
+      sendServerPaginationUpdate(searchParams);
     }, 300);
-  }, [sorting, pagination.pageSize, onPaginationChange, isServerPagination, getDefaultSortColumn]);
+  }, [sorting, pagination.pageSize, isServerPagination, getDefaultSortColumn, sendServerPaginationUpdate]);
 
   // Handle sorting change
   useEffect(() => {
-    if (isInitialRender.current || !isServerPagination) return;
+    if (isInitialRender.current || !isServerPagination || !onPaginationChange) return;
     
-    if (!onPaginationChange) return;
-
     // Clear previous timeout
     if (sortingTimeoutRef.current) {
       clearTimeout(sortingTimeoutRef.current);
@@ -264,13 +298,11 @@ export function DataTable<TData, TValue>({
     
     // Debounce the sort request
     sortingTimeoutRef.current = setTimeout(() => {
-      onPaginationChange(sortParams).catch(error => {
-        console.error('Error during sorting:', error);
-      });
+      sendServerPaginationUpdate(sortParams);
     }, 300);
-  }, [sorting, onPaginationChange, pagination.pageIndex, pagination.pageSize, searchQuery, isServerPagination, getDefaultSortColumn]);
+  }, [sorting, onPaginationChange, pagination.pageIndex, pagination.pageSize, searchQuery, isServerPagination, getDefaultSortColumn, sendServerPaginationUpdate]);
 
-  // Handle pagination change
+  // Handle pagination change from the table
   useEffect(() => {
     // Skip the initial render to prevent an infinite loop
     if (isInitialRender.current) {
@@ -287,17 +319,40 @@ export function DataTable<TData, TValue>({
     const sortDirection = sorting.length > 0 ? (sorting[0].desc ? 'desc' : 'asc') : 'asc';
     
     const paginationParams: PaginationParams = {
-      page: pagination.pageIndex + 1,
+      page: pagination.pageIndex + 1, // Convert 0-based index to 1-based page
       pageSize: pagination.pageSize,
       sortBy: sortColumn,
       sortOrder: sortDirection as 'asc' | 'desc',
       search: searchQuery,
     };
     
-    onPaginationChange(paginationParams).catch(error => {
-      console.error('Error during pagination:', error);
-    });
-  }, [pagination, onPaginationChange, searchQuery, sorting, isServerPagination, getDefaultSortColumn]);
+    sendServerPaginationUpdate(paginationParams);
+  }, [pagination, onPaginationChange, searchQuery, sorting, isServerPagination, getDefaultSortColumn, sendServerPaginationUpdate]);
+
+  // Handle page size change
+  const handlePageSizeChange = useCallback((value: string) => {
+    const newSize = Number(value);
+    setPagination(prev => ({
+      pageSize: newSize,
+      pageIndex: 0, // Reset to first page when changing page size
+    }));
+    
+    // If using server pagination, trigger an update
+    if (isServerPagination && onPaginationChange) {
+      const sortColumn = getDefaultSortColumn();
+      const sortDirection = sorting.length > 0 ? (sorting[0].desc ? 'desc' : 'asc') : 'asc';
+      
+      const params: PaginationParams = {
+        page: 1, // Reset to first page
+        pageSize: newSize,
+        sortBy: sortColumn,
+        sortOrder: sortDirection as 'asc' | 'desc',
+        search: searchQuery,
+      };
+      
+      sendServerPaginationUpdate(params);
+    }
+  }, [isServerPagination, onPaginationChange, getDefaultSortColumn, sorting, searchQuery, sendServerPaginationUpdate]);
 
   // Validate that sortableColumns actually exist in the columns array
   useEffect(() => {
@@ -333,10 +388,6 @@ export function DataTable<TData, TValue>({
       pagination,
       columnFilters,
     },
-    // Add debug and error handling
-    debugTable: process.env.NODE_ENV === 'development',
-    debugHeaders: process.env.NODE_ENV === 'development',
-    debugColumns: process.env.NODE_ENV === 'development',
   });
 
   // Ensure counts are valid numbers
@@ -362,13 +413,7 @@ export function DataTable<TData, TValue>({
         />
         <Select
           value={pagination.pageSize.toString()}
-          onValueChange={(value) => {
-            setPagination(prev => ({
-              ...prev,
-              pageSize: Number(value),
-              pageIndex: 0, // Reset to first page when changing page size
-            }));
-          }}
+          onValueChange={handlePageSizeChange}
         >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select page size" />
@@ -388,18 +433,16 @@ export function DataTable<TData, TValue>({
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
