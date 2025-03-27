@@ -19,7 +19,7 @@ export default function StatsCountUp({ stats }: StatsCountUpProps) {
         <div className="mx-auto max-w-2xl lg:max-w-none">
           <div className="text-center">
             <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-[#1b316e] to-[#862996] bg-clip-text text-transparent sm:text-4xl">
-              {currentLang === "ar" ? "تيك ستارت بالأرقام" : "TechStart in numbers"}
+              {currentLang === "ar" ? "تيك ستارت بالأرقام" : "TechStart In Numbers"}
             </h2>
             <div className="w-32 h-1.5 bg-gradient-to-r from-[#1b316e] to-[#862996] mx-auto rounded-full mt-4 mb-8" />
           </div>
