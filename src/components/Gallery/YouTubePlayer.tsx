@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { VideoControls } from './VideoControls';
 
 // Add type declaration for YouTube API
@@ -97,13 +97,13 @@ export const YouTubePlayer = ({ videoId }: YouTubePlayerProps) => {
           width: '100%',
           videoId: videoId,
           playerVars: {
-            autoplay: 0,
-            controls: 0,
+            autoplay: 0, // Don't autoplay initially
+            controls: 0, // Use our custom controls
             rel: 0,
             showinfo: 0,
-            mute: 1, // Start muted
+            mute: 1, // Always start muted to comply with autoplay policies
             enablejsapi: 1,
-            playsinline: 1,
+            playsinline: 1, // Important for mobile playback
             origin: window.location.origin,
             fs: 1,
             modestbranding: 1
@@ -153,6 +153,19 @@ export const YouTubePlayer = ({ videoId }: YouTubePlayerProps) => {
     }
     return () => clearInterval(interval);
   }, [playerReady, isPlaying]);
+  
+  useEffect(() => {
+    if (hasUserInteracted && playerRef.current && playerReady) {
+      if (!isPlaying) {
+        return;
+      }
+
+      if (!isMuted) {
+        playerRef.current.unMute();
+        playerRef.current.setVolume(50);
+      }
+    }
+  }, [hasUserInteracted, isPlaying, isMuted, playerReady]);
 
   const handlePlay = () => {
     if (!playerRef.current || !playerReady) return;
@@ -160,15 +173,21 @@ export const YouTubePlayer = ({ videoId }: YouTubePlayerProps) => {
     try {
       if (!hasUserInteracted) {
         setHasUserInteracted(true);
-        playerRef.current.unMute();
-        playerRef.current.setVolume(50);
-        setIsMuted(false);
-      }
-
-      if (isPlaying) {
-        playerRef.current.pauseVideo();
+        
+        if (!isPlaying) {
+          playerRef.current.playVideo();
+        }
       } else {
-        playerRef.current.playVideo();
+        if (isPlaying) {
+          playerRef.current.pauseVideo();
+        } else {
+          if (isMuted) {
+            playerRef.current.unMute();
+            playerRef.current.setVolume(50);
+            setIsMuted(false);
+          }
+          playerRef.current.playVideo();
+        }
       }
     } catch (error) {
       console.error('Error in handlePlay:', error);
@@ -213,12 +232,11 @@ export const YouTubePlayer = ({ videoId }: YouTubePlayerProps) => {
     <div 
       ref={containerRef} 
       className="relative w-full h-full"
-      // Add touch listeners with passive option
-      onTouchStart={(e) => {
+      onTouchStart={useCallback((e: React.TouchEvent<HTMLDivElement>) => {
         if (!hasUserInteracted) {
           setHasUserInteracted(true);
         }
-      }}
+      }, [hasUserInteracted])}
     >
       <div id={`youtube-player-${videoId}`} className="w-full h-full" />
       {playerReady && (
