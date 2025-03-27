@@ -5,11 +5,12 @@ import { useState, useEffect, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight, X, Calendar, Play, ArrowRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, X, Calendar, Play, ArrowRight, ExternalLink } from "lucide-react"
 import { GalleryFilters } from "./GalleryFilters"
 import { useLanguage } from "@/context/LanguageContext"
 import type { Video, VideoGallery as VideoGalleryType } from "@/types/video-gallery"
 import { getYoutubeVideoId } from "@/lib/utils";
+import { YouTubePlayer } from "./YouTubePlayer"
 
 interface VideoGalleryProps {
   galleries: VideoGalleryType[]
@@ -32,6 +33,7 @@ export const VideoGallery = ({ galleries: initialGalleries }: VideoGalleryProps)
   const [selectedGallery, setSelectedGallery] = useState<VideoGalleryType | null>(null)
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0)
   const [mounted, setMounted] = useState(false)
+  const [youtubeRedirectUrl, setYoutubeRedirectUrl] = useState<string | null>(null)
   
   useEffect(() => {
     setMounted(true)
@@ -98,16 +100,8 @@ export const VideoGallery = ({ galleries: initialGalleries }: VideoGalleryProps)
   const handleVideoClick = useCallback((gallery: VideoGalleryType, index: number) => {
     const video = gallery.videos[index];
     
-    // For YouTube videos, use a direct approach to open in a new window
-    if (video.type === "youtube") {
-      const videoId = getYoutubeVideoId(video.url);
-      const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
-      window.open(youtubeUrl, '_blank');
-    } else {
-      // For local videos, use the modal
-      setSelectedGallery(gallery);
-      setCurrentVideoIndex(index);
-    }
+    setSelectedGallery(gallery);
+    setCurrentVideoIndex(index);
   }, [])
 
   const nextVideo = useCallback(() => {
@@ -248,21 +242,33 @@ export const VideoGallery = ({ galleries: initialGalleries }: VideoGalleryProps)
               
               <div className="relative w-full max-w-4xl aspect-video">
                 <div className="w-full h-full">
-                  <video
-                    src={selectedGallery.videos[currentVideoIndex]?.url}
-                    className="absolute top-0 left-0 w-full h-full object-contain rounded-lg"
-                    controls
-                    autoPlay
-                    playsInline
-                  />
+                  {selectedGallery.videos[currentVideoIndex]?.type === 'youtube' ? (
+                    <YouTubePlayer videoId={getYoutubeVideoId(selectedGallery.videos[currentVideoIndex]?.url)} />
+                  ) : (
+                    <video
+                      src={selectedGallery.videos[currentVideoIndex]?.url}
+                      className="absolute top-0 left-0 w-full h-full object-contain rounded-lg"
+                      controls
+                      autoPlay
+                      playsInline
+                    />
+                  )}
                 </div>
               </div>
               
-              <div className="mt-4 text-white text-center">
+              <div className="mt-4 text-white text-center relative">
                 <h2 className="text-2xl font-bold mb-2">
                   {getLocalizedVideoTitle(selectedGallery.videos[currentVideoIndex])}
                 </h2>
                 <p className="text-lg mb-2">{getLocalizedTitle(selectedGallery)}</p>
+                {selectedGallery.videos[currentVideoIndex]?.type === 'youtube' && (
+                  <Button variant="ghost" size="sm" className="absolute right-0 top-0 text-white hover:bg-white/20" onClick={() => {
+                    const videoId = getYoutubeVideoId(selectedGallery.videos[currentVideoIndex].url);
+                    window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank');
+                  }}>
+                    <ExternalLink size={16} className="mr-1" /> Open on YouTube
+                  </Button>
+                )}
                 <p className="text-sm flex items-center justify-center">
                   <Calendar size={14} className="mr-1" />
                   {formatDate(selectedGallery.createdAt.toString())}
@@ -304,13 +310,7 @@ export const VideoGallery = ({ galleries: initialGalleries }: VideoGalleryProps)
                       className={`relative flex-shrink-0 w-20 h-12 md:w-28 md:h-16 
                         ${index === currentVideoIndex ? 'ring-2 ring-white' : 'opacity-60 hover:opacity-100'}`}
                       onClick={() => {
-                        if (video.type === "youtube") {
-                          const videoId = getYoutubeVideoId(video.url);
-                          const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
-                          window.open(youtubeUrl, '_blank');
-                        } else {
-                          setCurrentVideoIndex(index);
-                        }
+                        setCurrentVideoIndex(index);
                       }}
                       aria-label={`View video ${index + 1}`}
                       type="button"
