@@ -536,6 +536,8 @@ model UploadedItem {
   createdAt DateTime @default(now())
 }
 
+// Contact Info
+
 model ContactInfo {
   id        String   @id @default(cuid())
   addressEn String
