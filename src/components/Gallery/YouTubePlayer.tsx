@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { VideoControls } from './VideoControls';
 
 // Add type declaration for YouTube API
@@ -66,23 +66,6 @@ export const YouTubePlayer = ({ videoId }: YouTubePlayerProps) => {
   const [startPlayback, setStartPlayback] = useState(false);
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-    
-    const handleTouch = () => {
-      if (!hasUserInteracted) {
-        setHasUserInteracted(true);
-      }
-    };
-    
-    container.addEventListener('touchstart', handleTouch, { passive: true });
-    
-    return () => {
-      container.removeEventListener('touchstart', handleTouch);
-    };
-  }, [hasUserInteracted]);
-
-  useEffect(() => {
     if (hasInitialized.current) return;
     hasInitialized.current = true;
 
@@ -93,10 +76,6 @@ export const YouTubePlayer = ({ videoId }: YouTubePlayerProps) => {
           return;
         }
 
-        const iframeContainer = document.createElement('div');
-        iframeContainer.innerHTML = `<iframe id="youtube-iframe-${videoId}" src="https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&origin=${encodeURIComponent(window.location.origin)}&widgetid=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-        document.getElementById(`youtube-player-${videoId}`)?.appendChild(iframeContainer.firstChild as Node);
-        
         const tag = document.createElement('script');
         tag.src = 'https://www.youtube.com/iframe_api';
         tag.async = true;
@@ -113,23 +92,21 @@ export const YouTubePlayer = ({ videoId }: YouTubePlayerProps) => {
       try {
         await loadYouTubeAPI();
 
-        playerRef.current = new window.YT.Player(`youtube-iframe-${videoId}`, {
+        playerRef.current = new window.YT.Player(`youtube-player-${videoId}`, {
           height: '100%',
           width: '100%',
           videoId: videoId,
           playerVars: {
-            autoplay: 0, // Don't autoplay initially
-            controls: 0, // Use our custom controls
+            autoplay: 0,
+            controls: 0,
             rel: 0,
             showinfo: 0,
-            mute: 1, // Always start muted to comply with autoplay policies
+            mute: 1, // Start muted
             enablejsapi: 1,
-            playsinline: 1, // Important for mobile playback
+            playsinline: 1,
             origin: window.location.origin,
             fs: 1,
-            modestbranding: 1,
-            disablekb: 1, // Disable keyboard controls to prevent unexpected state changes
-            iv_load_policy: 3, // Disable annotations
+            modestbranding: 1
           },
           events: {
             onReady: (event: YouTubePlayerEvent) => {
@@ -176,25 +153,6 @@ export const YouTubePlayer = ({ videoId }: YouTubePlayerProps) => {
     }
     return () => clearInterval(interval);
   }, [playerReady, isPlaying]);
-  
-  useEffect(() => {
-    if (!playerRef.current || !playerReady || !hasUserInteracted) return;
-    
-    if (!isPlaying) return;
-    
-    if (!isMuted) {
-      try {
-        const timer = setTimeout(() => {
-          playerRef.current?.unMute();
-          playerRef.current?.setVolume(50);
-        }, 200);
-        
-        return () => clearTimeout(timer);
-      } catch (error) {
-        console.error('Error setting volume after user interaction:', error);
-      }
-    }
-  }, [playerReady, hasUserInteracted, isPlaying, isMuted]);
 
   const handlePlay = () => {
     if (!playerRef.current || !playerReady) return;
@@ -202,29 +160,15 @@ export const YouTubePlayer = ({ videoId }: YouTubePlayerProps) => {
     try {
       if (!hasUserInteracted) {
         setHasUserInteracted(true);
+        playerRef.current.unMute();
+        playerRef.current.setVolume(50);
+        setIsMuted(false);
       }
-      
+
       if (isPlaying) {
         playerRef.current.pauseVideo();
       } else {
-        playerRef.current.mute();
-        setIsMuted(true);
-        
         playerRef.current.playVideo();
-        
-        if (hasUserInteracted) {
-          setTimeout(() => {
-            try {
-              if (playerRef.current && isPlaying) {
-                playerRef.current.unMute();
-                playerRef.current.setVolume(50);
-                setIsMuted(false);
-              }
-            } catch (error) {
-              console.error('Error unmuting video:', error);
-            }
-          }, 500); // Longer delay to ensure browser recognizes user interaction
-        }
       }
     } catch (error) {
       console.error('Error in handlePlay:', error);
@@ -253,36 +197,13 @@ export const YouTubePlayer = ({ videoId }: YouTubePlayerProps) => {
   const handleMute = (muted: boolean) => {
     if (!playerRef.current || !playerReady) return;
     try {
-      const wasPlaying = isPlaying;
-      const currentVolume = playerRef.current.getVolume();
-      
       if (muted) {
         playerRef.current.mute();
-        setIsMuted(true);
       } else {
-        if (hasUserInteracted) {
-          if (!isPlaying) {
-            playerRef.current.playVideo();
-          }
-          
-          setTimeout(() => {
-            try {
-              if (playerRef.current) {
-                playerRef.current.unMute();
-                playerRef.current.setVolume(currentVolume > 0 ? currentVolume : 50);
-                
-                if (wasPlaying && !isPlaying) {
-                  playerRef.current.playVideo();
-                }
-                
-                setIsMuted(false);
-              }
-            } catch (error) {
-              console.error('Error in delayed unmute:', error);
-            }
-          }, 300);
-        }
+        playerRef.current.unMute();
+        playerRef.current.setVolume(50);
       }
+      setIsMuted(muted);
     } catch (error) {
       console.error('Error in handleMute:', error);
     }
@@ -292,6 +213,12 @@ export const YouTubePlayer = ({ videoId }: YouTubePlayerProps) => {
     <div 
       ref={containerRef} 
       className="relative w-full h-full"
+      // Add touch listeners with passive option
+      onTouchStart={(e) => {
+        if (!hasUserInteracted) {
+          setHasUserInteracted(true);
+        }
+      }}
     >
       <div id={`youtube-player-${videoId}`} className="w-full h-full" />
       {playerReady && (
@@ -310,10 +237,7 @@ export const YouTubePlayer = ({ videoId }: YouTubePlayerProps) => {
       {!hasUserInteracted && (
         <div 
           className="absolute inset-0 flex items-center justify-center bg-black/50 cursor-pointer z-10"
-          onClick={() => {
-            setHasUserInteracted(true);
-            handlePlay();
-          }}
+          onClick={handlePlay}
         >
           <div className="text-white text-center bg-black/70 p-6 rounded-lg">
             <div className="text-6xl mb-4">▶️</div>

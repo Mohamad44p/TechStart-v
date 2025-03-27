@@ -5,12 +5,11 @@ import { useState, useEffect, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight, X, Calendar, Play, ArrowRight, ExternalLink } from "lucide-react"
+import { ChevronLeft, ChevronRight, X, Calendar, Play, ArrowRight } from "lucide-react"
 import { GalleryFilters } from "./GalleryFilters"
 import { useLanguage } from "@/context/LanguageContext"
 import type { Video, VideoGallery as VideoGalleryType } from "@/types/video-gallery"
 import { getYoutubeVideoId } from "@/lib/utils";
-import { YouTubePlayer } from "./YouTubePlayer"
 
 interface VideoGalleryProps {
   galleries: VideoGalleryType[]
@@ -33,7 +32,6 @@ export const VideoGallery = ({ galleries: initialGalleries }: VideoGalleryProps)
   const [selectedGallery, setSelectedGallery] = useState<VideoGalleryType | null>(null)
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0)
   const [mounted, setMounted] = useState(false)
-  const [youtubeRedirectUrl, setYoutubeRedirectUrl] = useState<string | null>(null)
   
   useEffect(() => {
     setMounted(true)
@@ -49,7 +47,8 @@ export const VideoGallery = ({ galleries: initialGalleries }: VideoGalleryProps)
         month: "long",
         day: "numeric",
       })
-      } catch (e) {
+    } catch (e) {
+      console.error("Date formatting error:", e);
       return dateStr
     }
   }, [])
@@ -100,8 +99,25 @@ export const VideoGallery = ({ galleries: initialGalleries }: VideoGalleryProps)
   const handleVideoClick = useCallback((gallery: VideoGalleryType, index: number) => {
     const video = gallery.videos[index];
     
-    setSelectedGallery(gallery);
-    setCurrentVideoIndex(index);
+    // For YouTube videos, open in a popup window in the same page
+    if (video.type === "youtube") {
+      const videoId = getYoutubeVideoId(video.url);
+      const youtubeUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+      const width = Math.min(800, window.innerWidth * 0.8);
+      const height = width * 0.5625; // 16:9 aspect ratio
+      const left = (window.innerWidth - width) / 2;
+      const top = (window.innerHeight - height) / 2;
+      
+      window.open(
+        youtubeUrl, 
+        "YouTubePopup", 
+        `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=no,status=no,location=no,menubar=no,toolbar=no`
+      );
+    } else {
+      // For local videos, use the modal
+      setSelectedGallery(gallery);
+      setCurrentVideoIndex(index);
+    }
   }, [])
 
   const nextVideo = useCallback(() => {
@@ -242,8 +258,14 @@ export const VideoGallery = ({ galleries: initialGalleries }: VideoGalleryProps)
               
               <div className="relative w-full max-w-4xl aspect-video">
                 <div className="w-full h-full">
-                  {selectedGallery.videos[currentVideoIndex]?.type === 'youtube' ? (
-                    <YouTubePlayer videoId={getYoutubeVideoId(selectedGallery.videos[currentVideoIndex]?.url)} />
+                  {selectedGallery.videos[currentVideoIndex]?.type === "youtube" ? (
+                    <iframe
+                      src={`https://www.youtube.com/embed/${getYoutubeVideoId(selectedGallery.videos[currentVideoIndex]?.url)}`}
+                      className="absolute top-0 left-0 w-full h-full object-contain rounded-lg"
+                      allowFullScreen
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      title={getLocalizedVideoTitle(selectedGallery.videos[currentVideoIndex])}
+                    />
                   ) : (
                     <video
                       src={selectedGallery.videos[currentVideoIndex]?.url}
@@ -256,19 +278,11 @@ export const VideoGallery = ({ galleries: initialGalleries }: VideoGalleryProps)
                 </div>
               </div>
               
-              <div className="mt-4 text-white text-center relative">
+              <div className="mt-4 text-white text-center">
                 <h2 className="text-2xl font-bold mb-2">
                   {getLocalizedVideoTitle(selectedGallery.videos[currentVideoIndex])}
                 </h2>
                 <p className="text-lg mb-2">{getLocalizedTitle(selectedGallery)}</p>
-                {selectedGallery.videos[currentVideoIndex]?.type === 'youtube' && (
-                  <Button variant="ghost" size="sm" className="absolute right-0 top-0 text-white hover:bg-white/20" onClick={() => {
-                    const videoId = getYoutubeVideoId(selectedGallery.videos[currentVideoIndex].url);
-                    window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank');
-                  }}>
-                    <ExternalLink size={16} className="mr-1" /> Open on YouTube
-                  </Button>
-                )}
                 <p className="text-sm flex items-center justify-center">
                   <Calendar size={14} className="mr-1" />
                   {formatDate(selectedGallery.createdAt.toString())}
@@ -310,7 +324,22 @@ export const VideoGallery = ({ galleries: initialGalleries }: VideoGalleryProps)
                       className={`relative flex-shrink-0 w-20 h-12 md:w-28 md:h-16 
                         ${index === currentVideoIndex ? 'ring-2 ring-white' : 'opacity-60 hover:opacity-100'}`}
                       onClick={() => {
-                        setCurrentVideoIndex(index);
+                        if (video.type === "youtube") {
+                          const videoId = getYoutubeVideoId(video.url);
+                          const youtubeUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+                          const width = Math.min(800, window.innerWidth * 0.8);
+                          const height = width * 0.5625; // 16:9 aspect ratio
+                          const left = (window.innerWidth - width) / 2;
+                          const top = (window.innerHeight - height) / 2;
+                          
+                          window.open(
+                            youtubeUrl, 
+                            "YouTubePopup", 
+                            `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=no,status=no,location=no,menubar=no,toolbar=no`
+                          );
+                        } else {
+                          setCurrentVideoIndex(index);
+                        }
                       }}
                       aria-label={`View video ${index + 1}`}
                       type="button"
