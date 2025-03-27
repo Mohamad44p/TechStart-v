@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+//contact info schema
+
 export const contactInfoSchema = z.object({
   addressEn: z.string().min(1, "English address is required"),
   addressAr: z.string().min(1, "Arabic address is required"),

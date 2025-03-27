@@ -18,6 +18,11 @@ const ProgramCard = ({
   description,
 }: ProgramCardProps) => {
   const { currentLang } = useLanguage();
+  
+  // Set apply link based on program ID
+  const applyLink = id === 'cm7urp3n80015t718sk4lzm6r' 
+    ? 'https://fs20.formsite.com/DAIForms/np9dh3xik0/login' 
+    : 'https://fs20.formsite.com/DAIForms/smr0etmskv/login';
 
   return (
     <Card className="w-full max-w-sm mx-auto bg-white/90 backdrop-blur-sm shadow-lg rounded-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 border border-purple-100/20">
@@ -48,7 +53,7 @@ const ProgramCard = ({
             {currentLang === "ar" ? "اعرف المزيد" : "Learn More"}
           </Button>
         </Link>
-        <Link href="https://fs20.formsite.com/DAIForms/smr0etmskv/login">
+        <Link href={applyLink}>
           <Button className="w-full py-2.5 text-sm font-semibold bg-gradient-to-r from-[#1b316e] to-[#862996] text-white hover:from-[#152554] hover:to-[#6b2178] transition-all duration-300">
             {currentLang === "ar" ? "قدم الآن" : "Apply Now"}
           </Button>

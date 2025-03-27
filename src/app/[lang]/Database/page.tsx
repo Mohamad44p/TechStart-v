@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useSiteContext } from "@/context/SiteContext";
 
-export default function MohamadmonPage() {
+export default function NotFound() {
   const router = useRouter();
   const { siteDisabled, toggleSiteDisabled } = useSiteContext();
 

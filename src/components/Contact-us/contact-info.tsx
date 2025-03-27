@@ -25,7 +25,6 @@ export function ContactInfo() {
   }, []);
 
   if (!contactInfo) {
-    // Fallback to default data if database data is not yet loaded
     const defaultContactInfo = {
       en: [
         {
@@ -62,7 +61,6 @@ export function ContactInfo() {
     );
   }
 
-  // Use database data when available
   const contactData = [
     {
       icon: MapPin,

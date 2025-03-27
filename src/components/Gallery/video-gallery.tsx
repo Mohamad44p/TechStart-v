@@ -1,14 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
 "use client"
 
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight, X, Calendar, Play, ArrowRight } from "lucide-react"
 import { GalleryFilters } from "./GalleryFilters"
 import { useLanguage } from "@/context/LanguageContext"
-import type { VideoGallery as VideoGalleryType, Video } from "@/types/video-gallery"
+import type { Video, VideoGallery as VideoGalleryType } from "@/types/video-gallery"
 import { getYoutubeVideoId } from "@/lib/utils";
 
 interface VideoGalleryProps {
@@ -19,188 +19,10 @@ interface VideoGalleryProps {
 // Use smaller thumbnail size that's more reliable (works even with private/unlisted videos)
 const YOUTUBE_THUMBNAIL_URL = (videoId: string) => `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
 
-const VideoThumbnail = ({ video, onClick }: { video: Video; onClick: () => void }) => {
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const [isClient, setIsClient] = useState(false)
-  
-  useEffect(() => {
-    setIsClient(true)
-    
-    // For video elements, set to a frame that works as a good thumbnail
-    if (isClient && videoRef.current && video.type !== "youtube") {
-      videoRef.current.currentTime = 1;
-    }
-  }, [isClient, video])
 
-  const thumbnailUrl = video.thumbnail || 
-    (video.type === "youtube" ? YOUTUBE_THUMBNAIL_URL(getYoutubeVideoId(video.url)) : "/placeholder.jpg");
 
-  return (
-    <button 
-      className="relative aspect-video cursor-pointer overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 w-full block"
-      onClick={onClick}
-      type="button"
-    >
-      {isClient ? (
-        <>
-          {video.type === "youtube" ? (
-            <img
-              src={thumbnailUrl}
-              alt={video.title_en || "Video thumbnail"}
-              className="w-full h-full object-cover rounded-lg transform hover:scale-105 transition-transform duration-500"
-              loading="lazy"
-            />
-          ) : (
-            <video
-              ref={videoRef}
-              src={video.url}
-              className="w-full h-full object-cover rounded-lg transform hover:scale-105 transition-transform duration-500"
-              preload="metadata"
-              muted
-            />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-70 hover:opacity-90 transition-opacity">
-            <div className="absolute bottom-4 left-4 right-4 text-white">
-              <h3 className="text-lg font-semibold truncate">{video.title_en || "Untitled"}</h3>
-            </div>
-          </div>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="rounded-full bg-white/20 p-3 backdrop-blur-sm hover:bg-white/30 transform hover:scale-110 transition-all duration-300">
-              <Play className="w-8 h-8 text-white" />
-            </div>
-          </div>
-        </>
-      ) : (
-        // Skeleton on server
-        <div className="w-full h-full bg-gray-200 animate-pulse rounded-lg"></div>
-      )}
-    </button>
-  )
-}
 
-// Update YouTubePlayer component to ensure proper YouTube API interactions
-const YouTubePlayer = ({ videoId, title }: { videoId: string, title: string }) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-  
-  // Use the full, explicit YouTube embed URL with all necessary parameters for optimal playback
-  const videoSrc = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&controls=1&enablejsapi=1&origin=${typeof window !== 'undefined' ? window.location.origin : ''}&playsinline=1&iv_load_policy=3`;
-  
-  // Add a more reliable way to handle YouTube iframe interactions
-  useEffect(() => {
-    const handleIframeClick = (e: MouseEvent) => {
-      // Prevent event propagation to allow clicks on the iframe
-      e.stopPropagation();
-    };
-    
-    const iframe = iframeRef.current;
-    if (iframe) {
-      iframe.addEventListener('click', handleIframeClick);
-      
-      // Focus iframe after it loads
-      const focusIframe = () => {
-        if (iframe && document.activeElement !== iframe) {
-          iframe.focus();
-        }
-      };
-      
-      // Try to focus multiple times to ensure it works
-      setTimeout(focusIframe, 100);
-      setTimeout(focusIframe, 500);
-      setTimeout(focusIframe, 1000);
-    }
-    
-    return () => {
-      if (iframe) {
-        iframe.removeEventListener('click', handleIframeClick);
-      }
-    };
-  }, []);
-  
-  // Safety timeout to hide loading state
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
-    
-    return () => clearTimeout(timer);
-  }, []);
-  
-  return (
-    <div className="w-full h-full relative">
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm z-10">
-          <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      )}
-      <iframe
-        ref={iframeRef}
-        src={videoSrc}
-        title={title || "YouTube video"}
-        className="absolute top-0 left-0 w-full h-full rounded-lg"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-        allowFullScreen
-        frameBorder="0"
-        tabIndex={0}
-        onLoad={() => {
-          setTimeout(() => setIsLoading(false), 1000);
-        }}
-      />
-    </div>
-  );
-};
 
-// Update the VideoPlayer component to use the specialized YouTube player
-const VideoPlayer = ({ video }: { video: Video }) => {
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [isClient, setIsClient] = useState(false)
-  
-  useEffect(() => {
-    setIsClient(true)
-    setIsLoading(true)
-  }, [video])
-  
-  if (!isClient) {
-    return <div className="absolute inset-0 bg-gray-800 rounded-lg"></div>;
-  }
-
-  if (video.type === "youtube") {
-    const videoId = getYoutubeVideoId(video.url);
-    return <YouTubePlayer videoId={videoId} title={video.title_en || ""} />;
-  }
-
-  return (
-    <div className="absolute top-0 left-0 w-full h-full">
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm">
-          <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      )}
-      <video
-        ref={videoRef}
-        src={video.url}
-        className="w-full h-full object-contain rounded-lg"
-        controls
-        playsInline
-        controlsList="nodownload"
-        autoPlay
-        onLoadedData={() => setIsLoading(false)}
-        onError={() => setIsLoading(false)}
-        onClick={(e) => {
-          e.stopPropagation();
-          if (videoRef.current) {
-            if (videoRef.current.paused) {
-              videoRef.current.play();
-            } else {
-              videoRef.current.pause();
-            }
-          }
-        }}
-      />
-    </div>
-  )
-}
 
 export const VideoGallery = ({ galleries: initialGalleries }: VideoGalleryProps) => {
   const { currentLang } = useLanguage()
@@ -225,7 +47,7 @@ export const VideoGallery = ({ galleries: initialGalleries }: VideoGalleryProps)
         month: "long",
         day: "numeric",
       })
-    } catch (e) {
+      } catch (e) {
       return dateStr
     }
   }, [])
@@ -238,7 +60,7 @@ export const VideoGallery = ({ galleries: initialGalleries }: VideoGalleryProps)
   )
 
   const getLocalizedVideoTitle = useCallback(
-    (video: any) => {
+    (video: Video) => {
       return currentLang === "ar" ? video.title_ar : video.title_en
     },
     [currentLang],

@@ -4,6 +4,7 @@ import db from "@/app/db/db";
 import { revalidatePath } from "next/cache";
 import { sendContactFormNotification } from "@/utils/email";
 import { PaginatedResult, PaginationParams } from "@/types/pagination";
+import { Prisma } from "@prisma/client";
 
 export interface ContactFormData {
   name: string;
@@ -67,11 +68,11 @@ export async function getPaginatedContactSubmissions(params?: PaginationParams):
     const where = safeParams.search
       ? {
           OR: [
-            { name: { contains: safeParams.search, mode: 'insensitive' } },
-            { email: { contains: safeParams.search, mode: 'insensitive' } },
-            { subject: { contains: safeParams.search, mode: 'insensitive' } },
-            { message: { contains: safeParams.search, mode: 'insensitive' } },
-            { status: { contains: safeParams.search, mode: 'insensitive' } },
+            { name: { contains: safeParams.search, mode: Prisma.QueryMode.insensitive } },
+            { email: { contains: safeParams.search, mode: Prisma.QueryMode.insensitive } },
+            { subject: { contains: safeParams.search, mode: Prisma.QueryMode.insensitive } },
+            { message: { contains: safeParams.search, mode: Prisma.QueryMode.insensitive } },
+            { status: { contains: safeParams.search, mode: Prisma.QueryMode.insensitive } },
           ],
         }
       : {};
