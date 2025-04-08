@@ -4,6 +4,7 @@ import { LanguageProvider } from '@/context/LanguageContext'
 import { SiteProvider } from '@/context/SiteContext'
 import type { Metadata } from 'next'
 import { Montserrat } from 'next/font/google'
+import Script from 'next/script'
 
 export const metadata: Metadata = {
   title: 'Tech Start',
@@ -30,10 +31,8 @@ export default async function RootLayout(
   return (
     <html lang="en" className="lenis lenis-smooth" suppressHydrationWarning>
       <body className={`${montserrat.variable} font-sans`}>
-        {/* SVG Filters for Color Blindness */}
         <svg className="hidden" aria-hidden="true">
           <defs>
-            {/* Protanopia (red-blind) */}
             <filter id="protanopia-filter">
               <feColorMatrix
                 in="SourceGraphic"
@@ -45,7 +44,6 @@ export default async function RootLayout(
               />
             </filter>
             
-            {/* Deuteranopia (green-blind) */}
             <filter id="deuteranopia-filter">
               <feColorMatrix
                 in="SourceGraphic"
@@ -57,7 +55,6 @@ export default async function RootLayout(
               />
             </filter>
             
-            {/* Tritanopia (blue-blind) */}
             <filter id="tritanopia-filter">
               <feColorMatrix
                 in="SourceGraphic"
@@ -70,13 +67,26 @@ export default async function RootLayout(
             </filter>
           </defs>
         </svg>
-        
         <SiteProvider>
           <LanguageProvider defaultLang={params.lang}>
             {children}
             <AccessibilityDock />
           </LanguageProvider>
         </SiteProvider>
+        
+        {/* Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-87JFR13LTB"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-87JFR13LTB');
+          `}
+        </Script>
       </body>
     </html>
   )

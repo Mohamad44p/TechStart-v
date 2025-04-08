@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "./button";
 import { 
-  Settings, 
   ZoomIn, 
   ZoomOut, 
   Type, 
@@ -13,7 +12,8 @@ import {
   Palette, 
   Underline,
   ScanFace,
-  ListEnd
+  ListEnd,
+  Accessibility,
 } from "lucide-react";
 import {
   Sheet,
@@ -151,16 +151,16 @@ export function AccessibilityDock() {
   };
 
   return (
-    <div className="fixed right-4 top-1/2 -translate-y-1/2 z-50 accessibility-dock">
+    <div className="fixed left-4 bottom-4 z-50 accessibility-dock">
       <Sheet>
         <SheetTrigger asChild>
           <Button
             variant="default"
             size="icon"
-            className="h-12 w-12 rounded-full shadow-lg"
+            className="h-12 w-12 rounded-full shadow-lg bg-gradient-to-br from-[#1C65A9] to-[#862996] hover:from-[#1C65A9]/90 hover:to-[#862996]/90"
             aria-label="Accessibility options"
           >
-            <Settings className="h-6 w-6" />
+            <Accessibility className="h-6 w-6 text-white" />
           </Button>
         </SheetTrigger>
         <SheetContent side="right" className="w-80 overflow-y-auto">
@@ -349,7 +349,7 @@ export function AccessibilityDock() {
                   />
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Highlights the content you're currently reading
+                  Highlights the content you&apos;re currently reading
                 </p>
               </div>
             </TabsContent>
